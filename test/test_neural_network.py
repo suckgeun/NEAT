@@ -1,5 +1,7 @@
 import unittest
 import numpy as np
+from globaladmin import nngen
+from players.neuralnet import NeuralNetwork
 
 """
 Tests individual neural network(nn) objects
@@ -8,8 +10,8 @@ Tests individual neural network(nn) objects
 
 class NeuralNetworkTest(unittest.TestCase):
 
-    def create_one_nn__three_inputs_one_outputs(self):
-        nns = NnGenerator(3, 1, 1)
+    def test_create_one_nn__three_inputs_one_outputs(self):
+        nns = nngen.create_nns(3, 1, 1)
         self.assertEqual(len(nns), 1, "created one object")
         nn = nns[0]
         # check type
@@ -17,7 +19,7 @@ class NeuralNetworkTest(unittest.TestCase):
         # 0: input
         # 1: output
         # 2: hidden
-        self.assertEqual(nn.node_genes, np.array([0, 0, 0, 1]))
+        self.assertTrue(np.array_equal(nn.node_genes, np.array([0, 0, 0, 1])))
         # in, out, weight, enabled, innov
         #  0,   3,     w1,       1,     0,
         #  1,   3,     w2,       1,     1,
@@ -42,8 +44,8 @@ class NeuralNetworkTest(unittest.TestCase):
         self.assertEqual(nn.connect_genes[2, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[2, 4], 2, "innovation number")
 
-    def create_one_nn__two_inputs_three_outputs(self):
-        nns = NnGenerator(2, 3, 1)
+    def test_create_one_nn__two_inputs_three_outputs(self):
+        nns = nngen.create_nns(2, 3, 1)
         self.assertEqual(len(nns), 1, "created one object")
         nn = nns[0]
         # check type
@@ -51,7 +53,7 @@ class NeuralNetworkTest(unittest.TestCase):
         # 0: input
         # 1: output
         # 2: hidden
-        self.assertEqual(nn.node_genes, np.array([0, 0, 1, 1, 1]))
+        self.assertTrue(np.array_equal(nn.node_genes, np.array([0, 0, 1, 1, 1])))
         # in, out, weight, enabled, innov
         #  0,   2,     w1,       1,     0,
         #  1,   2,     w2,       1,     1,
@@ -97,8 +99,8 @@ class NeuralNetworkTest(unittest.TestCase):
         self.assertEqual(nn.connect_genes[5, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[5, 4], 5, "innovation number")
 
-    def create_two_nn__two_inputs_one_outputs(self):
-        nns = NnGenerator(2, 1, 2)
+    def test_create_two_nn__two_inputs_one_outputs(self):
+        nns = nngen.create_nns(2, 1, 2)
         self.assertEqual(len(nns), 2, "created one object")
         nn0 = nns[0]
         nn1 = nns[1]
@@ -108,8 +110,8 @@ class NeuralNetworkTest(unittest.TestCase):
         # 0: input
         # 1: output
         # 2: hidden
-        self.assertEqual(nn0.node_genes, np.array([0, 0, 1]))
-        self.assertEqual(nn1.node_genes, np.array([0, 0, 1]))
+        self.assertTrue(np.array_equal(nn0.node_genes, np.array([0, 0, 1])))
+        self.assertTrue(np.array_equal(nn1.node_genes, np.array([0, 0, 1])))
         # in, out, weight, enabled, innov
         #  0,   2,     w1,       1,     0,
         #  1,   2,     w2,       1,     1,
