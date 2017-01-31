@@ -8,24 +8,24 @@ from globaladmin.workplace import Workplace
 class WorkerTest(unittest.TestCase):
 
     def test_connect_gene_exists__no_history(self):
-        workplace = Workplace(3, 1)
+        workplace = Workplace(n_input=3, n_output=1)
         worker = Worker(workplace)
 
         node_in = 1
         node_out = 3
-        history = []
+        history = np.empty((1, 3))
 
-        self.assertFalse(worker.connect_gene_exits(node_in, node_out, history))
+        self.assertEqual(worker.connect_gene_exits(node_in, node_out, history), -1)
 
     def test_connect_gene_exists__yes_history(self):
-        workplace = Workplace(3, 1)
+        workplace = Workplace(n_input=3, n_output=1)
         worker = Worker(workplace)
 
-        node_in = 1
+        node_in = 2
         node_out = 3
-        history = [[1, 3], [2, 3]]
+        history = np.array([[1, 3, 1], [2, 3, 4]])
 
-        self.assertTrue(worker.connect_gene_exits(node_in, node_out, history))
+        self.assertEqual(worker.connect_gene_exits(node_in, node_out, history), 4)
 
     def test_add_connect_gene__no_history(self):
         workplace = Workplace(3, 1)
