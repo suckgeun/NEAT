@@ -15,7 +15,7 @@ class WorkerTest(unittest.TestCase):
         node_out = 3
         history = np.empty((1, 3))
 
-        self.assertEqual(worker.connect_gene_exits(node_in, node_out, history), -1)
+        self.assertEqual(worker.connect_gene_exists(node_in, node_out, history), -1)
 
     def test_connect_gene_exists__yes_history(self):
         workplace = Workplace(n_input=3, n_output=1)
@@ -25,7 +25,7 @@ class WorkerTest(unittest.TestCase):
         node_out = 3
         history = np.array([[1, 3, 1], [2, 3, 4]])
 
-        self.assertEqual(worker.connect_gene_exits(node_in, node_out, history), 4)
+        self.assertEqual(worker.connect_gene_exists(node_in, node_out, history), 4)
 
     def test_add_connect_gene__no_history(self):
         workplace = Workplace(3, 1)

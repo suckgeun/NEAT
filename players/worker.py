@@ -16,7 +16,7 @@ class Worker:
         new_counter = 0
         new_history = np.array([])
 
-    def connect_gene_exits(self, node_in, node_out, history):
+    def connect_gene_exists(self, node_in, node_out, history):
         """
         check if connection between node_in and node_out exists in all neural networks history.
 
