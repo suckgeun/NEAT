@@ -7,7 +7,7 @@ from globaladmin.workplace import Workplace
 
 class WorkerTest(unittest.TestCase):
 
-    def test_connect_gene_exists__no_history(self):
+    def test_is_connect_gene_exists__no_history(self):
         workplace = Workplace(n_input=3, n_output=1)
         worker = Worker(workplace)
 
@@ -15,9 +15,9 @@ class WorkerTest(unittest.TestCase):
         node_out = 3
         history = np.empty((1, 3))
 
-        self.assertEqual(worker.connect_gene_exists(node_in, node_out, history), -1)
+        self.assertEqual(worker.is_connect_gene_exists(node_in, node_out, history), -1)
 
-    def test_connect_gene_exists__yes_history(self):
+    def test_is_connect_gene_exists__yes_history(self):
         workplace = Workplace(n_input=3, n_output=1)
         worker = Worker(workplace)
 
@@ -25,17 +25,79 @@ class WorkerTest(unittest.TestCase):
         node_out = 3
         history = np.array([[1, 3, 1], [2, 3, 4]])
 
-        self.assertEqual(worker.connect_gene_exists(node_in, node_out, history), 4)
+        self.assertEqual(worker.is_connect_gene_exists(node_in, node_out, history), 4)
 
-    def test_add_connect_gene__no_history(self):
-        workplace = Workplace(3, 1)
+    def test_is_input_node__yes(self):
+        workplace = Workplace(n_input=3, n_output=1)
         worker = Worker(workplace)
+
+        node = 0
+        self.assertTrue(worker.is_input_node(node))
+        node = 1
+        self.assertTrue(worker.is_input_node(node))
+        node = 2
+        self.assertTrue(worker.is_input_node(node))
+
+    def test_is_input_node__no(self):
+        workplace = Workplace(n_input=5, n_output=4)
+        worker = Worker(workplace)
+
+        node = 5
+        self.assertFalse(worker.is_input_node(node))
+        node = 6
+        self.assertFalse(worker.is_input_node(node))
+        node = 10
+        self.assertFalse(worker.is_input_node(node))
+
+    def test_is_output_node__yes(self):
+        workplace = Workplace(n_input=5, n_output=4)
+        worker = Worker(workplace)
+
+        node = 5
+        self.assertTrue(worker.is_output_node(node))
+        node = 6
+        self.assertTrue(worker.is_output_node(node))
+        node = 7
+        self.assertTrue(worker.is_output_node(node))
+        node = 8
+        self.assertTrue(worker.is_output_node(node))
+
+    def test_is_output_node__no(self):
+        workplace = Workplace(n_input=5, n_output=4)
+        worker = Worker(workplace)
+
+        node = 4
+        self.assertFalse(worker.is_output_node(node))
+        node = 0
+        self.assertFalse(worker.is_output_node(node))
+        node = 9
+        self.assertFalse(worker.is_output_node(node))
+        node = 20
+        self.assertFalse(worker.is_output_node(node))
+
+    def test_is_new_connect_valid__valid(self):
+        workplace = Workplace(n_input=5, n_output=3)
+        worker = Worker(workplace)
+
+        node_in = 0
+        node_out = 3
+        history = np.empty((1, 3))
+
+        self.assertTrue(worker.is_new_connect_valid(node_in=node_in, node_out=node_out),
+                        "check new connection validity")
+
+
+
+    def test_create_connection_gene__no_history(self):
+        workplace = Workplace(n_input=3, n_output=1)
+        worker = Worker(workplace)
+
         node_in = 1
         node_out = 3
         weight = 0.5
-        workplace.innov_history = []
+        history = np.empty((1, 3))
 
-        gene = worker.create_connection_gene(node_in, node_out, weight)
+        gene = worker.create_connection_gene(node_in, node_out, weight, history)
 
         self.assertTrue(np.array_equal(gene, np.array([node_in, node_out, weight, 1, 0])))
 
