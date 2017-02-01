@@ -16,7 +16,8 @@ class Worker:
         new_counter = 0
         new_history = np.array([])
 
-    def connect_gene_exists(self, node_in, node_out, history):
+    @staticmethod
+    def is_connect_gene_exists(node_in, node_out, history):
         """
         check if connection between node_in and node_out exists in all neural networks history.
 
@@ -46,7 +47,40 @@ class Worker:
         else:
             return -1
 
-    def create_connection_gene(self, node_in, node_out, weight):
+    def is_input_node(self, node):
+        """
+        check if given node is input node.
+
+        :param node: index of node
+        :return: if input node, return true, if no, return false
+        """
+        assert node > -1, "node index must be positive integer"
+
+        return node < self.workplace.n_input
+
+    def is_output_node(self, node):
+        """
+        check if given node is output node
+
+        :param node: index of node
+        :return: if output node, return true, if no, return false
+        """
+        assert node > -1, "node index must be positive integer"
+
+        is_input_node = self.is_input_node(node)
+        n_input_output = self.workplace.n_input + self.workplace.n_output
+        is_output_index = not is_input_node and node < n_input_output
+
+        return is_output_index
+
+    def is_new_connect_valid(self, node_in, node_out):
+
+        assert node_in > -1, "node index must be positive integer"
+        assert node_out > -1, "node index must be positive integer"
+
+        return False
+
+    def create_connection_gene(self, node_in, node_out, weight, history):
         pass
 
 
@@ -81,5 +115,7 @@ class Worker:
     #             new_counter += 1
     #
     #     return nn, new_counter, new_history
+
+
 
 
