@@ -29,3 +29,19 @@
 
 ### repeat the process
 1. go back to "test neural networks" 
+
+----------
+## Details
+
+#### Adding new connection 
+1. Add_connect(in, out)
+    1. does connection exists in global history?
+    2. Is valid connection?
+        1. is in-in connection?
+        2. is out-out connection?
+        3. is recursive connection?
+        4. does nn have it? 
+        5. is it in global history?
+    3. If all the above are not true, 
+        1. increment global innovation counter
+        2. add the connection info to individual history
