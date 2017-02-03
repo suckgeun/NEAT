@@ -6,14 +6,13 @@ from globaladmin.workplace import Workplace
 
 
 class WorkerTest(unittest.TestCase):
-
     def test_is_connect_gene_exists__no_history(self):
         workplace = Workplace(n_input=3, n_output=1)
         worker = Worker(workplace)
 
         node_in = 1
         node_out = 3
-        history = np.empty((1, 3))
+        history = {}
 
         self.assertEqual(worker.is_connect_gene_exists(node_in, node_out, history), -1)
 
@@ -23,7 +22,7 @@ class WorkerTest(unittest.TestCase):
 
         node_in = 2
         node_out = 3
-        history = np.array([[1, 3, 1], [2, 3, 4]])
+        history = {(1, 3): 1, (2, 3): 4}
 
         self.assertEqual(worker.is_connect_gene_exists(node_in, node_out, history), 4)
 
@@ -75,16 +74,60 @@ class WorkerTest(unittest.TestCase):
         node = 20
         self.assertFalse(worker.is_output_node(node))
 
-    def test_is_new_connect_valid__valid(self):
+    def test_is_new_connect_valid__new_gene(self):
         workplace = Workplace(n_input=5, n_output=3)
+        workplace.innov_history = {(0, 5): 0, (0, 6): 1}
         worker = Worker(workplace)
 
         node_in = 0
-        node_out = 3
-        history = np.empty((1, 3))
+        node_out = 7
+        nn = NeuralNetwork()
+        nn.connect_genes = {(0, 5): 0, (0, 6): 1}
 
-        self.assertTrue(worker.is_new_connect_valid(node_in=node_in, node_out=node_out),
+        self.assertTrue(worker.is_new_connect_valid(node_in=node_in, node_out=node_out, nn=nn),
                         "check new connection validity")
+
+    def test_is_new_connect_valid__nn_contains_gene(self):
+        workplace = Workplace(n_input=5, n_output=3)
+        workplace.innov_history = {(0, 5): 0, (0, 6): 1}
+        worker = Worker(workplace)
+
+        node_in = 0
+        node_out = 5
+        nn = NeuralNetwork()
+        nn.connect_genes = {(0, 5): 0, (0, 6): 1}
+
+        self.assertFalse(worker.is_new_connect_valid(node_in=node_in, node_out=node_out, nn=nn),
+                         "check new connection validity")
+
+    def test_is_new_connect_valid___gene_invalid(self):
+        workplace = Workplace(n_input=5, n_output=3)
+        workplace.innov_history = {(0, 5): 0, (0, 6): 1}
+        worker = Worker(workplace)
+
+        node_in = 0
+        node_out = 4
+        nn = NeuralNetwork()
+        nn.connect_genes = {(0, 5): 0, (0, 6): 1}
+
+        self.assertTrue(worker.is_new_connect_valid(node_in=node_in, node_out=node_out, nn=nn),
+                        "check new connection validity")
+
+    def test_is_new_connect_valid__other_nn_has_it(self):
+        workplace = Workplace(n_input=5, n_output=3)
+        workplace.innov_history = {(0, 5): 0, (0, 6): 1, (0, 7): 2}
+        worker = Worker(workplace)
+
+        node_in = 0
+        node_out = 7
+        nn = NeuralNetwork()
+        nn.connect_genes = {(0, 5): 0}
+
+        self.assertTrue(worker.is_new_connect_valid(node_in=node_in, node_out=node_out, nn=nn),
+                        "check new connection validity")
+
+
+
 
 
 
@@ -246,7 +289,6 @@ class WorkerTest(unittest.TestCase):
 
     def test_add_node(self):
         pass
-
 
     def test_mutate_connection(self):
         pass
