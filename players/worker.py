@@ -36,8 +36,8 @@ class Worker:
         connection = [node_in, node_out]
 
         element_compared = np.equal(connection, history[:, :2])
-        row_compared = np.all(element_compared, 1)
-        matching_row = np.where(row_compared)[0]
+        col_compared = np.all(element_compared, 1)
+        matching_row = np.where(col_compared)[0]
 
         assert matching_row.shape[0] < 2, "history corrupted. more then one same gene in history"
 
@@ -73,11 +73,62 @@ class Worker:
 
         return is_output_index
 
-    def is_new_connect_valid(self, node_in, node_out):
+    def is_in_in_connect(self, node1, node2):
+        """
+        check if node1 and node2 are both input nodes.
+        :param node1:
+        :param node2:
+        :return: True if both are input nodes, False if one of them is not input node
+        """
+
+        assert node1 > -1 and node2 > -1,  "node index must be positive integer"
+
+        is_node1_in = self.is_input_node(node1)
+        is_node2_in = self.is_input_node(node2)
+
+        return is_node1_in and is_node2_in
+
+    def is_out_out_connect(self, node1, node2):
+        """
+        check if node1 and node2 are both output nodes.
+        :param node1:
+        :param node2:
+        :return: True if both are output nodes, False if one of them is not output node
+        """
+
+        assert node1 > -1 and node2 > -1,  "node index must be positive integer"
+
+        is_node1_out = self.is_output_node(node1)
+        is_node2_out = self.is_output_node(node2)
+
+        return is_node1_out and is_node2_out
+
+    @staticmethod
+    def is_recursive_connect(node1, node2):
+        """
+        check if node1 and node2 are the same; hence recursive connect.
+        :param node1:
+        :param node2:
+        :return: True if recursive. False if not
+        """
+
+        assert node1 > -1 and node2 > -1,  "node index must be positive integer"
+
+        return node1 == node2
+
+
+    def is_new_connect_valid(self, node_in, node_out, nn):
 
         assert node_in > -1, "node index must be positive integer"
         assert node_out > -1, "node index must be positive integer"
+        assert type(nn) is NeuralNetwork, "nn must be instance of NeuralNetwork"
 
+        # is in-in connection?
+        self.is_input_node(node_in)
+        # is out-out connection?
+        # is recursive connection?
+        # is it new to nn?
+        # is it new to global?
         return False
 
     def create_connection_gene(self, node_in, node_out, weight, history):
@@ -115,6 +166,8 @@ class Worker:
     #             new_counter += 1
     #
     #     return nn, new_counter, new_history
+
+
 
 
 
