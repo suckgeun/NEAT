@@ -376,6 +376,22 @@ class WorkerTest(unittest.TestCase):
                                            (1, 3): 4,
                                            (1, 4): 5})
 
+    def test_initialize_nns__10_nns(self):
+        workplace = Workplace(n_input=3, n_output=1, n_nn=10)
+        worker = Worker(workplace)
+
+        worker.initialize_nns()
+
+        self.assertEqual(len(workplace.nns), 10)
+        self.assertEqual(workplace.innov_history, {(0, 3): 0,
+                                                   (1, 3): 1,
+                                                   (2, 3): 2})
+        self.assertEqual(workplace.innov_counter, 2)
+
+        nn1 = workplace.nns[0]
+        nn2 = workplace.nns[9]
+        self.assertEqual(nn2.connect_genes.shape(), (3, 5))
+        self.assertTrue(np.array_equal(nn1.connect_genes, nn2.connect_genes))
 
     #
     #
