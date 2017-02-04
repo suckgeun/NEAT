@@ -245,6 +245,37 @@ class WorkerTest(unittest.TestCase):
         self.assertTrue((nn.connect_genes, np.array([[1, 2, 3, 4, 5],
                                                      [0, 6, 0, 1, 1]])))
 
+    def test_increment_innov_counter(self):
+        workplace = Workplace(n_input=5, n_output=4)
+        worker = Worker(workplace)
+
+        self.assertEqual(workplace.innov_counter, -1)
+
+        worker.increment_innov_counter()
+        self.assertEqual(workplace.innov_counter, 0)
+        worker.increment_innov_counter()
+        self.assertEqual(workplace.innov_counter, 1)
+        worker.increment_innov_counter()
+        self.assertEqual(workplace.innov_counter, 2)
+
+    def test_record_innov_history__connect_already_exist(self):
+        workplace = Workplace(n_input=5, n_output=4)
+        worker = Worker(workplace)
+        workplace.innov_history[(1, 6)] = 4
+
+        connect = (1, 6)
+        self.assertRaises(AssertionError, worker.record_innov_history, connect)
+
+    def test_record_innov_history__ok(self):
+        workplace = Workplace(n_input=5, n_output=4)
+        worker = Worker(workplace)
+        workplace.innov_counter = 5
+        workplace.innov_history[(1, 6)] = 4
+
+        connect = (1, 5)
+        worker.record_innov_history(connect)
+        self.assertEqual(workplace.innov_history, {(1, 6): 4, (1, 5): 5})
+
 
 
 
@@ -308,6 +339,9 @@ class WorkerTest(unittest.TestCase):
         # self.assertIsInstance(nn.connect_genes[2, 2], float, "weight")
         # self.assertEqual(nn.connect_genes[2, 3], 1, "enabled")
         # self.assertEqual(nn.connect_genes[2, 4], 2, "innovation number")
+
+
+
 
     # def test_initializing_nn__two_inputs_three_outputs(self):
     #     ori_nn = NeuralNetwork(2, 3)
