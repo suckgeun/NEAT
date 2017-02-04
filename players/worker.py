@@ -134,6 +134,24 @@ class Worker:
         else:
             nn.connect_genes = np.vstack((nn.connect_genes, new_gene))
 
+    def increment_innov_counter(self):
+        """
+        increment the global innovation counter
+        :return:
+        """
+        self.workplace.innov_counter += 1
+
+    def record_innov_history(self, connect):
+        """
+        record the connection to the innov_history with the current innov_counter
+
+        :param connect: connection to record, this becomes the key of innov_history dictionary
+        :return:
+        """
+        assert connect not in self.workplace.innov_history, "the connection already exists in the innovation history"
+
+        self.workplace.innov_history[connect] = self.workplace.innov_counter
+
     def is_new_connect_valid(self, node_in, node_out, nn):
 
         assert node_in > -1, "node index must be positive integer"
@@ -183,6 +201,8 @@ class Worker:
     #             new_counter += 1
     #
     #     return nn, new_counter, new_history
+
+
 
 
 
