@@ -388,10 +388,15 @@ class WorkerTest(unittest.TestCase):
                                                    (2, 3): 2})
         self.assertEqual(workplace.innov_counter, 2)
 
+        # test if two nns have identical genes
         nn1 = workplace.nns[0]
         nn2 = workplace.nns[9]
         self.assertEqual(nn2.connect_genes.shape, (3, 5))
         self.assertTrue(np.array_equal(nn1.connect_genes, nn2.connect_genes))
+
+        # test if two nns have separate gene copy
+        nn1.connect_genes[0] = 1
+        self.assertFalse(np.array_equal(nn1.connect_genes, nn2.connect_genes))
 
     #
     #
