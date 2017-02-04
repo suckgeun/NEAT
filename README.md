@@ -33,6 +33,11 @@
 ----------
 ## Details
 
+#### initializing Neural Networks, History, and innovation counter
+1. create initial connect gene for one neural network using workplace info
+2. when creating, increment history and counter
+3. assign value to nns, history, and counter
+
 #### Adding new connection 
 1. Add_connect(in, out)
     1. does connection exists in global history?
