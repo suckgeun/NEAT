@@ -9,13 +9,6 @@ class Worker:
     def __init__(self, workplace):
         self.workplace = workplace
 
-    def initialize_nn(self, n_input, n_output):
-        nn = NeuralNetwork()
-        nn.node_genes = np.array([0] * n_input + [1] * n_output)
-        nn.connect_genes = np.empty((n_input * n_output, 5), float)
-        new_counter = 0
-        new_history = np.array([])
-
     @staticmethod
     def is_connect_exist_nn(node_in, node_out, nn):
         """
@@ -152,25 +145,8 @@ class Worker:
 
         self.workplace.innov_history[connect] = self.workplace.innov_counter
 
-    def is_new_connect_valid(self, node_in, node_out, nn):
-
-        assert node_in > -1, "node index must be positive integer"
-        assert node_out > -1, "node index must be positive integer"
-        assert type(nn) is NeuralNetwork, "nn must be instance of NeuralNetwork"
-
-        # is in-in connection?
-        self.is_input_node(node_in)
-        # is out-out connection?
-        # is recursive connection?
-        # is it new to nn?
-        # is it new to global?
-        return False
-
-    def create_connection_gene(self, node_in, node_out, weight, history):
+    def create_initial_info(self):
         pass
-
-
-
     # @staticmethod
     # def initialize_nn(n_input, n_output, counter, history):
     #     """
@@ -201,6 +177,23 @@ class Worker:
     #             new_counter += 1
     #
     #     return nn, new_counter, new_history
+    def is_new_connect_valid(self, node_in, node_out, nn):
+
+        assert node_in > -1, "node index must be positive integer"
+        assert node_out > -1, "node index must be positive integer"
+        assert type(nn) is NeuralNetwork, "nn must be instance of NeuralNetwork"
+
+        # is in-in connection?
+        self.is_input_node(node_in)
+        # is out-out connection?
+        # is recursive connection?
+        # is it new to nn?
+        # is it new to global?
+        return False
+
+    def create_connection_gene(self, node_in, node_out, weight, history):
+        pass
+
 
 
 
