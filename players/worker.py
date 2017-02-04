@@ -17,35 +17,38 @@ class Worker:
         new_history = np.array([])
 
     @staticmethod
-    def is_connect_gene_exists(node_in, node_out, history):
+    def is_connect_exist_nn(node_in, node_out, nn):
         """
-        check if connection between node_in and node_out exists in all neural networks history.
+        check if the connection between node_in and node_out exists
 
-        If connection exists, return its global innovation counter.
-        If connection does not exits, return -1
+        :param node_in:
+        :param node_out:
+        :param nn: Neural network instance
+        :return: True if exists, False if DNE
+        """
+
+        assert type(nn) == NeuralNetwork, "nn must be an instance of Neural Network"
+
+        if nn.connect_genes is None:
+            return False
+
+        connect = [node_in, node_out]
+        history = nn.connect_genes[:, :2]
+
+        return any(np.equal(connect, history).all(1))
+
+    def is_connect_exist_global(self, node_in, node_out):
+        """
+        check if connection (node_in, node_out) exists in all neural networks history.
+
+        If connection exists, return its innovation number.
+        If connection does not exits, return None
 
         :param node_in: index of input node
         :param node_out: index of output node
-        :param history: record of connections of all. 2D array with each row represents one history,
-                and row is [in, out, counter]
-                ex) [[1, 2, 3], [2, 4, 5], ...]
-        :return: exists: global counter, DNE: -1
+        :return: exists: innovation number, DNE: None
         """
-        assert history.shape[1] == 3, "history must be numpy array and have 3 columns"
-
-        connection = [node_in, node_out]
-
-        element_compared = np.equal(connection, history[:, :2])
-        col_compared = np.all(element_compared, 1)
-        matching_row = np.where(col_compared)[0]
-
-        assert matching_row.shape[0] < 2, "history corrupted. more then one same gene in history"
-
-        if matching_row.shape[0] == 1:
-            index = matching_row[0]
-            return history[index][2]
-        else:
-            return -1
+        return self.workplace.innov_history.get((node_in, node_out))
 
     def is_input_node(self, node):
         """
@@ -104,18 +107,32 @@ class Worker:
         return is_node1_out and is_node2_out
 
     @staticmethod
-    def is_recursive_connect(node1, node2):
+    def is_recursive_connect(node_in, node_out):
         """
-        check if node1 and node2 are the same; hence recursive connect.
-        :param node1:
-        :param node2:
+        check if node_in and node2 are the same; hence recursive connect.
+        :param node_in:
+        :param node_out:
         :return: True if recursive. False if not
         """
 
-        assert node1 > -1 and node2 > -1,  "node index must be positive integer"
+        assert node_in > -1 and node_out > -1, "node index must be positive integer"
 
-        return node1 == node2
+        return node_in == node_out
 
+    def add_connect(self, node_in, node_out, weight, enabled, innov_num, nn):
+
+        assert node_in > -1 and node_out > -1, "node index must be positive integer"
+        assert type(weight) is float, "weight must be float"
+        assert enabled in (0, 1), "enabled must be 0 or 1"
+        assert innov_num > -1, "innovation number must be positive integer"
+        assert type(nn) is NeuralNetwork, "nn must be an instance of Neural Network"
+
+        new_gene = np.array([[node_in, node_out, weight, enabled, innov_num]])
+
+        if nn.connect_genes is None:
+            nn.connect_genes = new_gene
+        else:
+            nn.connect_genes = np.vstack((nn.connect_genes, new_gene))
 
     def is_new_connect_valid(self, node_in, node_out, nn):
 
@@ -166,6 +183,7 @@ class Worker:
     #             new_counter += 1
     #
     #     return nn, new_counter, new_history
+
 
 
 
