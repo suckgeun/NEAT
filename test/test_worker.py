@@ -380,7 +380,7 @@ class WorkerTest(unittest.TestCase):
         workplace = Workplace(n_input=3, n_output=1, n_nn=10)
         worker = Worker(workplace)
 
-        worker.initialize_nns()
+        worker.initialize_workplace()
 
         self.assertEqual(len(workplace.nns), 10)
         self.assertEqual(workplace.innov_history, {(0, 3): 0,
@@ -390,7 +390,7 @@ class WorkerTest(unittest.TestCase):
 
         nn1 = workplace.nns[0]
         nn2 = workplace.nns[9]
-        self.assertEqual(nn2.connect_genes.shape(), (3, 5))
+        self.assertEqual(nn2.connect_genes.shape, (3, 5))
         self.assertTrue(np.array_equal(nn1.connect_genes, nn2.connect_genes))
 
     #
