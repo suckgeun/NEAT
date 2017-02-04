@@ -1,6 +1,6 @@
 from players.neuralnet import NeuralNetwork
 import numpy as np
-from players.config import COL_IN, COL_OUT, COL_WEIGHT, COL_ENABLED, COL_INNOV, COL_TOTAL_NUM, DISABLED, ENABLED
+from players.config import COL_IN, COL_OUT, COL_WEIGHT, COL_ENABLED, COL_INNOV, ENABLED
 import random
 
 
@@ -112,7 +112,8 @@ class Worker:
 
         return node_in == node_out
 
-    def add_connect(self, node_in, node_out, weight, enabled, innov_num, nn):
+    @staticmethod
+    def add_connect(node_in, node_out, weight, enabled, innov_num, nn):
 
         assert node_in > -1 and node_out > -1, "node index must be positive integer"
         assert type(weight) is float, "weight must be float"
@@ -146,37 +147,33 @@ class Worker:
         self.workplace.innov_history[connect] = self.workplace.innov_counter
 
     def create_initial_info(self):
-        pass
-    # @staticmethod
-    # def initialize_nn(n_input, n_output, counter, history):
-    #     """
-    #     initialize one Neural Network with the given info
-    #
-    #     :param n_input: number of inputs
-    #     :param n_output: number of outputs
-    #     :param counter: global innovation counter
-    #     :param history: global innovation history
-    #     :return: initialized neural network, incremented counter, and incremented history
-    #     """
-    #     nn = NeuralNetwork()
-    #     nn.node_genes = np.array([0] * n_input + [1] * n_output)
-    #     nn.connect_genes = np.empty((n_input * n_output, 5), float)
-    #     new_counter = 0
-    #     new_history = np.array([])
-    #
-    #
-    #     row = 0
-    #     for innode in range(n_input):
-    #         for outnode in range(n_output):
-    #             nn.connect_genes[row, COL_IN] = innode
-    #             nn.connect_genes[row, COL_OUT] = outnode + n_input
-    #             nn.connect_genes[row, COL_WEIGHT] = random.uniform(-1.0, 1.0)
-    #             nn.connect_genes[row, COL_ENABLED] = ENABLED
-    #             nn.connect_genes[row, COL_INNOV] = new_counter
-    #             row += 1
-    #             new_counter += 1
-    #
-    #     return nn, new_counter, new_history
+        """
+        creates the initial gene, history, and counter using the number of inputs and outputs.
+
+        :return: returns initial genes, history, counter
+            assign those to workplace.
+        """
+
+        n_input = self.workplace.n_input
+        n_output = self.workplace.n_output
+        counter = -1
+        history = {}
+        genes = np.empty((n_input * n_output, 5), float)
+
+        for node_in in range(n_input):
+            for node_out in range(n_input, n_input + n_output):
+                counter += 1
+
+                genes[counter, COL_IN] = node_in
+                genes[counter, COL_OUT] = node_out
+                genes[counter, COL_WEIGHT] = random.uniform(-1.0, 1.0)
+                genes[counter, COL_ENABLED] = ENABLED
+                genes[counter, COL_INNOV] = counter
+
+                history[(node_in, node_out)] = counter
+
+        return genes, history, counter
+
     def is_new_connect_valid(self, node_in, node_out, nn):
 
         assert node_in > -1, "node index must be positive integer"
