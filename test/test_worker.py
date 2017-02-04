@@ -7,25 +7,75 @@ from globaladmin.workplace import Workplace
 
 class WorkerTest(unittest.TestCase):
 
-    def test_is_connect_gene_exists__no_history(self):
+    def test_is_connect_exist_nn__no_gene(self):
+        workplace = Workplace(n_input=5, n_output=4)
+        worker = Worker(workplace)
+        nn = NeuralNetwork()
+        nn.connect_genes = None
+
+        node_in = 0
+        node_out = 6
+        self.assertFalse(worker.is_connect_exist_nn(node_in, node_out, nn))
+
+    def test_is_connect_exist_nn__yes_gene_no_connect(self):
+        workplace = Workplace(n_input=5, n_output=4)
+        worker = Worker(workplace)
+        nn = NeuralNetwork()
+        nn.connect_genes = np.array([[0, 6, 0, 1, 1]])
+
+        node_in = 0
+        node_out = 7
+        self.assertFalse(worker.is_connect_exist_nn(node_in, node_out, nn))
+
+    def test_is_connect_exist_nn__yes_gene_yes_connect(self):
+        workplace = Workplace(n_input=5, n_output=4)
+        worker = Worker(workplace)
+        nn = NeuralNetwork()
+        nn.connect_genes = np.array([[0, 6, 0, 1, 1]])
+
+        node_in = 0
+        node_out = 6
+        self.assertTrue(worker.is_connect_exist_nn(node_in, node_out, nn))
+
+    def test_is_connect_exist_nn__yes(self):
+        workplace = Workplace(n_input=5, n_output=4)
+        worker = Worker(workplace)
+        nn = NeuralNetwork()
+        nn.connect_genes = np.array([[0, 6, 0, 1, 1]])
+
+        node_in = 0
+        node_out = 6
+        self.assertTrue(worker.is_connect_exist_nn(node_in, node_out, nn))
+
+    def test_is_connect_exist_global__no_history(self):
         workplace = Workplace(n_input=3, n_output=1)
+        workplace.innov_history = {}
         worker = Worker(workplace)
 
         node_in = 1
         node_out = 3
-        history = np.empty((1, 3))
 
-        self.assertEqual(worker.is_connect_gene_exists(node_in, node_out, history), -1)
+        self.assertEqual(worker.is_connect_exist_global(node_in, node_out), None)
 
-    def test_is_connect_gene_exists__yes_history(self):
+    def test_is_connect_exist_global__yes_history_yes_match(self):
         workplace = Workplace(n_input=3, n_output=1)
+        workplace.innov_history = {(1, 3): 1, (2, 3): 4}
         worker = Worker(workplace)
 
         node_in = 2
         node_out = 3
-        history = np.array([[1, 3, 1], [2, 3, 4]])
 
-        self.assertEqual(worker.is_connect_gene_exists(node_in, node_out, history), 4)
+        self.assertEqual(worker.is_connect_exist_global(node_in, node_out), 4)
+
+    def test_is_connect_exist_global__yes_history_no_match(self):
+        workplace = Workplace(n_input=3, n_output=1)
+        workplace.innov_history = {(1, 3): 1, (2, 3): 4}
+        worker = Worker(workplace)
+
+        node_in = 0
+        node_out = 3
+
+        self.assertEqual(worker.is_connect_exist_global(node_in, node_out), None)
 
     def test_is_input_node__yes(self):
         workplace = Workplace(n_input=3, n_output=1)
@@ -165,62 +215,70 @@ class WorkerTest(unittest.TestCase):
         node2 = 2
         self.assertFalse(worker.is_recursive_connect(node1, node2))
 
-
-
-
-
-    def test_is_new_connect_valid__no_history(self):
-        workplace = Workplace(n_input=5, n_output=3)
+    def test_add_connect__no_connect_gene(self):
+        workplace = Workplace(n_input=5, n_output=4)
         worker = Worker(workplace)
 
-        node_in = 0
-        node_out = 5
         nn = NeuralNetwork()
+        worker.add_connect(node_in=0,
+                           node_out=6,
+                           weight=0.0,
+                           enabled=1,
+                           innov_num=1,
+                           nn=nn)
 
-        self.assertTrue(worker.is_new_connect_valid(node_in=node_in, node_out=node_out, nn=nn),
-                        "check new connection validity")
+        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 1]])))
 
-    def test_is_new_connect_valid__nn_has_it(self):
-        workplace = Workplace(n_input=5, n_output=3)
+    def test_add_connect__yes_connect_gene(self):
+        workplace = Workplace(n_input=5, n_output=4)
         worker = Worker(workplace)
 
-        node_in = 0
-        node_out = 5
         nn = NeuralNetwork()
+        nn.connect_genes = np.array([[1, 2, 3, 4, 5]])
+        worker.add_connect(node_in=0,
+                           node_out=6,
+                           weight=0.0,
+                           enabled=1,
+                           innov_num=1,
+                           nn=nn)
 
-        self.assertTrue(worker.is_new_connect_valid(node_in=node_in, node_out=node_out, nn=nn),
-                        "check new connection validity")
+        self.assertTrue((nn.connect_genes, np.array([[1, 2, 3, 4, 5],
+                                                     [0, 6, 0, 1, 1]])))
 
 
 
-    def test_create_connection_gene__no_history(self):
-        workplace = Workplace(n_input=3, n_output=1)
-        worker = Worker(workplace)
 
-        node_in = 1
-        node_out = 3
-        weight = 0.5
-        history = np.empty((1, 3))
-
-        gene = worker.create_connection_gene(node_in, node_out, weight, history)
-
-        self.assertTrue(np.array_equal(gene, np.array([node_in, node_out, weight, 1, 0])))
-
-    def test_add_connect_gene__yes_history(self):
-        workplace = Workplace(3, 1)
-        worker = Worker(workplace)
-        node_in = 1
-        node_out = 3
-        weight = 0.5
-        workplace.innov_history = [[1, 3]]
-
-        gene = worker.create_connection_gene(node_in, node_out, weight)
-
-        self.assertIsNone(gene, "do not create gene that already exits")
-
-    def test_initializing_nn__three_inputs_one_outputs(self):
-        workplace = Workplace(3, 1, 1)
-        worker = Worker(workplace)
+    #
+    #
+    #
+    # def test_create_connection_gene__no_history(self):
+    #     workplace = Workplace(n_input=3, n_output=1)
+    #     worker = Worker(workplace)
+    #
+    #     node_in = 1
+    #     node_out = 3
+    #     weight = 0.5
+    #     history = np.empty((1, 3))
+    #
+    #     gene = worker.create_connection_gene(node_in, node_out, weight, history)
+    #
+    #     self.assertTrue(np.array_equal(gene, np.array([node_in, node_out, weight, 1, 0])))
+    #
+    # def test_add_connect_gene__yes_history(self):
+    #     workplace = Workplace(3, 1)
+    #     worker = Worker(workplace)
+    #     node_in = 1
+    #     node_out = 3
+    #     weight = 0.5
+    #     workplace.innov_history = [[1, 3]]
+    #
+    #     gene = worker.create_connection_gene(node_in, node_out, weight)
+    #
+    #     self.assertIsNone(gene, "do not create gene that already exits")
+    #
+    # def test_initializing_nn__three_inputs_one_outputs(self):
+    #     workplace = Workplace(3, 1, 1)
+    #     worker = Worker(workplace)
 
         # nn, counter, history = Worker.initialize_nn(Workplace.N_INPUT, Workplace.N_OUTPUT,
         #                                             Workplace.INNOV_COUNTER, Workplace.INNOV_HISTORY)
