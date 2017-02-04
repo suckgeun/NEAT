@@ -139,10 +139,11 @@ class Worker:
         """
         record the connection to the innov_history with the current innov_counter
 
-        :param connect: connection to record, this becomes the key of innov_history dictionary
+        :param connect: (node_in, node_out) tuple
         :return:
         """
         assert connect not in self.workplace.innov_history, "the connection already exists in the innovation history"
+        assert type(connect) is tuple, "connect must be tuple (node_in, node_out)"
 
         self.workplace.innov_history[connect] = self.workplace.innov_counter
 
