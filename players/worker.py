@@ -175,6 +175,32 @@ class Worker:
 
         return genes, history, counter
 
+    def initialize_workplace(self):
+        """
+        initialize nns, innov_history, and innov_counter in workplace
+
+        :return:
+        """
+
+        # get init info
+        gene, history, counter = self.create_initial_info()
+
+        # init nns
+        for i in range(self.workplace.n_nn):
+            nn = NeuralNetwork()
+            nn.connect_genes = np.copy(gene)
+            self.workplace.nns.append(nn)
+
+        # init history
+        self.workplace.innov_history = history
+
+        # init counter
+        self.workplace.innov_counter = counter
+
+
+
+
+
     def is_new_connect_valid(self, node_in, node_out, nn):
 
         assert node_in > -1, "node index must be positive integer"
@@ -191,7 +217,6 @@ class Worker:
 
     def create_connection_gene(self, node_in, node_out, weight, history):
         pass
-
 
 
 
