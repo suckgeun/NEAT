@@ -197,6 +197,25 @@ class Worker:
         # init counter
         self.workplace.innov_counter = counter
 
+    def activate(self, xs, weights):
+        """
+        calculate the activation using the given xs, weights, and bias
+        activation function workplace has will be used to calculate the output
+
+        :param xs: input to neural networks
+        :param weights: weights of each connection
+        :return:
+        """
+
+        assert xs.ndim == 2 and xs.shape[0] == 1, "xs must be 2 dimensional array with one row"
+        assert weights.ndim == 2 and weights.shape[1] == 1, "weights must be 2 dimensional array with one column"
+        assert xs.shape[1] == weights.shape[0], "xs column len and weights row len must be the same"
+
+        activ_func = self.workplace.activ_func
+        bias = self.workplace.bias
+
+        return activ_func(np.dot(xs, weights)) - bias
+
 
 
 
@@ -217,6 +236,7 @@ class Worker:
 
     def create_connection_gene(self, node_in, node_out, weight, history):
         pass
+
 
 
 
