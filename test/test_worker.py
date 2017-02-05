@@ -216,7 +216,7 @@ class WorkerTest(unittest.TestCase):
         node2 = 2
         self.assertFalse(worker.is_recursive_connect(node1, node2))
 
-    def test_add_connect__no_connect_gene(self):
+    def test_add_connect(self):
         workplace = Workplace(n_input=5, n_output=4)
         worker = Worker(workplace)
 
@@ -224,27 +224,22 @@ class WorkerTest(unittest.TestCase):
         worker.add_connect(node_in=0,
                            node_out=6,
                            weight=0.0,
-                           enabled=1,
-                           innov_num=1,
                            nn=nn)
 
-        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 1]])))
+        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 0, 1]])))
+        self.assertEqual(workplace.innov_counter, 0, "innov counter should be 0")
+        self.assertEqual(workplace.innov_history, {(0, 6): 0})
 
-    def test_add_connect__yes_connect_gene(self):
-        workplace = Workplace(n_input=5, n_output=4)
-        worker = Worker(workplace)
-
-        nn = NeuralNetwork()
-        nn.connect_genes = np.array([[1, 2, 3, 4, 5]])
         worker.add_connect(node_in=0,
-                           node_out=6,
-                           weight=0.0,
-                           enabled=1,
-                           innov_num=1,
+                           node_out=7,
+                           weight=1.0,
                            nn=nn)
 
-        self.assertTrue((nn.connect_genes, np.array([[1, 2, 3, 4, 5],
-                                                     [0, 6, 0, 1, 1]])))
+        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 0, 1],
+                                                                   [0, 7, 1, 1, 1]])))
+        self.assertEqual(workplace.innov_counter, 1, "innov counter should be 1")
+        self.assertEqual(workplace.innov_history, {(0, 6): 0,
+                                                   (0, 7): 1})
 
     def test_increment_innov_counter(self):
         workplace = Workplace(n_input=5, n_output=4)
