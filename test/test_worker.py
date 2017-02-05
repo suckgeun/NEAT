@@ -226,7 +226,7 @@ class WorkerTest(unittest.TestCase):
                            weight=0.0,
                            nn=nn)
 
-        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 0, 1]])))
+        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0]])))
         self.assertEqual(workplace.innov_counter, 0, "innov counter should be 0")
         self.assertEqual(workplace.innov_history, {(0, 6): 0})
 
@@ -235,7 +235,7 @@ class WorkerTest(unittest.TestCase):
                            weight=1.0,
                            nn=nn)
 
-        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 0, 1],
+        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0],
                                                                    [0, 7, 1, 1, 1]])))
         self.assertEqual(workplace.innov_counter, 1, "innov counter should be 1")
         self.assertEqual(workplace.innov_history, {(0, 6): 0,
