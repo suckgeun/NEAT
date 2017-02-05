@@ -114,16 +114,36 @@ class Worker:
 
         return node_in == node_out
 
-    @staticmethod
-    def add_connect(node_in, node_out, weight, enabled, innov_num, nn):
+    def add_connect(self, node_in, node_out, weight, nn):
+        """
+        add connection to the given neural network.
+
+        if connection already exists in innov_history, the innov_number will be assigned to the new gene.
+        if connection does not exist in history, innov_counter will be incremented, and history will be recorded
+
+        :param node_in:
+        :param node_out:
+        :param weight:
+        :param nn:
+        :return:
+        """
 
         assert node_in > -1 and node_out > -1, "node index must be positive integer"
         assert type(weight) is float, "weight must be float"
-        assert enabled in (0, 1), "enabled must be 0 or 1"
-        assert innov_num > -1, "innovation number must be positive integer"
         assert type(nn) is NeuralNetwork, "nn must be an instance of Neural Network"
+        assert not self.is_connect_exist_nn(node_in, node_out, nn), "connect must not exist in the neural network"
+        assert not self.is_in_in_connect(node_in, node_out), "both nodes cannot be input nodes"
+        assert not self.is_out_out_connect(node_in, node_out), "both nodes cannot be output nodes"
+        assert not self.is_recursive_connect(node_in, node_out), "recursive connect not allowed"
 
-        new_gene = np.array([[node_in, node_out, weight, enabled, innov_num]])
+        innov_num = self.is_connect_exist_global(node_in, node_out)
+
+        if innov_num is None:
+            self.increment_innov_counter()
+            self.record_innov_history((node_in, node_out))
+            innov_num = self.workplace.innov_counter
+
+        new_gene = np.array([[node_in, node_out, weight, ENABLED, innov_num]])
 
         if nn.connect_genes is None:
             nn.connect_genes = new_gene
