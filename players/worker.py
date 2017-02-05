@@ -43,6 +43,17 @@ class Worker:
         """
         return self.workplace.innov_history.get((node_in, node_out))
 
+    @staticmethod
+    def is_bias_node(node):
+        """
+        check if given node is bias
+
+        :param node: node index
+        :return:
+        """
+        assert node > -1, "node index must be positive integer"
+        return node == 0
+
     def is_input_node(self, node):
         """
         check if given node is input node.
@@ -133,7 +144,7 @@ class Worker:
         assert type(connect) is tuple, "connect must be tuple (node_in, node_out)"
 
         self.workplace.innov_history[connect] = self.workplace.innov_counter
-        
+
     def add_connect(self, node_in, node_out, weight, nn):
         """
         add connection to the given neural network.
@@ -204,21 +215,27 @@ class Worker:
 
         :return:
         """
-
-        # get init info
-        gene, history, counter = self.create_initial_info()
-
-        # init nns
-        for _i in range(self.workplace.n_nn):
-            nn = NeuralNetwork()
-            nn.connect_genes = np.copy(gene)
-            self.workplace.nns.append(nn)
-
-        # init history
-        self.workplace.innov_history = history
-
-        # init counter
-        self.workplace.innov_counter = counter
+        # n_input = self.workplace.n_input
+        # n_output = self.workplace.n_output
+        # nns = self.workplace.nns
+        #
+        # for nn in nns:
+        #
+        #     for node_in in range(n_input):
+        #         for node_out in range(n_input, n_input + n_output):
+        #             self.add_connect(node_in, node_out, nn)
+        #
+        # # init nns
+        # for _i in range(self.workplace.n_nn):
+        #     nn = NeuralNetwork()
+        #     nn.connect_genes = np.copy(gene)
+        #     self.workplace.nns.append(nn)
+        #
+        # # init history
+        # self.workplace.innov_history = history
+        #
+        # # init counter
+        # self.workplace.innov_counter = counter
 
     def activate(self, xs, weights):
         """
@@ -260,6 +277,7 @@ class Worker:
 
     def create_connection_gene(self, node_in, node_out, weight, history):
         pass
+
 
 
 
