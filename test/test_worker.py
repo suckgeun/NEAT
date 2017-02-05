@@ -216,31 +216,6 @@ class WorkerTest(unittest.TestCase):
         node2 = 2
         self.assertFalse(worker.is_recursive_connect(node1, node2))
 
-    def test_add_connect(self):
-        workplace = Workplace(n_input=5, n_output=4)
-        worker = Worker(workplace)
-
-        nn = NeuralNetwork()
-        worker.add_connect(node_in=0,
-                           node_out=6,
-                           weight=0.0,
-                           nn=nn)
-
-        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0]])))
-        self.assertEqual(workplace.innov_counter, 0, "innov counter should be 0")
-        self.assertEqual(workplace.innov_history, {(0, 6): 0})
-
-        worker.add_connect(node_in=0,
-                           node_out=7,
-                           weight=1.0,
-                           nn=nn)
-
-        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0],
-                                                                   [0, 7, 1, 1, 1]])))
-        self.assertEqual(workplace.innov_counter, 1, "innov counter should be 1")
-        self.assertEqual(workplace.innov_history, {(0, 6): 0,
-                                                   (0, 7): 1})
-
     def test_increment_innov_counter(self):
         workplace = Workplace(n_input=5, n_output=4)
         worker = Worker(workplace)
@@ -271,6 +246,31 @@ class WorkerTest(unittest.TestCase):
         connect = (1, 5)
         worker.record_innov_history(connect)
         self.assertEqual(workplace.innov_history, {(1, 6): 4, (1, 5): 5})
+
+    def test_add_connect(self):
+        workplace = Workplace(n_input=5, n_output=4)
+        worker = Worker(workplace)
+
+        nn = NeuralNetwork()
+        worker.add_connect(node_in=0,
+                           node_out=6,
+                           weight=0.0,
+                           nn=nn)
+
+        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0]])))
+        self.assertEqual(workplace.innov_counter, 0, "innov counter should be 0")
+        self.assertEqual(workplace.innov_history, {(0, 6): 0})
+
+        worker.add_connect(node_in=0,
+                           node_out=7,
+                           weight=1.0,
+                           nn=nn)
+
+        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0],
+                                                                   [0, 7, 1, 1, 1]])))
+        self.assertEqual(workplace.innov_counter, 1, "innov counter should be 1")
+        self.assertEqual(workplace.innov_history, {(0, 6): 0,
+                                                   (0, 7): 1})
 
     def test_create_initial_info__3_inputs_1_output(self):
         workplace = Workplace(n_input=3, n_output=1)
