@@ -3,6 +3,7 @@ import numpy as np
 from players.neuralnet import NeuralNetwork
 from players.worker import Worker
 from globaladmin.workplace import Workplace
+from players.activation import sigmoid
 
 
 class WorkerTest(unittest.TestCase):
@@ -397,6 +398,41 @@ class WorkerTest(unittest.TestCase):
         # test if two nns have separate gene copy
         nn1.connect_genes[0] = 1
         self.assertFalse(np.array_equal(nn1.connect_genes, nn2.connect_genes))
+
+    def test_activate__valid_input(self):
+        bias = 2
+        workplace = Workplace(3, 4, bias=bias)
+        worker = Worker(workplace)
+
+        xs = np.array([[1, 2, 3]])
+        ws = np.array([[1], [1], [1]])
+        y = worker.activate(xs, ws)
+
+        self.assertEqual(y, sigmoid(np.dot(xs, ws)) - bias)
+
+    def test_activate__ws_xs_size_mismatch(self):
+        bias = 2
+        workplace = Workplace(3, 4, bias=bias)
+        worker = Worker(workplace)
+
+        xs = np.array([[1, 2, 3, 4]])
+        ws = np.array([[1], [1], [1]])
+
+        self.assertRaises(AssertionError, worker.activate, xs, ws)
+
+    def test_activate__xs_invalid_shape(self):
+        bias = 2
+        workplace = Workplace(3, 4, bias=bias)
+        worker = Worker(workplace)
+
+        xs = np.array([[1], [1], [1]])
+        ws = np.array([[1, 2, 3]])
+
+        self.assertRaises(AssertionError, worker.activate, xs, ws)
+
+
+
+
 
     #
     #
