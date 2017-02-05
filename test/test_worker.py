@@ -142,6 +142,34 @@ class WorkerTest(unittest.TestCase):
         node = 20
         self.assertFalse(worker.is_output_node(node))
 
+    def test_is_bias_in_connect__yes(self):
+        workplace = Workplace(n_input=5, n_output=4)
+        worker = Worker(workplace)
+
+        node1 = 0
+        node2 = 1
+        self.assertTrue(worker.is_bias_in_connect(node1, node2))
+        node1 = 0
+        node2 = 3
+        self.assertTrue(worker.is_bias_in_connect(node1, node2))
+        node1 = 0
+        node2 = 5
+        self.assertTrue(worker.is_bias_in_connect(node1, node2))
+
+    def test_is_bias_in_connect__no(self):
+        workplace = Workplace(n_input=5, n_output=4)
+        worker = Worker(workplace)
+
+        node1 = 0
+        node2 = 6
+        self.assertFalse(worker.is_bias_in_connect(node1, node2))
+        node1 = 0
+        node2 = 7
+        self.assertFalse(worker.is_bias_in_connect(node1, node2))
+        node1 = 0
+        node2 = 20
+        self.assertFalse(worker.is_bias_in_connect(node1, node2))
+
     def test_is_in_in_connect__yes(self):
         workplace = Workplace(n_input=5, n_output=4)
         worker = Worker(workplace)
