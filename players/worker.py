@@ -63,7 +63,10 @@ class Worker:
         """
         assert node > -1, "node index must be positive integer"
 
-        return node < self.workplace.n_input
+        is_bias = self.is_bias_node(node)
+        is_input = node <= self.workplace.n_input
+
+        return is_input and not is_bias
 
     def is_output_node(self, node):
         """
