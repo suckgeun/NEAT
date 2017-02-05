@@ -389,15 +389,19 @@ class WorkerTest(unittest.TestCase):
                                                    (2, 3): 2})
         self.assertEqual(workplace.innov_counter, 2)
 
-        # test if two nns have identical genes
+        # test if two nns have identical genes except weight
         nn1 = workplace.nns[0]
         nn2 = workplace.nns[9]
-        self.assertEqual(nn2.connect_genes.shape, (3, 5))
-        self.assertTrue(np.array_equal(nn1.connect_genes, nn2.connect_genes))
-
-        # test if two nns have separate gene copy
-        nn1.connect_genes[0] = 1
-        self.assertFalse(np.array_equal(nn1.connect_genes, nn2.connect_genes))
+        gene1 = nn1.connect_genes
+        gene2 = nn2.connect_genes
+        gene1_w_removed = np.delete(gene1, 3, 1)
+        gene2_w_removed = np.delete(gene2, 3, 1)
+        bias1 = nn1.bias
+        bias2 = nn2.bias
+        self.assertEqual(gene1.shape, (3, 5))
+        self.assertFalse(np.array_equal(gene1, gene2), "two genes must have different weights")
+        self.assertTrue(np.array_equal(gene1_w_removed, gene2_w_removed), "two genes have identical other elements")
+        self.assertNotEqual(bias1, bias2, "two genes must have different bias")
 
     def test_activate__valid_input(self):
         bias = 2
@@ -430,6 +434,59 @@ class WorkerTest(unittest.TestCase):
 
         self.assertRaises(AssertionError, worker.activate, xs, ws)
 
+    def test_feedforward__AND(self):
+        workplace = Workplace(2, 1, bias=0.2)
+        worker = Worker(workplace)
+
+        nn = NeuralNetwork()
+        nn.connect_genes = np.array([[0, 2, 0.5, 1, 0],
+                                     [1, 2, 0.5, 1, 1]])
+
+        input_data = np.array([0, 0])
+        self.assertTrue(worker.feedforward(input_data) < 0.5)
+        input_data = np.array([0, 1])
+        self.assertTrue(worker.feedforward(input_data) < 0.5)
+        input_data = np.array([1, 0])
+        self.assertTrue(worker.feedforward(input_data) < 0.5)
+        input_data = np.array([1, 1])
+        self.assertTrue(worker.feedforward(input_data) > 0.5)
+
+    def test_feedforward__OR(self):
+        workplace = Workplace(2, 1, bias=0.1)
+        worker = Worker(workplace)
+
+        nn = NeuralNetwork()
+        nn.connect_genes = np.array([[0, 2, 0.5, 1, 0],
+                                     [1, 2, 0.5, 1, 1]])
+
+        input_data = np.array([0, 0])
+        self.assertTrue(worker.feedforward(input_data) < 0.5)
+        input_data = np.array([0, 1])
+        self.assertTrue(worker.feedforward(input_data) > 0.5)
+        input_data = np.array([1, 0])
+        self.assertTrue(worker.feedforward(input_data) > 0.5)
+        input_data = np.array([1, 1])
+        self.assertTrue(worker.feedforward(input_data) > 0.5)
+
+    def test_feedforward__XOR(self):
+        workplace = Workplace(2, 1, bias=2.5)
+        worker = Worker(workplace)
+
+        nn = NeuralNetwork()
+        nn.connect_genes = np.array([[0, 2, 0.5, 1, 0],
+                                     [1, 2, 0.5, 1, 1],
+                                     [0, 3, 0.5, 1, 2],
+                                     [3, 2, 0.5, 1, 3],
+                                     [1, 3, 0.5, 1, 4]])
+
+        input_data = np.array([0, 0])
+        self.assertTrue(worker.feedforward(input_data) < 0.5)
+        input_data = np.array([0, 1])
+        self.assertTrue(worker.feedforward(input_data) > 0.5)
+        input_data = np.array([1, 0])
+        self.assertTrue(worker.feedforward(input_data) > 0.5)
+        input_data = np.array([1, 1])
+        self.assertTrue(worker.feedforward(input_data) < 0.5)
 
 
 
