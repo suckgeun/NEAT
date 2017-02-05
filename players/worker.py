@@ -77,11 +77,12 @@ class Worker:
         """
         assert node > -1, "node index must be positive integer"
 
-        is_input_node = self.is_input_node(node)
-        n_input_output = self.workplace.n_input + self.workplace.n_output
-        is_output_index = not is_input_node and node < n_input_output
+        is_bias = self.is_bias_node(node)
+        is_input = self.is_input_node(node)
+        n_total_node = self.workplace.n_input + self.workplace.n_output + 1
+        is_output = not is_bias and not is_input and node < n_total_node
 
-        return is_output_index
+        return is_output
 
     def is_in_in_connect(self, node1, node2):
         """
