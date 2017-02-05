@@ -237,6 +237,64 @@ class WorkerTest(unittest.TestCase):
         node1 = 2
         node2 = 8
         self.assertFalse(worker.is_out_out_connect(node1, node2))
+        
+    def test_is_in_bias_at_end_connect__yes(self):
+        workplace = Workplace(n_input=5, n_output=4)
+        worker = Worker(workplace)
+
+        node1 = 6
+        node2 = 0
+        self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 7
+        node2 = 0
+        self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 1
+        node2 = 0
+        self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 10
+        node2 = 0
+        self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 6
+        node2 = 1
+        self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 6
+        node2 = 2
+        self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 6
+        node2 = 3
+        self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 6
+        node2 = 4
+        self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 6
+        node2 = 5
+        self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
+        
+    def test_is_in_bias_at_end_connect__no(self):
+        workplace = Workplace(n_input=5, n_output=4)
+        worker = Worker(workplace)
+
+        node1 = 0
+        node2 = 6
+        self.assertFalse(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 0
+        node2 = 7
+        self.assertFalse(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 1
+        node2 = 6
+        self.assertFalse(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 10
+        node2 = 6
+        self.assertFalse(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 3
+        node2 = 6
+        self.assertFalse(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 2
+        node2 = 6
+        self.assertFalse(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 9
+        node2 = 6
+        self.assertFalse(worker.is_in_bias_at_end_connect(node1, node2))
 
     def test_is_recursive_connect__yes(self):
         workplace = Workplace(n_input=5, n_output=4)
