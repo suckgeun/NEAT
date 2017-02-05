@@ -72,6 +72,7 @@ class Worker:
     def is_in_in_connect(self, node1, node2):
         """
         check if node1 and node2 are both input nodes.
+
         :param node1:
         :param node2:
         :return: True if both are input nodes, False if one of them is not input node
@@ -103,6 +104,7 @@ class Worker:
     def is_recursive_connect(node_in, node_out):
         """
         check if node_in and node2 are the same; hence recursive connect.
+
         :param node_in:
         :param node_out:
         :return: True if recursive. False if not
@@ -131,6 +133,7 @@ class Worker:
     def increment_innov_counter(self):
         """
         increment the global innovation counter
+
         :return:
         """
         self.workplace.innov_counter += 1
@@ -186,7 +189,7 @@ class Worker:
         gene, history, counter = self.create_initial_info()
 
         # init nns
-        for i in range(self.workplace.n_nn):
+        for _i in range(self.workplace.n_nn):
             nn = NeuralNetwork()
             nn.connect_genes = np.copy(gene)
             self.workplace.nns.append(nn)
@@ -200,6 +203,7 @@ class Worker:
     def activate(self, xs, weights):
         """
         calculate the activation using the given xs, weights, and bias
+
         activation function workplace has will be used to calculate the output
 
         :param xs: input to neural networks
