@@ -10,7 +10,7 @@ class Workplace:
         self.innov_history = {}
         self.n_nn = n_nn
         self.nns = []
-        self.bias=bias
+        self.bias = bias
 
 
 
