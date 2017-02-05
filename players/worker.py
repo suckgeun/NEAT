@@ -114,6 +114,26 @@ class Worker:
 
         return node_in == node_out
 
+    def increment_innov_counter(self):
+        """
+        increment the global innovation counter
+
+        :return:
+        """
+        self.workplace.innov_counter += 1
+
+    def record_innov_history(self, connect):
+        """
+        record the connection to the innov_history with the current innov_counter
+
+        :param connect: (node_in, node_out) tuple
+        :return:
+        """
+        assert connect not in self.workplace.innov_history, "the connection already exists in the innovation history"
+        assert type(connect) is tuple, "connect must be tuple (node_in, node_out)"
+
+        self.workplace.innov_history[connect] = self.workplace.innov_counter
+        
     def add_connect(self, node_in, node_out, weight, nn):
         """
         add connection to the given neural network.
@@ -149,26 +169,6 @@ class Worker:
             nn.connect_genes = new_gene
         else:
             nn.connect_genes = np.vstack((nn.connect_genes, new_gene))
-
-    def increment_innov_counter(self):
-        """
-        increment the global innovation counter
-
-        :return:
-        """
-        self.workplace.innov_counter += 1
-
-    def record_innov_history(self, connect):
-        """
-        record the connection to the innov_history with the current innov_counter
-
-        :param connect: (node_in, node_out) tuple
-        :return:
-        """
-        assert connect not in self.workplace.innov_history, "the connection already exists in the innovation history"
-        assert type(connect) is tuple, "connect must be tuple (node_in, node_out)"
-
-        self.workplace.innov_history[connect] = self.workplace.innov_counter
 
     def create_initial_info(self):
         """
