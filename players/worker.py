@@ -84,6 +84,23 @@ class Worker:
 
         return is_output
 
+    def is_bias_in_connect(self, node1, node2):
+        """
+        check if node_in and node_out are bias to in connect
+
+        :param node1:
+        :param node2:
+        :return:
+        """
+        assert node1 > -1 and node2 > -1,  "node index must be positive integer"
+
+        is_bias1 = self.is_bias_node(node1)
+        is_bias2 = self.is_bias_node(node2)
+        is_iniput1 = self.is_input_node(node1)
+        is_iniput2 = self.is_input_node(node2)
+
+        return (is_bias1 and is_iniput2) or (is_bias2 and is_iniput1)
+
     def is_in_in_connect(self, node1, node2):
         """
         check if node1 and node2 are both input nodes.
@@ -114,6 +131,24 @@ class Worker:
         is_node2_out = self.is_output_node(node2)
 
         return is_node1_out and is_node2_out
+
+    def is_in_bias_at_end_connect(self, node_in, node_out):
+        """
+        check if end of connection is bias or input node
+
+        :param node_in:
+        :param node_out:
+        :return:
+        """
+        assert node_in > -1 and node_out > -1,  "node index must be positive integer"
+
+        is_bias = self.is_bias_node(node_out)
+        is_input = self.is_input_node(node_out)
+
+        return is_bias or is_input
+
+
+
 
     @staticmethod
     def is_recursive_connect(node_in, node_out):
@@ -221,12 +256,13 @@ class Worker:
         """
         # n_input = self.workplace.n_input
         # n_output = self.workplace.n_output
+        # n_bias = 1
         # nns = self.workplace.nns
         #
         # for nn in nns:
-        #
-        #     for node_in in range(n_input):
-        #         for node_out in range(n_input, n_input + n_output):
+        #     nn.connect_genes = np.array([[]])
+        #     for node_in in range(n_bias, n_input + n_bias):
+        #         for node_out in range(n_input + n_bias, n_input + n_output + n_bias):
         #             self.add_connect(node_in, node_out, nn)
         #
         # # init nns
@@ -281,6 +317,8 @@ class Worker:
 
     def create_connection_gene(self, node_in, node_out, weight, history):
         pass
+
+
 
 
 
