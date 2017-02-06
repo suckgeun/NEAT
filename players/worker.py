@@ -1,6 +1,6 @@
 from players.neuralnet import NeuralNetwork
 import numpy as np
-from players.config import COL_IN, COL_OUT, COL_WEIGHT, COL_ENABLED, COL_INNOV, ENABLED
+from players.config import ENABLED
 import random
 
 
@@ -237,34 +237,6 @@ class Worker:
 
                 # TODO decide how to cap the random weights.
                 self.add_connect(node_in, node_out, random.uniform(-1.0, 1.0), nn)
-
-    def create_initial_info(self):
-        """
-        creates the initial gene, history, and counter using the number of inputs and outputs.
-
-        :return: returns initial genes, history, counter
-            assign those to workplace.
-        """
-
-        n_input = self.workplace.n_input
-        n_output = self.workplace.n_output
-        counter = -1
-        history = {}
-        genes = np.empty((n_input * n_output, 5), float)
-
-        for node_in in range(n_input):
-            for node_out in range(n_input, n_input + n_output):
-                counter += 1
-
-                genes[counter, COL_IN] = node_in
-                genes[counter, COL_OUT] = node_out
-                genes[counter, COL_WEIGHT] = random.uniform(-1.0, 1.0)
-                genes[counter, COL_ENABLED] = ENABLED
-                genes[counter, COL_INNOV] = counter
-
-                history[(node_in, node_out)] = counter
-
-        return genes, history, counter
 
     def initialize_workplace(self):
         """
