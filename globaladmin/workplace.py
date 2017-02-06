@@ -5,9 +5,8 @@ class Workplace:
     innov_history is dictionary with key:(in, out), value:counter
     """
 
-    def __init__(self, n_input, n_output, n_nn=1, bias=True, activ_func=sigmoid):
+    def __init__(self, n_input, n_output, n_nn=1, bias=None, activ_func=sigmoid):
 
-        assert type(bias) is bool, "bias flag should be boolean value"
         assert n_input > -1 and n_output > -1 and n_nn > 0, "number of inputs, outputs and neural network " \
                                                             "should be positive integer"
 
@@ -18,8 +17,9 @@ class Workplace:
         self.n_nn = n_nn
         self.nns = []
         self.activ_func = activ_func
-        if bias:
+        if bias is not None:
             self.n_bias = 1
+            self.bias = bias
         else:
             self.n_bias = 0
 

@@ -202,6 +202,8 @@ class Worker:
         assert not self.is_in_in_connect(node_in, node_out), "both nodes cannot be input nodes"
         assert not self.is_out_out_connect(node_in, node_out), "both nodes cannot be output nodes"
         assert not self.is_recursive_connect(node_in, node_out), "recursive connect not allowed"
+        assert not self.is_bias_in_connect(node_in, node_out), "both node cannot be bias and input node"
+        assert not self.is_in_bias_at_end_connect(node_out, node_out), "output node cannot be bias or input node"
 
         innov_num = self.is_connect_exist_global(node_in, node_out)
 
@@ -252,7 +254,7 @@ class Worker:
 
     def activate(self, xs, weights):
         """
-        calculate the activation using the given xs, weights, and bias
+        calculate the activation using the given xs and weights
 
         activation function workplace has will be used to calculate the output
 
@@ -266,9 +268,8 @@ class Worker:
         assert xs.shape[1] == weights.shape[0], "xs column len and weights row len must be the same"
 
         activ_func = self.workplace.activ_func
-        bias = self.workplace.bias
 
-        return activ_func(np.dot(xs, weights)) - bias
+        return activ_func(np.dot(xs, weights))
 
 
 
