@@ -147,9 +147,6 @@ class Worker:
 
         return is_bias or is_input
 
-
-
-
     @staticmethod
     def is_recursive_connect(node_in, node_out):
         """
@@ -219,6 +216,27 @@ class Worker:
             nn.connect_genes = new_gene
         else:
             nn.connect_genes = np.vstack((nn.connect_genes, new_gene))
+
+    def initiate_nn(self, nn):
+        """
+        initialize the given neural network.
+
+        :param nn:
+        :return:
+        """
+
+        n_input = self.workplace.n_input
+        n_output = self.workplace.n_output
+        n_bias = self.workplace.n_bias
+
+        n_node_in = n_bias + n_input
+        n_node_out = n_output
+
+        for node_in in range(n_node_in):
+            for node_out in range(n_node_in, n_node_in + n_node_out):
+
+                # TODO decide how to cap the random weights.
+                self.add_connect(node_in, node_out, random.uniform(-1.0, 1.0), nn)
 
     def create_initial_info(self):
         """
@@ -317,6 +335,7 @@ class Worker:
 
     def create_connection_gene(self, node_in, node_out, weight, history):
         pass
+
 
 
 
