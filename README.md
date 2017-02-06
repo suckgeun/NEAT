@@ -33,6 +33,13 @@
 ----------
 ## Details
 
+#### Feed forward
+1. define function
+2. set it as main function to neural network using getattr
+3. calculate the inputs then output it. 
+4. feed forward
+5. get result
+
 #### initializing Neural Networks, History, and innovation counter
 1. create initial connect gene for one neural network using workplace info
 2. when creating, increment history and counter
