@@ -275,31 +275,6 @@ class Worker:
 
 
 
-    def is_new_connect_valid(self, node_in, node_out, nn):
-
-        assert node_in > -1, "node index must be positive integer"
-        assert node_out > -1, "node index must be positive integer"
-        assert type(nn) is NeuralNetwork, "nn must be instance of NeuralNetwork"
-
-        # is in-in connection?
-        self.is_input_node(node_in)
-        # is out-out connection?
-        # is recursive connection?
-        # is it new to nn?
-        # is it new to global?
-        return False
-
-    def create_connection_gene(self, node_in, node_out, weight, history):
-        pass
-
-
-
-
-
-
-
-
-
 
 
 
