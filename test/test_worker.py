@@ -374,7 +374,7 @@ class WorkerTest(unittest.TestCase):
                                                    (0, 7): 1})
 
     def test_initialize_nn__3_inputs_1_output(self):
-        workplace = Workplace(n_input=3, n_output=1)
+        workplace = Workplace(n_input=3, n_output=1, bias=1)
         worker = Worker(workplace)
         nn = NeuralNetwork()
 
@@ -421,7 +421,7 @@ class WorkerTest(unittest.TestCase):
                                                    (3, 4): 3})
 
     def test_initialize_nn__2_inputs_3_outputs(self):
-        workplace = Workplace(n_input=2, n_output=3)
+        workplace = Workplace(n_input=2, n_output=3, bias=1)
         worker = Worker(workplace)
         nn = NeuralNetwork()
 
@@ -508,7 +508,7 @@ class WorkerTest(unittest.TestCase):
                                                    (2, 5): 8})
 
     def test_initialize_all_nns__10_nns(self):
-        workplace = Workplace(n_input=3, n_output=1, n_nn=10)
+        workplace = Workplace(n_input=3, n_output=1, bias=1, n_nn=10)
         worker = Worker(workplace)
 
         worker.initialize_all_nns()
@@ -532,19 +532,17 @@ class WorkerTest(unittest.TestCase):
         self.assertTrue(np.array_equal(gene1_w_removed, gene2_w_removed), "two genes have identical other elements")
 
     def test_activate__valid_input(self):
-        bias = 2
-        workplace = Workplace(3, 4, bias=bias)
+        workplace = Workplace(3, 4)
         worker = Worker(workplace)
 
         xs = np.array([[1, 2, 3]])
         ws = np.array([[1], [1], [1]])
         y = worker.activate(xs, ws)
 
-        self.assertEqual(y, sigmoid(np.dot(xs, ws)) - bias)
+        self.assertEqual(y, sigmoid(np.dot(xs, ws)))
 
     def test_activate__ws_xs_size_mismatch(self):
-        bias = 2
-        workplace = Workplace(3, 4, bias=bias)
+        workplace = Workplace(3, 4)
         worker = Worker(workplace)
 
         xs = np.array([[1, 2, 3, 4]])
@@ -553,8 +551,7 @@ class WorkerTest(unittest.TestCase):
         self.assertRaises(AssertionError, worker.activate, xs, ws)
 
     def test_activate__xs_invalid_shape(self):
-        bias = 2
-        workplace = Workplace(3, 4, bias=bias)
+        workplace = Workplace(3, 4)
         worker = Worker(workplace)
 
         xs = np.array([[1], [1], [1]])
