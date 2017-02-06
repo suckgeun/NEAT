@@ -7,7 +7,6 @@ from players.activation import sigmoid
 
 
 class WorkerTest(unittest.TestCase):
-
     def test_is_connect_exist_nn__no_gene(self):
         workplace = Workplace(n_input=5, n_output=4)
         worker = Worker(workplace)
@@ -237,7 +236,7 @@ class WorkerTest(unittest.TestCase):
         node1 = 2
         node2 = 8
         self.assertFalse(worker.is_out_out_connect(node1, node2))
-        
+
     def test_is_in_bias_at_end_connect__yes(self):
         workplace = Workplace(n_input=5, n_output=4)
         worker = Worker(workplace)
@@ -269,7 +268,7 @@ class WorkerTest(unittest.TestCase):
         node1 = 6
         node2 = 5
         self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
-        
+
     def test_is_in_bias_at_end_connect__no(self):
         workplace = Workplace(n_input=5, n_output=4)
         worker = Worker(workplace)
@@ -373,6 +372,140 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(workplace.innov_counter, 1, "innov counter should be 1")
         self.assertEqual(workplace.innov_history, {(0, 6): 0,
                                                    (0, 7): 1})
+
+    def test_initiate_nn__3_inputs_1_output(self):
+        workplace = Workplace(n_input=3, n_output=1)
+        worker = Worker(workplace)
+        nn = NeuralNetwork()
+
+        worker.initiate_nn(nn)
+
+        # innov_counter check
+        self.assertEqual(workplace.innov_counter, 3, "incremented innovation counter check")
+
+        # in, out, weight, enabled, innov
+        #  0,   4,     w1,       1,     0,
+        #  1,   4,     w2,       1,     1,
+        #  2,   4,     w3,       1,     2,
+        #  3,   4,     w4,       1,     3,
+        self.assertEqual(nn.connect_genes.shape, (4, 5), "shape of connect genes")
+
+        self.assertEqual(nn.connect_genes[0, 0], 0, "input")
+        self.assertEqual(nn.connect_genes[0, 1], 4, "output")
+        self.assertIsInstance(nn.connect_genes[0, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[0, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[0, 4], 0, "innovation number")
+
+        self.assertEqual(nn.connect_genes[1, 0], 1, "input")
+        self.assertEqual(nn.connect_genes[1, 1], 4, "output")
+        self.assertIsInstance(nn.connect_genes[1, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[1, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[1, 4], 1, "innovation number")
+
+        self.assertEqual(nn.connect_genes[2, 0], 2, "input")
+        self.assertEqual(nn.connect_genes[2, 1], 4, "output")
+        self.assertIsInstance(nn.connect_genes[2, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[2, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[2, 4], 2, "innovation number")
+
+        self.assertEqual(nn.connect_genes[3, 0], 2, "input")
+        self.assertEqual(nn.connect_genes[3, 1], 4, "output")
+        self.assertIsInstance(nn.connect_genes[3, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[3, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[3, 4], 3, "innovation number")
+
+        # innov_history check
+        self.assertEqual(workplace.innov_history, {(0, 4): 0,
+                                                   (1, 4): 1,
+                                                   (2, 4): 2,
+                                                   (3, 4): 3})
+
+    def test_initiate_nn__2_inputs_3_outputs(self):
+        workplace = Workplace(n_input=2, n_output=3)
+        worker = Worker(workplace)
+        nn = NeuralNetwork()
+
+        worker.initiate_nn(nn)
+
+        # innov_counter check
+        self.assertEqual(workplace.innov_counter, 8, "incremented innovation counter check")
+
+        # in, out, weight, enabled, innov
+        #  0,   3,     w1,       1,     0,
+        #  0,   4,     w2,       1,     1,
+        #  0,   5,     w3,       1,     2,
+        #  1,   3,     w4,       1,     3,
+        #  1,   4,     w5,       1,     4,
+        #  1,   5,     w6,       1,     5,
+        #  2,   3,     w7,       1,     6,
+        #  2,   4,     w8,       1,     7,
+        #  2,   5,     w9,       1,     8,
+        self.assertEqual(nn.connect_genes.shape, (9, 5), "shape of connect genes")
+
+        self.assertEqual(nn.connect_genes[0, 0], 0, "input")
+        self.assertEqual(nn.connect_genes[0, 1], 3, "output")
+        self.assertIsInstance(nn.connect_genes[0, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[0, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[0, 4], 0, "innovation number")
+
+        self.assertEqual(nn.connect_genes[1, 0], 0, "input")
+        self.assertEqual(nn.connect_genes[1, 1], 4, "output")
+        self.assertIsInstance(nn.connect_genes[1, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[1, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[1, 4], 1, "innovation number")
+
+        self.assertEqual(nn.connect_genes[2, 0], 0, "input")
+        self.assertEqual(nn.connect_genes[2, 1], 5, "output")
+        self.assertIsInstance(nn.connect_genes[2, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[2, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[2, 4], 2, "innovation number")
+
+        self.assertEqual(nn.connect_genes[3, 0], 1, "input")
+        self.assertEqual(nn.connect_genes[3, 1], 3, "output")
+        self.assertIsInstance(nn.connect_genes[3, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[3, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[3, 4], 3, "innovation number")
+
+        self.assertEqual(nn.connect_genes[4, 0], 1, "input")
+        self.assertEqual(nn.connect_genes[4, 1], 4, "output")
+        self.assertIsInstance(nn.connect_genes[4, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[4, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[4, 4], 4, "innovation number")
+
+        self.assertEqual(nn.connect_genes[5, 0], 1, "input")
+        self.assertEqual(nn.connect_genes[5, 1], 5, "output")
+        self.assertIsInstance(nn.connect_genes[5, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[5, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[5, 4], 5, "innovation number")
+
+        self.assertEqual(nn.connect_genes[6, 0], 1, "input")
+        self.assertEqual(nn.connect_genes[6, 1], 3, "output")
+        self.assertIsInstance(nn.connect_genes[6, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[6, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[6, 4], 6, "innovation number")
+
+        self.assertEqual(nn.connect_genes[7, 0], 1, "input")
+        self.assertEqual(nn.connect_genes[7, 1], 4, "output")
+        self.assertIsInstance(nn.connect_genes[7, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[7, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[7, 4], 7, "innovation number")
+
+        self.assertEqual(nn.connect_genes[8, 0], 1, "input")
+        self.assertEqual(nn.connect_genes[8, 1], 5, "output")
+        self.assertIsInstance(nn.connect_genes[8, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[8, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[8, 4], 8, "innovation number")
+
+        # innov_history check
+        self.assertEqual(workplace.innov_history, {(0, 3): 0,
+                                                   (0, 4): 1,
+                                                   (0, 5): 2,
+                                                   (1, 3): 3,
+                                                   (1, 4): 4,
+                                                   (1, 5): 5,
+                                                   (2, 3): 6,
+                                                   (2, 4): 7,
+                                                   (2, 5): 8})
 
     def test_create_initial_info__3_inputs_1_output(self):
         workplace = Workplace(n_input=3, n_output=1)
@@ -614,9 +747,6 @@ class WorkerTest(unittest.TestCase):
         input_data = np.array([1, 1])
         self.assertTrue(worker.feedforward(input_data) < 0.5)
 
-
-
-
     #
     #
     #
@@ -648,7 +778,6 @@ class WorkerTest(unittest.TestCase):
 
     def test_add_node(self):
         pass
-
 
     def test_mutate_connection(self):
         pass
