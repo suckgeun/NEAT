@@ -373,12 +373,12 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(workplace.innov_history, {(0, 6): 0,
                                                    (0, 7): 1})
 
-    def test_initiate_nn__3_inputs_1_output(self):
+    def test_initialize_nn__3_inputs_1_output(self):
         workplace = Workplace(n_input=3, n_output=1)
         worker = Worker(workplace)
         nn = NeuralNetwork()
 
-        worker.initiate_nn(nn)
+        worker.initialize_nn(nn)
 
         # innov_counter check
         self.assertEqual(workplace.innov_counter, 3, "incremented innovation counter check")
@@ -420,12 +420,12 @@ class WorkerTest(unittest.TestCase):
                                                    (2, 4): 2,
                                                    (3, 4): 3})
 
-    def test_initiate_nn__2_inputs_3_outputs(self):
+    def test_initialize_nn__2_inputs_3_outputs(self):
         workplace = Workplace(n_input=2, n_output=3)
         worker = Worker(workplace)
         nn = NeuralNetwork()
 
-        worker.initiate_nn(nn)
+        worker.initialize_nn(nn)
 
         # innov_counter check
         self.assertEqual(workplace.innov_counter, 8, "incremented innovation counter check")
@@ -507,11 +507,11 @@ class WorkerTest(unittest.TestCase):
                                                    (2, 4): 7,
                                                    (2, 5): 8})
 
-    def test_initialize_nns__10_nns(self):
+    def test_initialize_all_nns__10_nns(self):
         workplace = Workplace(n_input=3, n_output=1, n_nn=10)
         worker = Worker(workplace)
 
-        worker.initialize_workplace()
+        worker.initialize_all_nns()
 
         self.assertEqual(len(workplace.nns), 10)
         self.assertEqual(workplace.innov_history, {(0, 4): 0,
@@ -525,9 +525,9 @@ class WorkerTest(unittest.TestCase):
         nn2 = workplace.nns[9]
         gene1 = nn1.connect_genes
         gene2 = nn2.connect_genes
-        gene1_w_removed = np.delete(gene1, 3, 1)
-        gene2_w_removed = np.delete(gene2, 3, 1)
-        self.assertEqual(gene1.shape, (3, 5))
+        gene1_w_removed = np.delete(gene1, 2, 1)
+        gene2_w_removed = np.delete(gene2, 2, 1)
+        self.assertEqual(gene1.shape, (4, 5))
         self.assertFalse(np.array_equal(gene1, gene2), "two genes must have different weights")
         self.assertTrue(np.array_equal(gene1_w_removed, gene2_w_removed), "two genes have identical other elements")
 
