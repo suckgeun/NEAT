@@ -612,34 +612,7 @@ class WorkerTest(unittest.TestCase):
         self.assertTrue(worker.feedforward(input_data) > 0.5)
         input_data = np.array([1, 1])
         self.assertTrue(worker.feedforward(input_data) < 0.5)
-
-    #
-    #
-    #
-    # def test_create_connection_gene__no_history(self):
-    #     workplace = Workplace(n_input=3, n_output=1)
-    #     worker = Worker(workplace)
-    #
-    #     node_in = 1
-    #     node_out = 3
-    #     weight = 0.5
-    #     history = np.empty((1, 3))
-    #
-    #     gene = worker.create_connection_gene(node_in, node_out, weight, history)
-    #
-    #     self.assertTrue(np.array_equal(gene, np.array([node_in, node_out, weight, 1, 0])))
-    #
-    # def test_add_connect_gene__yes_history(self):
-    #     workplace = Workplace(3, 1)
-    #     worker = Worker(workplace)
-    #     node_in = 1
-    #     node_out = 3
-    #     weight = 0.5
-    #     workplace.innov_history = [[1, 3]]
-    #
-    #     gene = worker.create_connection_gene(node_in, node_out, weight)
-    #
-    #     self.assertIsNone(gene, "do not create gene that already exits")
+        
 
 
     def test_add_node(self):
