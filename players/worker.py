@@ -217,7 +217,7 @@ class Worker:
         else:
             nn.connect_genes = np.vstack((nn.connect_genes, new_gene))
 
-    def initiate_nn(self, nn):
+    def initialize_nn(self, nn):
         """
         initialize the given neural network.
 
@@ -238,34 +238,17 @@ class Worker:
                 # TODO decide how to cap the random weights.
                 self.add_connect(node_in, node_out, random.uniform(-1.0, 1.0), nn)
 
-    def initialize_workplace(self):
+    def initialize_all_nns(self):
         """
-        initialize nns, innov_history, and innov_counter in workplace
+        initialize neural network list in workplace
 
         :return:
         """
-        # n_input = self.workplace.n_input
-        # n_output = self.workplace.n_output
-        # n_bias = 1
-        # nns = self.workplace.nns
-        #
-        # for nn in nns:
-        #     nn.connect_genes = np.array([[]])
-        #     for node_in in range(n_bias, n_input + n_bias):
-        #         for node_out in range(n_input + n_bias, n_input + n_output + n_bias):
-        #             self.add_connect(node_in, node_out, nn)
-        #
-        # # init nns
-        # for _i in range(self.workplace.n_nn):
-        #     nn = NeuralNetwork()
-        #     nn.connect_genes = np.copy(gene)
-        #     self.workplace.nns.append(nn)
-        #
-        # # init history
-        # self.workplace.innov_history = history
-        #
-        # # init counter
-        # self.workplace.innov_counter = counter
+
+        for _i in range(self.workplace.n_nn):
+            nn = NeuralNetwork()
+            self.initialize_nn(nn)
+            self.workplace.nns.append(nn)
 
     def activate(self, xs, weights):
         """
