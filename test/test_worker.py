@@ -408,7 +408,7 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn.connect_genes[2, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[2, 4], 2, "innovation number")
 
-        self.assertEqual(nn.connect_genes[3, 0], 2, "input")
+        self.assertEqual(nn.connect_genes[3, 0], 3, "input")
         self.assertEqual(nn.connect_genes[3, 1], 4, "output")
         self.assertIsInstance(nn.connect_genes[3, 2], float, "weight")
         self.assertEqual(nn.connect_genes[3, 3], 1, "enabled")
@@ -478,19 +478,19 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn.connect_genes[5, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[5, 4], 5, "innovation number")
 
-        self.assertEqual(nn.connect_genes[6, 0], 1, "input")
+        self.assertEqual(nn.connect_genes[6, 0], 2, "input")
         self.assertEqual(nn.connect_genes[6, 1], 3, "output")
         self.assertIsInstance(nn.connect_genes[6, 2], float, "weight")
         self.assertEqual(nn.connect_genes[6, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[6, 4], 6, "innovation number")
 
-        self.assertEqual(nn.connect_genes[7, 0], 1, "input")
+        self.assertEqual(nn.connect_genes[7, 0], 2, "input")
         self.assertEqual(nn.connect_genes[7, 1], 4, "output")
         self.assertIsInstance(nn.connect_genes[7, 2], float, "weight")
         self.assertEqual(nn.connect_genes[7, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[7, 4], 7, "innovation number")
 
-        self.assertEqual(nn.connect_genes[8, 0], 1, "input")
+        self.assertEqual(nn.connect_genes[8, 0], 2, "input")
         self.assertEqual(nn.connect_genes[8, 1], 5, "output")
         self.assertIsInstance(nn.connect_genes[8, 2], float, "weight")
         self.assertEqual(nn.connect_genes[8, 3], 1, "enabled")
