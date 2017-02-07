@@ -559,6 +559,43 @@ class WorkerTest(unittest.TestCase):
 
         self.assertRaises(AssertionError, worker.activate, xs, ws)
 
+    def test_get_input_of_node(self):
+        workplace = Workplace(3, 3, bias=1)
+        worker = Worker(workplace)
+        nn = NeuralNetwork()
+        nn.connect_genes = np.array([[0, 7, 0.5, 1, 0],
+                                     [1, 4, 0.5, 1, 1],
+                                     [1, 5, 0.5, 1, 2],
+                                     [2, 8, 0.5, 1, 3],
+                                     [3, 9, 0.5, 1, 4],
+                                     [7, 4, 0.5, 1, 5],
+                                     [8, 4, 0.5, 1, 6],
+                                     [8, 6, 0.5, 1, 7],
+                                     [9, 5, 0.5, 1, 8],
+                                     [9, 6, 0.5, 1, 9],
+                                     [8, 9, 0.5, 1, 10]])
+
+        nodes_in = worker.get_input_of_node(0, nn)
+        self.assertEqual(nodes_in, None)
+        nodes_in = worker.get_input_of_node(1, nn)
+        self.assertEqual(nodes_in, None)
+        nodes_in = worker.get_input_of_node(2, nn)
+        self.assertEqual(nodes_in, None)
+        nodes_in = worker.get_input_of_node(3, nn)
+        self.assertEqual(nodes_in, None)
+        nodes_in = worker.get_input_of_node(4, nn)
+        self.assertEqual(nodes_in, {1, 7, 8})
+        nodes_in = worker.get_input_of_node(5, nn)
+        self.assertEqual(nodes_in, {1, 9})
+        nodes_in = worker.get_input_of_node(6, nn)
+        self.assertEqual(nodes_in, {8, 9})
+        nodes_in = worker.get_input_of_node(7, nn)
+        self.assertEqual(nodes_in, {0})
+        nodes_in = worker.get_input_of_node(8, nn)
+        self.assertEqual(nodes_in, {2})
+        nodes_in = worker.get_input_of_node(9, nn)
+        self.assertEqual(nodes_in, {3, 8})
+
     def test_feedforward__AND(self):
         workplace = Workplace(2, 1, bias=0.2)
         worker = Worker(workplace)
@@ -568,13 +605,21 @@ class WorkerTest(unittest.TestCase):
                                      [1, 2, 0.5, 1, 1]])
 
         input_data = np.array([0, 0])
-        self.assertTrue(worker.feedforward(input_data) < 0.5)
+        result = worker.feedforward(input_data, nn)
+        self.assertEqual(result.shape, (1, ))
+        self.assertTrue(result[0] < 0.5)
         input_data = np.array([0, 1])
-        self.assertTrue(worker.feedforward(input_data) < 0.5)
+        result = worker.feedforward(input_data, nn)
+        self.assertEqual(result.shape, (1, ))
+        self.assertTrue(result[0] < 0.5)
         input_data = np.array([1, 0])
-        self.assertTrue(worker.feedforward(input_data) < 0.5)
+        result = worker.feedforward(input_data, nn)
+        self.assertEqual(result.shape, (1, ))
+        self.assertTrue(result[0] < 0.5)
         input_data = np.array([1, 1])
-        self.assertTrue(worker.feedforward(input_data) > 0.5)
+        result = worker.feedforward(input_data, nn)
+        self.assertEqual(result.shape, (1, ))
+        self.assertTrue(result[0] > 0.5)
 
     def test_feedforward__OR(self):
         workplace = Workplace(2, 1, bias=0.1)
@@ -585,13 +630,21 @@ class WorkerTest(unittest.TestCase):
                                      [1, 2, 0.5, 1, 1]])
 
         input_data = np.array([0, 0])
-        self.assertTrue(worker.feedforward(input_data) < 0.5)
+        result = worker.feedforward(input_data, nn)
+        self.assertEqual(result.shape, (1, ))
+        self.assertTrue(result[0] < 0.5)
         input_data = np.array([0, 1])
-        self.assertTrue(worker.feedforward(input_data) > 0.5)
+        result = worker.feedforward(input_data, nn)
+        self.assertEqual(result.shape, (1, ))
+        self.assertTrue(result[0] > 0.5)
         input_data = np.array([1, 0])
-        self.assertTrue(worker.feedforward(input_data) > 0.5)
+        result = worker.feedforward(input_data, nn)
+        self.assertEqual(result.shape, (1, ))
+        self.assertTrue(result[0] > 0.5)
         input_data = np.array([1, 1])
-        self.assertTrue(worker.feedforward(input_data) > 0.5)
+        result = worker.feedforward(input_data, nn)
+        self.assertEqual(result.shape, (1, ))
+        self.assertTrue(result[0] > 0.5)
 
     def test_feedforward__XOR(self):
         workplace = Workplace(2, 1, bias=2.5)
@@ -605,13 +658,21 @@ class WorkerTest(unittest.TestCase):
                                      [1, 3, 0.5, 1, 4]])
 
         input_data = np.array([0, 0])
-        self.assertTrue(worker.feedforward(input_data) < 0.5)
+        result = worker.feedforward(input_data, nn)
+        self.assertEqual(result.shape, (1, ))
+        self.assertTrue(result[0] < 0.5)
         input_data = np.array([0, 1])
-        self.assertTrue(worker.feedforward(input_data) > 0.5)
+        result = worker.feedforward(input_data, nn)
+        self.assertEqual(result.shape, (1, ))
+        self.assertTrue(result[0] > 0.5)
         input_data = np.array([1, 0])
-        self.assertTrue(worker.feedforward(input_data) > 0.5)
+        result = worker.feedforward(input_data, nn)
+        self.assertEqual(result.shape, (1, ))
+        self.assertTrue(result[0] > 0.5)
         input_data = np.array([1, 1])
-        self.assertTrue(worker.feedforward(input_data) < 0.5)
+        result = worker.feedforward(input_data, nn)
+        self.assertEqual(result.shape, (1, ))
+        self.assertTrue(result[0] < 0.5)
         
 
 
