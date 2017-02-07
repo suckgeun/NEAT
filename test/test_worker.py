@@ -559,7 +559,7 @@ class WorkerTest(unittest.TestCase):
 
         self.assertRaises(AssertionError, worker.activate, xs, ws)
 
-    def test_get_input_of_node(self):
+    def test_get_inputs_of_node(self):
         workplace = Workplace(3, 3, bias=1)
         worker = Worker(workplace)
         nn = NeuralNetwork()
@@ -575,25 +575,25 @@ class WorkerTest(unittest.TestCase):
                                      [9, 6, 0.5, 1, 9],
                                      [8, 9, 0.5, 1, 10]])
 
-        nodes_in = worker.get_input_of_node(0, nn)
-        self.assertEqual(nodes_in, None)
-        nodes_in = worker.get_input_of_node(1, nn)
-        self.assertEqual(nodes_in, None)
-        nodes_in = worker.get_input_of_node(2, nn)
-        self.assertEqual(nodes_in, None)
-        nodes_in = worker.get_input_of_node(3, nn)
-        self.assertEqual(nodes_in, None)
-        nodes_in = worker.get_input_of_node(4, nn)
+        nodes_in = worker.get_inputs_of_node(0, nn)
+        self.assertEqual(nodes_in, set())
+        nodes_in = worker.get_inputs_of_node(1, nn)
+        self.assertEqual(nodes_in, set())
+        nodes_in = worker.get_inputs_of_node(2, nn)
+        self.assertEqual(nodes_in, set())
+        nodes_in = worker.get_inputs_of_node(3, nn)
+        self.assertEqual(nodes_in, set())
+        nodes_in = worker.get_inputs_of_node(4, nn)
         self.assertEqual(nodes_in, {1, 7, 8})
-        nodes_in = worker.get_input_of_node(5, nn)
+        nodes_in = worker.get_inputs_of_node(5, nn)
         self.assertEqual(nodes_in, {1, 9})
-        nodes_in = worker.get_input_of_node(6, nn)
+        nodes_in = worker.get_inputs_of_node(6, nn)
         self.assertEqual(nodes_in, {8, 9})
-        nodes_in = worker.get_input_of_node(7, nn)
+        nodes_in = worker.get_inputs_of_node(7, nn)
         self.assertEqual(nodes_in, {0})
-        nodes_in = worker.get_input_of_node(8, nn)
+        nodes_in = worker.get_inputs_of_node(8, nn)
         self.assertEqual(nodes_in, {2})
-        nodes_in = worker.get_input_of_node(9, nn)
+        nodes_in = worker.get_inputs_of_node(9, nn)
         self.assertEqual(nodes_in, {3, 8})
 
     def test_feedforward__AND(self):
