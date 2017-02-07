@@ -271,6 +271,34 @@ class Worker:
 
         return activ_func(np.dot(xs, weights))
 
+    @staticmethod
+    def get_inputs_of_node(node_out, nn):
+        """
+        gets all the inputs of given node using the connect_genes of neural network
+
+        :param node_out:
+        :param nn:
+        :return:
+        """
+
+        connects = nn.connect_genes[:, 0:2]
+
+        return {connect[0] for connect in connects if connect[1] == node_out}
+
+    def feedforward(self, input_data, nn):
+        sum_wx = 0
+
+        # get all inputs of node_out
+        # for input in inputs
+        ## if input result is not none
+        ### sum_wx += result * weight
+        ## else
+        ### feedforward(input, nn)
+
+        # return self.activate(sum_wx)
+        pass
+
+
 
 
 
