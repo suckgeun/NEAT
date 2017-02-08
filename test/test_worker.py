@@ -3,7 +3,7 @@ import numpy as np
 from players.neuralnet import NeuralNetwork
 from players.worker import Worker
 from globaladmin.workplace import Workplace
-from players.activation import sigmoid
+from players.activation import sigmoid, linear
 
 
 class WorkerTest(unittest.TestCase):
@@ -507,11 +507,11 @@ class WorkerTest(unittest.TestCase):
                                                    (2, 4): 7,
                                                    (2, 5): 8})
 
-    def test_initialize_all_nns__10_nns(self):
+    def test_initialize_workplace__10_nns(self):
         workplace = Workplace(n_input=3, n_output=1, bias=1, n_nn=10)
         worker = Worker(workplace)
 
-        worker.initialize_all_nns()
+        worker.initialize_workplace()
 
         self.assertEqual(len(workplace.nns), 10)
         self.assertEqual(workplace.innov_history, {(0, 4): 0,
@@ -519,6 +519,7 @@ class WorkerTest(unittest.TestCase):
                                                    (2, 4): 2,
                                                    (3, 4): 3})
         self.assertEqual(workplace.innov_counter, 3)
+        self.assertEqual(workplace.node_genes, [0, 1, 1, 1, 2])
 
         # test if two nns have identical genes except weight
         nn1 = workplace.nns[0]
@@ -559,7 +560,7 @@ class WorkerTest(unittest.TestCase):
 
         self.assertRaises(AssertionError, worker.activate, xs, ws)
 
-    def test_get_inputs_of_node(self):
+    def test_get_nodes_in_of_node(self):
         workplace = Workplace(3, 3, bias=1)
         worker = Worker(workplace)
         nn = NeuralNetwork()
@@ -575,26 +576,53 @@ class WorkerTest(unittest.TestCase):
                                      [9, 6, 0.5, 1, 9],
                                      [8, 9, 0.5, 1, 10]])
 
-        nodes_in = worker.get_inputs_of_node(0, nn)
+        nodes_in = worker.get_nodes_in_of_node(0, nn)
         self.assertEqual(nodes_in, set())
-        nodes_in = worker.get_inputs_of_node(1, nn)
+        nodes_in = worker.get_nodes_in_of_node(1, nn)
         self.assertEqual(nodes_in, set())
-        nodes_in = worker.get_inputs_of_node(2, nn)
+        nodes_in = worker.get_nodes_in_of_node(2, nn)
         self.assertEqual(nodes_in, set())
-        nodes_in = worker.get_inputs_of_node(3, nn)
+        nodes_in = worker.get_nodes_in_of_node(3, nn)
         self.assertEqual(nodes_in, set())
-        nodes_in = worker.get_inputs_of_node(4, nn)
+        nodes_in = worker.get_nodes_in_of_node(4, nn)
         self.assertEqual(nodes_in, {1, 7, 8})
-        nodes_in = worker.get_inputs_of_node(5, nn)
+        nodes_in = worker.get_nodes_in_of_node(5, nn)
         self.assertEqual(nodes_in, {1, 9})
-        nodes_in = worker.get_inputs_of_node(6, nn)
+        nodes_in = worker.get_nodes_in_of_node(6, nn)
         self.assertEqual(nodes_in, {8, 9})
-        nodes_in = worker.get_inputs_of_node(7, nn)
+        nodes_in = worker.get_nodes_in_of_node(7, nn)
         self.assertEqual(nodes_in, {0})
-        nodes_in = worker.get_inputs_of_node(8, nn)
+        nodes_in = worker.get_nodes_in_of_node(8, nn)
         self.assertEqual(nodes_in, {2})
-        nodes_in = worker.get_inputs_of_node(9, nn)
+        nodes_in = worker.get_nodes_in_of_node(9, nn)
         self.assertEqual(nodes_in, {3, 8})
+
+    def test_calc_output(self):
+        workplace = Workplace(3, 3, bias=1, activ_func=linear)
+        worker = Worker(workplace)
+        workplace.inputs = np.array([1, 1, 1])
+        nn = NeuralNetwork()
+        nn.connect_genes = np.array([[0, 7, 1, 1, 0],
+                                     [1, 4, 3, 1, 1],
+                                     [1, 5, 1, 1, 2],
+                                     [2, 8, 4, 1, 3],
+                                     [3, 9, 1, 1, 4],
+                                     [7, 4, 2, 1, 5],
+                                     [8, 4, 5, 1, 6],
+                                     [8, 6, 1, 1, 7],
+                                     [9, 5, 1, 1, 8],
+                                     [9, 6, 1, 1, 9],
+                                     [8, 9, 1, 1, 10]])
+
+        inputs = np.array([1, 2, 3])
+        node_out = 4
+        activ_result = [None for _i in range(len())]
+        result, updated_activ_result = worker.calc_output(node_out, inputs, activ_result, nn)
+
+        self.assertEqual(result, 7)
+        self.assertEqual(updated_activ_result, )
+
+
 
     def test_feedforward__AND(self):
         workplace = Workplace(2, 1, bias=0.2)
