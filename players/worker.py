@@ -240,7 +240,7 @@ class Worker:
                 # TODO decide how to cap the random weights.
                 self.add_connect(node_in, node_out, random.uniform(-1.0, 1.0), nn)
 
-    def initialize_all_nns(self):
+    def initialize_workplace(self):
         """
         initialize neural network list in workplace
 
@@ -272,9 +272,9 @@ class Worker:
         return activ_func(np.dot(xs, weights))
 
     @staticmethod
-    def get_inputs_of_node(node_out, nn):
+    def get_nodes_in_of_node(node_out, nn):
         """
-        gets all the inputs of given node using the connect_genes of neural network
+        gets all the node_in of given node using the connect_genes of neural network
 
         :param node_out:
         :param nn:
@@ -284,6 +284,18 @@ class Worker:
         connects = nn.connect_genes[:, 0:2]
 
         return {connect[0] for connect in connects if connect[1] == node_out}
+
+    # def calc_output(self, node_out, inputs, nn):
+    #
+    #     nodes_in = self.get_nodes_in_of_node(node_out, nn)
+    #
+    #     for node_in in nodes_in:
+    #         is_input_node = self.is_input_node(node_in)
+    #         is_bias = self.is_bias_node(node_in)
+    #         is_
+    #
+    #
+    #     pass
 
     def feedforward(self, input_data, nn):
         sum_wx = 0
@@ -297,6 +309,7 @@ class Worker:
 
         # return self.activate(sum_wx)
         pass
+
 
 
 
