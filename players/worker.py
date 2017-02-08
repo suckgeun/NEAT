@@ -242,12 +242,27 @@ class Worker:
 
     def initialize_workplace(self):
         """
-        initialize neural network list in workplace
+        initialize workplace and its parameters including neural network list, node genes, history, and counter
 
         :return:
         """
 
-        for _i in range(self.workplace.n_nn):
+        node_genes = self.workplace.node_genes
+        n_bias = self.workplace.n_bias
+        n_input = self.workplace.n_input
+        n_output = self.workplace.n_output
+        n_nn = self.workplace.n_nn
+
+        for _i in range(n_bias):
+            node_genes.append(0)
+
+        for _i in range(n_input):
+            node_genes.append(1)
+
+        for _i in range(n_output):
+            node_genes.append(2)
+
+        for _i in range(n_nn):
             nn = NeuralNetwork()
             self.initialize_nn(nn)
             self.workplace.nns.append(nn)
