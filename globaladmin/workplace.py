@@ -1,5 +1,6 @@
 from players.activation import sigmoid
 
+
 class Workplace:
     """
     innov_history is dictionary with key:(in, out), value:counter
@@ -18,6 +19,7 @@ class Workplace:
         self.nns = []
         self.activ_func = activ_func
         self.node_genes = []
+        self.inputs = None
         if bias is not None:
             self.n_bias = 1
             self.bias = bias

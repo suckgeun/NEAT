@@ -300,17 +300,65 @@ class Worker:
 
         return {connect[0] for connect in connects if connect[1] == node_out}
 
-    # def calc_output(self, node_out, inputs, nn):
-    #
-    #     nodes_in = self.get_nodes_in_of_node(node_out, nn)
-    #
-    #     for node_in in nodes_in:
-    #         is_input_node = self.is_input_node(node_in)
-    #         is_bias = self.is_bias_node(node_in)
-    #         is_
-    #
-    #
-    #     pass
+    @staticmethod
+    def get_weight_of_connect(node_in, node_out, nn):
+        """
+        get the weight of given connection.
+
+        :param node_in:
+        :param node_out:
+        :param nn:
+        :return: weight of given connection. if connection DNE, return None
+        """
+
+        connects = np.array(nn.connect_genes[:, 0:2])
+
+        rows = np.where((connects == (node_in, node_out)).all(1))
+        n_rows = len(rows[0])
+
+        assert n_rows <= 1, "there are more then two identical connections. connection corrupted"
+
+        if n_rows == 0:
+            return None
+        else:
+            return nn.connect_genes[rows[0], 2]
+
+    def calc_output(self, node_out, activ_result, nn):
+        """
+        calculate the output of the given node.
+
+        it uses the input info of workplace
+        TODO: performance bottle neck. Hard to understand code
+
+        :param node_out: node to calculate output
+        :param activ_result: record for all result of activation of nodes.
+        :param nn:
+        :return: updated activ_result
+        """
+
+        assert not self.is_bias_node(node_out), "node_out cannot be bias node"
+        assert not self.is_input_node(node_out), "node_out cannot be input node"
+
+        n_bias = self.workplace.n_bias
+        sum_wx = 0
+        nodes_in = self.get_nodes_in_of_node(node_out, nn)
+        for node in nodes_in:
+            weight = self.get_weight_of_connect(node, node_out, nn)
+            if activ_result[node] is None:
+                if self.is_input_node(node):
+                    activ_result[node] = self.workplace.inputs[node - n_bias]
+                elif self.is_bias_node(node):
+                    activ_result[node] = self.workplace.bias
+                else:
+                    self.calc_output(node, activ_result, nn)
+
+            sum_wx += activ_result[node] * weight
+
+        result = self.workplace.activ_func(sum_wx)
+        activ_result[node_out] = result
+
+        return activ_result
+
 
     def feedforward(self, input_data, nn):
         sum_wx = 0
