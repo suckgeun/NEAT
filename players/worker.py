@@ -329,13 +329,13 @@ class Worker:
 
         it uses the input info of workplace
 
-        TODO: performance bottle neck. Hard to understand code
-
         :param node_out: node to calculate output
         :param activ_result: record for all result of activation of nodes.
         :param nn:
         :return: updated activ_result
         """
+
+        # TODO: performance bottle neck. Hard to understand code
 
         assert not self.is_bias_node(node_out), "node_out cannot be bias node"
         assert not self.is_input_node(node_out), "node_out cannot be input node"
