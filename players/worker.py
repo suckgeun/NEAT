@@ -328,6 +328,7 @@ class Worker:
         calculate the output of the given node.
 
         it uses the input info of workplace
+
         TODO: performance bottle neck. Hard to understand code
 
         :param node_out: node to calculate output
