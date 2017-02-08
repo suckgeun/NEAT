@@ -597,10 +597,36 @@ class WorkerTest(unittest.TestCase):
         nodes_in = worker.get_nodes_in_of_node(9, nn)
         self.assertEqual(nodes_in, {3, 8})
 
+    def test_get_weight_of_connect(self):
+        workplace = Workplace(3, 3, bias=1)
+        worker = Worker(workplace)
+
+        nn = NeuralNetwork
+        nn.connect_genes = np.array([[0, 7, 1, 1, 0],
+                                     [1, 4, 3, 1, 1],
+                                     [1, 5, 1, 1, 2],
+                                     [2, 8, 4, 1, 3],
+                                     [3, 9, 1, 1, 4],
+                                     [7, 4, 2, 1, 5],
+                                     [8, 4, 5, 1, 6],
+                                     [8, 6, 1, 1, 7],
+                                     [9, 5, 1, 1, 8],
+                                     [9, 6, 1, 1, 9],
+                                     [8, 9, 1, 1, 10]])
+
+        self.assertTrue(worker.get_weight_of_connect(0, 7, nn), 1)
+        self.assertTrue(worker.get_weight_of_connect(1, 4, nn), 3)
+        self.assertTrue(worker.get_weight_of_connect(1, 5, nn), 1)
+        self.assertTrue(worker.get_weight_of_connect(2, 8, nn), 4)
+        self.assertTrue(worker.get_weight_of_connect(3, 9, nn), 1)
+        self.assertTrue(worker.get_weight_of_connect(7, 4, nn), 2)
+        self.assertTrue(worker.get_weight_of_connect(8, 4, nn), 5)
+        self.assertIsNone(worker.get_weight_of_connect(0, 9, nn))
+
     def test_calc_output(self):
         workplace = Workplace(3, 3, bias=1, activ_func=linear)
         worker = Worker(workplace)
-        workplace.inputs = np.array([1, 1, 1])
+        workplace.inputs = np.array([1, 2, 3])
         nn = NeuralNetwork()
         nn.connect_genes = np.array([[0, 7, 1, 1, 0],
                                      [1, 4, 3, 1, 1],
@@ -614,13 +640,11 @@ class WorkerTest(unittest.TestCase):
                                      [9, 6, 1, 1, 9],
                                      [8, 9, 1, 1, 10]])
 
-        inputs = np.array([1, 2, 3])
         node_out = 4
-        activ_result = [None for _i in range(len())]
-        result, updated_activ_result = worker.calc_output(node_out, inputs, activ_result, nn)
+        activ_result = [None] * 10
+        updated_activ_result = worker.calc_output(node_out, activ_result, nn)
 
-        self.assertEqual(result, 7)
-        self.assertEqual(updated_activ_result, )
+        self.assertEqual(updated_activ_result, [1, 1, 2, None, 12, None, None, 0.5, 4, None])
 
 
 
