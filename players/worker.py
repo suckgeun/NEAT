@@ -321,7 +321,7 @@ class Worker:
         if n_rows == 0:
             return None
         else:
-            return nn.connect_genes[rows[0], 2]
+            return nn.connect_genes[rows[0][0], 2]
 
     def calc_output(self, node_out, activ_result, nn):
         """
@@ -344,6 +344,7 @@ class Worker:
         sum_wx = 0
         nodes_in = self.get_nodes_in_of_node(node_out, nn)
         for node in nodes_in:
+            node = int(node)
             weight = self.get_weight_of_connect(node, node_out, nn)
             if activ_result[node] is None:
                 if self.is_input_node(node):
@@ -374,9 +375,30 @@ class Worker:
         return [node for node in range(n_bias+n_input, n_total)]
 
     def feedforward(self, input_data, nn):
-        pass
+        """
+        calculate all outputs of the neural network.
 
-        # nodes_out = self.get_all_nodes_out()
+        :param input_data:
+        :param nn:
+        :return: outputs as list
+        """
+
+        self.workplace.inputs = input_data
+        n_input = self.workplace.n_input
+        n_output = self.workplace.n_output
+        n_bias = self.workplace.n_bias
+        n_total = len(self.workplace.node_genes)
+        activ_result = [None] * n_total
+
+        outputs = self.get_output_nodes()
+        for output in outputs:
+            self.calc_output(output, activ_result, nn)
+
+        return activ_result[n_bias+n_input : n_bias + n_input + n_output]
+
+
+
+
 
 
 
