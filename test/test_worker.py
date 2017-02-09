@@ -646,32 +646,45 @@ class WorkerTest(unittest.TestCase):
 
         self.assertEqual(updated_activ_result, [1, 1, 2, None, 12, None, None, 0.5, 4, None])
 
+    def test_get_output_nodes__yes_bias(self):
+        workplace = Workplace(3, 3, bias=1)
+        worker = Worker(workplace)
+
+        self.assertEqual(worker.get_output_nodes(), [4, 5, 6])
+
+    def test_get_output_nodes__no_bias(self):
+        workplace = Workplace(3, 3)
+        worker = Worker(workplace)
+
+        self.assertEqual(worker.get_output_nodes(), [3, 4, 5])
 
 
     def test_feedforward__AND(self):
-        workplace = Workplace(2, 1, bias=0.2)
+        workplace = Workplace(2, 1, bias=1)
+        workplace.activ_func = linear
         worker = Worker(workplace)
 
         nn = NeuralNetwork()
-        nn.connect_genes = np.array([[0, 2, 0.5, 1, 0],
-                                     [1, 2, 0.5, 1, 1]])
+        nn.connect_genes = np.array([[0, 3, 2, 1, 0],
+                                     [1, 3, 2, 1, 1],
+                                     [2, 3, 2, 1, 1]])
 
         input_data = np.array([0, 0])
         result = worker.feedforward(input_data, nn)
         self.assertEqual(result.shape, (1, ))
-        self.assertTrue(result[0] < 0.5)
+        self.assertEqual(result[0], -1)
         input_data = np.array([0, 1])
         result = worker.feedforward(input_data, nn)
         self.assertEqual(result.shape, (1, ))
-        self.assertTrue(result[0] < 0.5)
+        self.assertEqual(result[0], 0)
         input_data = np.array([1, 0])
         result = worker.feedforward(input_data, nn)
         self.assertEqual(result.shape, (1, ))
-        self.assertTrue(result[0] < 0.5)
+        self.assertEqual(result[0], 0)
         input_data = np.array([1, 1])
         result = worker.feedforward(input_data, nn)
         self.assertEqual(result.shape, (1, ))
-        self.assertTrue(result[0] > 0.5)
+        self.assertEqual(result[0], 1)
 
     def test_feedforward__OR(self):
         workplace = Workplace(2, 1, bias=0.1)
