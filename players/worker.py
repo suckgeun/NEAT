@@ -323,7 +323,7 @@ class Worker:
         else:
             return nn.connect_genes[rows[0][0], 2]
 
-    def calc_output(self, node_out, activ_result, nn):
+    def calc_output(self, node_out, activ_result, inputs, nn):
         """
         calculate the output of the given node.
 
@@ -331,6 +331,7 @@ class Worker:
 
         :param node_out: node to calculate output
         :param activ_result: record for all result of activation of nodes.
+        :param inputs:
         :param nn:
         :return: updated activ_result
         """
@@ -348,11 +349,11 @@ class Worker:
             weight = self.get_weight_of_connect(node, node_out, nn)
             if activ_result[node] is None:
                 if self.is_input_node(node):
-                    activ_result[node] = self.workplace.inputs[node - n_bias]
+                    activ_result[node] = inputs[node - n_bias]
                 elif self.is_bias_node(node):
                     activ_result[node] = self.workplace.bias
                 else:
-                    self.calc_output(node, activ_result, nn)
+                    self.calc_output(node, activ_result, inputs, nn)
 
             sum_wx += activ_result[node] * weight
 
@@ -374,16 +375,15 @@ class Worker:
 
         return [node for node in range(n_bias+n_input, n_total)]
 
-    def feedforward(self, input_data, nn):
+    def feedforward(self, inputs, nn):
         """
         calculate all outputs of the neural network.
 
-        :param input_data:
+        :param inputs:
         :param nn:
         :return: outputs as list
         """
 
-        self.workplace.inputs = input_data
         n_input = self.workplace.n_input
         n_output = self.workplace.n_output
         n_bias = self.workplace.n_bias
@@ -392,7 +392,7 @@ class Worker:
 
         outputs = self.get_output_nodes()
         for output in outputs:
-            self.calc_output(output, activ_result, nn)
+            self.calc_output(output, activ_result, inputs, nn)
 
         return activ_result[n_bias+n_input : n_bias + n_input + n_output]
 
