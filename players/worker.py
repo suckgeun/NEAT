@@ -360,19 +360,24 @@ class Worker:
 
         return activ_result
 
+    def get_output_nodes(self):
+        """
+        get the output node index
+
+        :return: list of output node index
+        """
+        n_input = self.workplace.n_input
+        n_output = self.workplace.n_output
+        n_bias = self.workplace.n_bias
+        n_total = n_bias + n_input + n_output
+
+        return [node for node in range(n_bias+n_input, n_total)]
 
     def feedforward(self, input_data, nn):
-        sum_wx = 0
-
-        # get all inputs of node_out
-        # for input in inputs
-        ## if input result is not none
-        ### sum_wx += result * weight
-        ## else
-        ### feedforward(input, nn)
-
-        # return self.activate(sum_wx)
         pass
+
+        # nodes_out = self.get_all_nodes_out()
+
 
 
 
