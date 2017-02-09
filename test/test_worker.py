@@ -626,7 +626,7 @@ class WorkerTest(unittest.TestCase):
     def test_calc_output(self):
         workplace = Workplace(3, 3, bias=1, activ_func=linear)
         worker = Worker(workplace)
-        workplace.inputs = np.array([1, 2, 3])
+        inputs = np.array([1, 2, 3])
         nn = NeuralNetwork()
         nn.connect_genes = np.array([[0, 7, 1, 1, 0],
                                      [1, 4, 3, 1, 1],
@@ -642,7 +642,7 @@ class WorkerTest(unittest.TestCase):
 
         node_out = 4
         activ_result = [None] * 10
-        updated_activ_result = worker.calc_output(node_out, activ_result, nn)
+        updated_activ_result = worker.calc_output(node_out, activ_result, inputs, nn)
 
         self.assertEqual(updated_activ_result, [1, 1, 2, None, 12, None, None, 0.5, 4, None])
 
@@ -669,23 +669,23 @@ class WorkerTest(unittest.TestCase):
                                      [1, 3, 2, 1, 1],
                                      [2, 3, 2, 1, 2]])
 
-        input_data = np.array([0, 0])
-        result = worker.feedforward(input_data, nn)
+        inputs = np.array([0, 0])
+        result = worker.feedforward(inputs, nn)
         self.assertEqual(len(result), 1)
         self.assertEqual(result, [-1])
 
-        input_data = np.array([0, 1])
-        result = worker.feedforward(input_data, nn)
+        inputs = np.array([0, 1])
+        result = worker.feedforward(inputs, nn)
         self.assertEqual(len(result), 1)
         self.assertEqual(result, [0])
 
-        input_data = np.array([1, 0])
-        result = worker.feedforward(input_data, nn)
+        inputs = np.array([1, 0])
+        result = worker.feedforward(inputs, nn)
         self.assertEqual(len(result), 1)
         self.assertEqual(result, [0])
 
-        input_data = np.array([1, 1])
-        result = worker.feedforward(input_data, nn)
+        inputs = np.array([1, 1])
+        result = worker.feedforward(inputs, nn)
         self.assertEqual(len(result), 1)
         self.assertEqual(result, [1])
 
@@ -700,23 +700,23 @@ class WorkerTest(unittest.TestCase):
                                      [1, 3, 3.0, 1, 1],
                                      [2, 3, 3.0, 1, 2]])
 
-        input_data = np.array([0, 0])
-        result = worker.feedforward(input_data, nn)
+        inputs = np.array([0, 0])
+        result = worker.feedforward(inputs, nn)
         self.assertEqual(len(result), 1)
         self.assertEqual(result, [-0.5])
 
-        input_data = np.array([0, 1])
-        result = worker.feedforward(input_data, nn)
+        inputs = np.array([0, 1])
+        result = worker.feedforward(inputs, nn)
         self.assertEqual(len(result), 1)
         self.assertEqual(result, [1])
 
-        input_data = np.array([1, 0])
-        result = worker.feedforward(input_data, nn)
+        inputs = np.array([1, 0])
+        result = worker.feedforward(inputs, nn)
         self.assertEqual(len(result), 1)
         self.assertEqual(result, [1])
 
-        input_data = np.array([1, 1])
-        result = worker.feedforward(input_data, nn)
+        inputs = np.array([1, 1])
+        result = worker.feedforward(inputs, nn)
         self.assertEqual(len(result), 1)
         self.assertEqual(result, [2.5])
 
@@ -735,23 +735,23 @@ class WorkerTest(unittest.TestCase):
                                      [2, 4, 2.0, 1, 5],
                                      [0, 4, 2.0, 1, 6]])
 
-        input_data = np.array([0, 0])
-        result = worker.feedforward(input_data, nn)
+        inputs = np.array([0, 0])
+        result = worker.feedforward(inputs, nn)
         self.assertEqual(len(result), 1)
         self.assertEqual(result, [-1.3])
 
-        input_data = np.array([0, 1])
-        result = worker.feedforward(input_data, nn)
+        inputs = np.array([0, 1])
+        result = worker.feedforward(inputs, nn)
         self.assertEqual(len(result), 1)
         self.assertEqual(result, [0.7])
 
-        input_data = np.array([1, 0])
-        result = worker.feedforward(input_data, nn)
+        inputs = np.array([1, 0])
+        result = worker.feedforward(inputs, nn)
         self.assertEqual(len(result), 1)
         self.assertEqual(result, [0.7])
 
-        input_data = np.array([1, 1])
-        result = worker.feedforward(input_data, nn)
+        inputs = np.array([1, 1])
+        result = worker.feedforward(inputs, nn)
         self.assertEqual(len(result), 1)
         self.assertEqual(result, [2.7])
         
