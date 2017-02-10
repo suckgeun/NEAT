@@ -677,39 +677,33 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(workplace.innov_counter, 2, "incremented innovation counter check")
 
         # in, out, weight, enabled, innov
-        #  0,   4,     w1,       1,     0,
-        #  1,   4,     w2,       1,     1,
-        #  2,   4,     w3,       1,     2,
-        self.assertEqual(nn.connect_genes.shape, (4, 5), "shape of connect genes")
+        #  0,   3,     w1,       1,     0,
+        #  1,   3,     w2,       1,     1,
+        #  2,   3,     w3,       1,     2,
+        self.assertEqual(nn.connect_genes.shape, (3, 5), "shape of connect genes")
 
         self.assertEqual(nn.connect_genes[0, 0], 0, "input")
-        self.assertEqual(nn.connect_genes[0, 1], 4, "output")
+        self.assertEqual(nn.connect_genes[0, 1], 3, "output")
         self.assertIsInstance(nn.connect_genes[0, 2], float, "weight")
         self.assertEqual(nn.connect_genes[0, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[0, 4], 0, "innovation number")
 
         self.assertEqual(nn.connect_genes[1, 0], 1, "input")
-        self.assertEqual(nn.connect_genes[1, 1], 4, "output")
+        self.assertEqual(nn.connect_genes[1, 1], 3, "output")
         self.assertIsInstance(nn.connect_genes[1, 2], float, "weight")
         self.assertEqual(nn.connect_genes[1, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[1, 4], 1, "innovation number")
 
         self.assertEqual(nn.connect_genes[2, 0], 2, "input")
-        self.assertEqual(nn.connect_genes[2, 1], 4, "output")
+        self.assertEqual(nn.connect_genes[2, 1], 3, "output")
         self.assertIsInstance(nn.connect_genes[2, 2], float, "weight")
         self.assertEqual(nn.connect_genes[2, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[2, 4], 2, "innovation number")
 
-        self.assertEqual(nn.connect_genes[3, 0], 3, "input")
-        self.assertEqual(nn.connect_genes[3, 1], 4, "output")
-        self.assertIsInstance(nn.connect_genes[3, 2], float, "weight")
-        self.assertEqual(nn.connect_genes[3, 3], 1, "enabled")
-        self.assertEqual(nn.connect_genes[3, 4], 3, "innovation number")
-
         # innov_history check
-        self.assertEqual(workplace.innov_history, {(0, 4): 0,
-                                                   (1, 4): 1,
-                                                   (2, 4): 2})
+        self.assertEqual(workplace.innov_history, {(0, 3): 0,
+                                                   (1, 3): 1,
+                                                   (2, 3): 2})
 
     def test_initialize_nn__2_inputs_3_outputs_yes_bias(self):
         workplace = Workplace(n_input=2, n_output=3, bias=1)
@@ -809,57 +803,57 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(workplace.innov_counter, 5, "incremented innovation counter check")
 
         # in, out, weight, enabled, innov
-        #  0,   3,     w1,       1,     0,
-        #  0,   4,     w2,       1,     1,
-        #  0,   5,     w3,       1,     2,
-        #  1,   3,     w4,       1,     3,
-        #  1,   4,     w5,       1,     4,
-        #  1,   5,     w6,       1,     5,
-        self.assertEqual(nn.connect_genes.shape, (9, 5), "shape of connect genes")
+        #  0,   2,     w1,       1,     0,
+        #  0,   3,     w2,       1,     1,
+        #  0,   4,     w3,       1,     2,
+        #  1,   2,     w4,       1,     3,
+        #  1,   3,     w5,       1,     4,
+        #  1,   4,     w6,       1,     5,
+        self.assertEqual(nn.connect_genes.shape, (6, 5), "shape of connect genes")
 
         self.assertEqual(nn.connect_genes[0, 0], 0, "input")
-        self.assertEqual(nn.connect_genes[0, 1], 3, "output")
+        self.assertEqual(nn.connect_genes[0, 1], 2, "output")
         self.assertIsInstance(nn.connect_genes[0, 2], float, "weight")
         self.assertEqual(nn.connect_genes[0, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[0, 4], 0, "innovation number")
 
         self.assertEqual(nn.connect_genes[1, 0], 0, "input")
-        self.assertEqual(nn.connect_genes[1, 1], 4, "output")
+        self.assertEqual(nn.connect_genes[1, 1], 3, "output")
         self.assertIsInstance(nn.connect_genes[1, 2], float, "weight")
         self.assertEqual(nn.connect_genes[1, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[1, 4], 1, "innovation number")
 
         self.assertEqual(nn.connect_genes[2, 0], 0, "input")
-        self.assertEqual(nn.connect_genes[2, 1], 5, "output")
+        self.assertEqual(nn.connect_genes[2, 1], 4, "output")
         self.assertIsInstance(nn.connect_genes[2, 2], float, "weight")
         self.assertEqual(nn.connect_genes[2, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[2, 4], 2, "innovation number")
 
         self.assertEqual(nn.connect_genes[3, 0], 1, "input")
-        self.assertEqual(nn.connect_genes[3, 1], 3, "output")
+        self.assertEqual(nn.connect_genes[3, 1], 2, "output")
         self.assertIsInstance(nn.connect_genes[3, 2], float, "weight")
         self.assertEqual(nn.connect_genes[3, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[3, 4], 3, "innovation number")
 
         self.assertEqual(nn.connect_genes[4, 0], 1, "input")
-        self.assertEqual(nn.connect_genes[4, 1], 4, "output")
+        self.assertEqual(nn.connect_genes[4, 1], 3, "output")
         self.assertIsInstance(nn.connect_genes[4, 2], float, "weight")
         self.assertEqual(nn.connect_genes[4, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[4, 4], 4, "innovation number")
 
         self.assertEqual(nn.connect_genes[5, 0], 1, "input")
-        self.assertEqual(nn.connect_genes[5, 1], 5, "output")
+        self.assertEqual(nn.connect_genes[5, 1], 4, "output")
         self.assertIsInstance(nn.connect_genes[5, 2], float, "weight")
         self.assertEqual(nn.connect_genes[5, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[5, 4], 5, "innovation number")
 
         # innov_history check
-        self.assertEqual(workplace.innov_history, {(0, 3): 0,
-                                                   (0, 4): 1,
-                                                   (0, 5): 2,
-                                                   (1, 3): 3,
-                                                   (1, 4): 4,
-                                                   (1, 5): 5})
+        self.assertEqual(workplace.innov_history, {(0, 2): 0,
+                                                   (0, 3): 1,
+                                                   (0, 4): 2,
+                                                   (1, 2): 3,
+                                                   (1, 3): 4,
+                                                   (1, 4): 5})
 
     def test_initialize_workplace__yes_bias_10_nns(self):
         workplace = Workplace(n_input=3, n_output=1, bias=1, n_nn=10)
@@ -893,10 +887,10 @@ class WorkerTest(unittest.TestCase):
         worker.initialize_workplace()
 
         self.assertEqual(len(workplace.nns), 10)
-        self.assertEqual(workplace.innov_history, {(0, 4): 0,
-                                                   (1, 4): 1,
-                                                   (2, 4): 2})
-        self.assertEqual(workplace.innov_counter, 3)
+        self.assertEqual(workplace.innov_history, {(0, 3): 0,
+                                                   (1, 3): 1,
+                                                   (2, 3): 2})
+        self.assertEqual(workplace.innov_counter, 2)
         self.assertEqual(workplace.node_genes, [1, 1, 1, 2])
 
         # test if two nns have identical genes except weight
