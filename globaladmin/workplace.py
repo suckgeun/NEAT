@@ -25,6 +25,7 @@ class Workplace:
             self.bias = bias
         else:
             self.n_bias = 0
+            self.bias = None
 
 
 

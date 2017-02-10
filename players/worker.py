@@ -43,8 +43,7 @@ class Worker:
         """
         return self.workplace.innov_history.get((node_in, node_out))
 
-    @staticmethod
-    def is_bias_node(node):
+    def is_bias_node(self, node):
         """
         check if given node is bias
 
@@ -52,7 +51,11 @@ class Worker:
         :return:
         """
         assert node > -1, "node index must be positive integer"
-        return node == 0
+
+        if self.workplace.bias is None:
+            return False
+        else:
+            return node == 0
 
     def is_input_node(self, node):
         """
@@ -64,9 +67,11 @@ class Worker:
         assert node > -1, "node index must be positive integer"
 
         is_bias = self.is_bias_node(node)
-        is_input = node <= self.workplace.n_input
 
-        return is_input and not is_bias
+        n_input_bias = self.workplace.n_bias + self.workplace.n_input
+        is_input_or_bias = node < n_input_bias
+
+        return is_input_or_bias and not is_bias
 
     def is_output_node(self, node):
         """
@@ -79,7 +84,7 @@ class Worker:
 
         is_bias = self.is_bias_node(node)
         is_input = self.is_input_node(node)
-        n_total_node = self.workplace.n_input + self.workplace.n_output + 1
+        n_total_node = self.workplace.n_input + self.workplace.n_output + self.workplace.n_bias
         is_output = not is_bias and not is_input and node < n_total_node
 
         return is_output
@@ -235,6 +240,7 @@ class Worker:
         n_node_out = n_output
 
         for node_in in range(n_node_in):
+            # TODO change to get_output_nodes
             for node_out in range(n_node_in, n_node_in + n_node_out):
 
                 # TODO decide how to cap the random weights.
