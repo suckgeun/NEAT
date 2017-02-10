@@ -77,22 +77,29 @@ class WorkerTest(unittest.TestCase):
 
         self.assertEqual(worker.is_connect_exist_global(node_in, node_out), None)
 
-    def test_is_bias_node__yes(self):
-        workplace = Workplace(n_input=3, n_output=1)
+    def test_is_bias_node__yes_bias_yes(self):
+        workplace = Workplace(n_input=3, n_output=1, bias=1)
         worker = Worker(workplace)
 
         node = 0
         self.assertTrue(worker.is_bias_node(node))
 
-    def test_is_bias_node__no(self):
+    def test_is_bias_node__yes_bias_no(self):
         workplace = Workplace(n_input=3, n_output=1)
         worker = Worker(workplace)
 
         node = 1
         self.assertFalse(worker.is_bias_node(node))
 
-    def test_is_input_node__yes(self):
-        workplace = Workplace(n_input=3, n_output=1)
+    def test_is_bias_node__no_bias_no(self):
+        workplace = Workplace(n_input=3, n_output=1, bias=None)
+        worker = Worker(workplace)
+
+        node = 0
+        self.assertFalse(worker.is_bias_node(node))
+
+    def test_is_input_node__yes_bias_yes(self):
+        workplace = Workplace(n_input=3, n_output=1, bias=1)
         worker = Worker(workplace)
 
         node = 1
@@ -102,8 +109,8 @@ class WorkerTest(unittest.TestCase):
         node = 3
         self.assertTrue(worker.is_input_node(node))
 
-    def test_is_input_node__no(self):
-        workplace = Workplace(n_input=5, n_output=4)
+    def test_is_input_node__yes_bias_no(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=1)
         worker = Worker(workplace)
 
         node = 0
@@ -115,8 +122,32 @@ class WorkerTest(unittest.TestCase):
         node = 10
         self.assertFalse(worker.is_input_node(node))
 
-    def test_is_output_node__yes(self):
-        workplace = Workplace(n_input=5, n_output=4)
+    def test_is_input_node__no_bias_yes(self):
+        workplace = Workplace(n_input=3, n_output=1, bias=None)
+        worker = Worker(workplace)
+
+        node = 0
+        self.assertTrue(worker.is_input_node(node))
+        node = 1
+        self.assertTrue(worker.is_input_node(node))
+        node = 2
+        self.assertTrue(worker.is_input_node(node))
+
+    def test_is_input_node__no_bias_no(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=None)
+        worker = Worker(workplace)
+
+        node = 5
+        self.assertFalse(worker.is_input_node(node))
+        node = 6
+        self.assertFalse(worker.is_input_node(node))
+        node = 7
+        self.assertFalse(worker.is_input_node(node))
+        node = 10
+        self.assertFalse(worker.is_input_node(node))
+
+    def test_is_output_node__yes_bias_yes(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=1)
         worker = Worker(workplace)
 
         node = 6
@@ -128,21 +159,51 @@ class WorkerTest(unittest.TestCase):
         node = 9
         self.assertTrue(worker.is_output_node(node))
 
-    def test_is_output_node__no(self):
-        workplace = Workplace(n_input=5, n_output=4)
+    def test_is_output_node__yes_bias_no(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=1)
         worker = Worker(workplace)
 
         node = 0
         self.assertFalse(worker.is_output_node(node))
         node = 3
         self.assertFalse(worker.is_output_node(node))
+        node = 5
+        self.assertFalse(worker.is_output_node(node))
         node = 10
         self.assertFalse(worker.is_output_node(node))
         node = 20
         self.assertFalse(worker.is_output_node(node))
 
-    def test_is_bias_in_connect__yes(self):
-        workplace = Workplace(n_input=5, n_output=4)
+    def test_is_output_node__no_bias_yes(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=None)
+        worker = Worker(workplace)
+
+        node = 5
+        self.assertTrue(worker.is_output_node(node))
+        node = 6
+        self.assertTrue(worker.is_output_node(node))
+        node = 7
+        self.assertTrue(worker.is_output_node(node))
+        node = 8
+        self.assertTrue(worker.is_output_node(node))
+
+    def test_is_output_node__no_bias_no(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=None)
+        worker = Worker(workplace)
+
+        node = 0
+        self.assertFalse(worker.is_output_node(node))
+        node = 3
+        self.assertFalse(worker.is_output_node(node))
+        node = 4
+        self.assertFalse(worker.is_output_node(node))
+        node = 9
+        self.assertFalse(worker.is_output_node(node))
+        node = 20
+        self.assertFalse(worker.is_output_node(node))
+
+    def test_is_bias_in_connect__yes_bias_yes(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=1)
         worker = Worker(workplace)
 
         node1 = 0
@@ -155,8 +216,8 @@ class WorkerTest(unittest.TestCase):
         node2 = 5
         self.assertTrue(worker.is_bias_in_connect(node1, node2))
 
-    def test_is_bias_in_connect__no(self):
-        workplace = Workplace(n_input=5, n_output=4)
+    def test_is_bias_in_connect__yes_bias_no(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=1)
         worker = Worker(workplace)
 
         node1 = 0
@@ -168,43 +229,136 @@ class WorkerTest(unittest.TestCase):
         node1 = 0
         node2 = 20
         self.assertFalse(worker.is_bias_in_connect(node1, node2))
+        node1 = 1
+        node2 = 2
+        self.assertFalse(worker.is_bias_in_connect(node1, node2))
 
-    def test_is_in_in_connect__yes(self):
-        workplace = Workplace(n_input=5, n_output=4)
+    def test_is_bias_in_connect__no_bias_no(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=None)
+        worker = Worker(workplace)
+
+        node1 = 0
+        node2 = 1
+        self.assertFalse(worker.is_bias_in_connect(node1, node2))
+        node1 = 0
+        node2 = 2
+        self.assertFalse(worker.is_bias_in_connect(node1, node2))
+        node1 = 0
+        node2 = 3
+        self.assertFalse(worker.is_bias_in_connect(node1, node2))
+        node1 = 1
+        node2 = 2
+        self.assertFalse(worker.is_bias_in_connect(node1, node2))
+        node1 = 0
+        node2 = 20
+        self.assertFalse(worker.is_bias_in_connect(node1, node2))
+
+    def test_is_in_in_connect__yes_bias_yes(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=1)
         worker = Worker(workplace)
 
         node1 = 1
         node2 = 2
         self.assertTrue(worker.is_in_in_connect(node1, node2))
         node1 = 1
+        node2 = 3
+        self.assertTrue(worker.is_in_in_connect(node1, node2))
+        node1 = 1
         node2 = 4
         self.assertTrue(worker.is_in_in_connect(node1, node2))
         node1 = 1
-        node2 = 3
+        node2 = 5
         self.assertTrue(worker.is_in_in_connect(node1, node2))
         node1 = 2
+        node2 = 5
+        self.assertTrue(worker.is_in_in_connect(node1, node2))
+        node1 = 3
         node2 = 4
         self.assertTrue(worker.is_in_in_connect(node1, node2))
 
-    def test_is_in_in_connect__no(self):
-        workplace = Workplace(n_input=5, n_output=4)
+    def test_is_in_in_connect__yes_bias_no(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=1)
         worker = Worker(workplace)
 
+        node1 = 0
+        node2 = 1
+        self.assertFalse(worker.is_in_in_connect(node1, node2))
         node1 = 0
         node2 = 2
         self.assertFalse(worker.is_in_in_connect(node1, node2))
         node1 = 0
         node2 = 3
+        self.assertFalse(worker.is_in_in_connect(node1, node2))
+        node1 = 1
+        node2 = 6
         self.assertFalse(worker.is_in_in_connect(node1, node2))
         node1 = 1
         node2 = 7
         self.assertFalse(worker.is_in_in_connect(node1, node2))
+        node1 = 5
+        node2 = 6
+        self.assertFalse(worker.is_in_in_connect(node1, node2))
         node1 = 2
         node2 = 8
         self.assertFalse(worker.is_in_in_connect(node1, node2))
+        node1 = 2
+        node2 = 0
+        self.assertFalse(worker.is_in_in_connect(node1, node2))
 
-    def test_is_out_out_connect__yes(self):
-        workplace = Workplace(n_input=5, n_output=4)
+    def test_is_in_in_connect__no_bias_yes(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=None)
+        worker = Worker(workplace)
+
+        node1 = 0
+        node2 = 1
+        self.assertTrue(worker.is_in_in_connect(node1, node2))
+        node1 = 0
+        node2 = 2
+        self.assertTrue(worker.is_in_in_connect(node1, node2))
+        node1 = 0
+        node2 = 3
+        self.assertTrue(worker.is_in_in_connect(node1, node2))
+        node1 = 0
+        node2 = 4
+        self.assertTrue(worker.is_in_in_connect(node1, node2))
+        node1 = 1
+        node2 = 4
+        self.assertTrue(worker.is_in_in_connect(node1, node2))
+        node1 = 2
+        node2 = 4
+        self.assertTrue(worker.is_in_in_connect(node1, node2))
+
+    def test_is_in_in_connect__no_bias_no(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=None)
+        worker = Worker(workplace)
+
+        node1 = 0
+        node2 = 5
+        self.assertFalse(worker.is_in_in_connect(node1, node2))
+        node1 = 1
+        node2 = 5
+        self.assertFalse(worker.is_in_in_connect(node1, node2))
+        node1 = 2
+        node2 = 5
+        self.assertFalse(worker.is_in_in_connect(node1, node2))
+        node1 = 1
+        node2 = 6
+        self.assertFalse(worker.is_in_in_connect(node1, node2))
+        node1 = 1
+        node2 = 7
+        self.assertFalse(worker.is_in_in_connect(node1, node2))
+        node1 = 4
+        node2 = 6
+        self.assertFalse(worker.is_in_in_connect(node1, node2))
+        node1 = 2
+        node2 = 8
+        self.assertFalse(worker.is_in_in_connect(node1, node2))
+        node1 = 8
+        node2 = 0
+        self.assertFalse(worker.is_in_in_connect(node1, node2))
+
+    def test_is_out_out_connect__yes_bias_yes(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=1)
         worker = Worker(workplace)
 
         node1 = 6
@@ -220,8 +374,8 @@ class WorkerTest(unittest.TestCase):
         node2 = 9
         self.assertTrue(worker.is_out_out_connect(node1, node2))
 
-    def test_is_out_out_connect__no(self):
-        workplace = Workplace(n_input=5, n_output=4)
+    def test_is_out_out_connect__yes_bias_no(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=1)
         worker = Worker(workplace)
 
         node1 = 0
@@ -237,8 +391,42 @@ class WorkerTest(unittest.TestCase):
         node2 = 8
         self.assertFalse(worker.is_out_out_connect(node1, node2))
 
-    def test_is_in_bias_at_end_connect__yes(self):
-        workplace = Workplace(n_input=5, n_output=4)
+    def test_is_out_out_connect__no_bias_yes(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=None)
+        worker = Worker(workplace)
+
+        node1 = 5
+        node2 = 6
+        self.assertTrue(worker.is_out_out_connect(node1, node2))
+        node1 = 5
+        node2 = 8
+        self.assertTrue(worker.is_out_out_connect(node1, node2))
+        node1 = 6
+        node2 = 8
+        self.assertTrue(worker.is_out_out_connect(node1, node2))
+        node1 = 7
+        node2 = 8
+        self.assertTrue(worker.is_out_out_connect(node1, node2))
+
+    def test_is_out_out_connect__no_bias_no(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=None)
+        worker = Worker(workplace)
+
+        node1 = 4
+        node2 = 5
+        self.assertFalse(worker.is_out_out_connect(node1, node2))
+        node1 = 0
+        node2 = 7
+        self.assertFalse(worker.is_out_out_connect(node1, node2))
+        node1 = 1
+        node2 = 7
+        self.assertFalse(worker.is_out_out_connect(node1, node2))
+        node1 = 5
+        node2 = 9
+        self.assertFalse(worker.is_out_out_connect(node1, node2))
+
+    def test_is_in_bias_at_end_connect__yes_bias_yes(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=1)
         worker = Worker(workplace)
 
         node1 = 6
@@ -269,8 +457,8 @@ class WorkerTest(unittest.TestCase):
         node2 = 5
         self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
 
-    def test_is_in_bias_at_end_connect__no(self):
-        workplace = Workplace(n_input=5, n_output=4)
+    def test_is_in_bias_at_end_connect__yes_bias_no(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=1)
         worker = Worker(workplace)
 
         node1 = 0
@@ -293,6 +481,64 @@ class WorkerTest(unittest.TestCase):
         self.assertFalse(worker.is_in_bias_at_end_connect(node1, node2))
         node1 = 9
         node2 = 6
+        self.assertFalse(worker.is_in_bias_at_end_connect(node1, node2))
+
+    def test_is_in_bias_at_end_connect__no_bias_yes(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=None)
+        worker = Worker(workplace)
+
+        node1 = 6
+        node2 = 0
+        self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 7
+        node2 = 0
+        self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 1
+        node2 = 0
+        self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 10
+        node2 = 0
+        self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 6
+        node2 = 1
+        self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 6
+        node2 = 2
+        self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 6
+        node2 = 3
+        self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 6
+        node2 = 4
+        self.assertTrue(worker.is_in_bias_at_end_connect(node1, node2))
+
+    def test_is_in_bias_at_end_connect__no_bias_no(self):
+        workplace = Workplace(n_input=5, n_output=4, bias=None)
+        worker = Worker(workplace)
+
+        node1 = 0
+        node2 = 5
+        self.assertFalse(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 0
+        node2 = 6
+        self.assertFalse(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 1
+        node2 = 7
+        self.assertFalse(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 10
+        node2 = 5
+        self.assertFalse(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 3
+        node2 = 5
+        self.assertFalse(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 2
+        node2 = 5
+        self.assertFalse(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 9
+        node2 = 5
+        self.assertFalse(worker.is_in_bias_at_end_connect(node1, node2))
+        node1 = 6
+        node2 = 5
         self.assertFalse(worker.is_in_bias_at_end_connect(node1, node2))
 
     def test_is_recursive_connect__yes(self):
@@ -373,7 +619,7 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(workplace.innov_history, {(0, 6): 0,
                                                    (0, 7): 1})
 
-    def test_initialize_nn__3_inputs_1_output(self):
+    def test_initialize_nn__3_inputs_1_output_yes_bias(self):
         workplace = Workplace(n_input=3, n_output=1, bias=1)
         worker = Worker(workplace)
         nn = NeuralNetwork()
@@ -420,7 +666,52 @@ class WorkerTest(unittest.TestCase):
                                                    (2, 4): 2,
                                                    (3, 4): 3})
 
-    def test_initialize_nn__2_inputs_3_outputs(self):
+    def test_initialize_nn__3_inputs_1_output_no_bias(self):
+        workplace = Workplace(n_input=3, n_output=1, bias=None)
+        worker = Worker(workplace)
+        nn = NeuralNetwork()
+
+        worker.initialize_nn(nn)
+
+        # innov_counter check
+        self.assertEqual(workplace.innov_counter, 2, "incremented innovation counter check")
+
+        # in, out, weight, enabled, innov
+        #  0,   4,     w1,       1,     0,
+        #  1,   4,     w2,       1,     1,
+        #  2,   4,     w3,       1,     2,
+        self.assertEqual(nn.connect_genes.shape, (4, 5), "shape of connect genes")
+
+        self.assertEqual(nn.connect_genes[0, 0], 0, "input")
+        self.assertEqual(nn.connect_genes[0, 1], 4, "output")
+        self.assertIsInstance(nn.connect_genes[0, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[0, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[0, 4], 0, "innovation number")
+
+        self.assertEqual(nn.connect_genes[1, 0], 1, "input")
+        self.assertEqual(nn.connect_genes[1, 1], 4, "output")
+        self.assertIsInstance(nn.connect_genes[1, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[1, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[1, 4], 1, "innovation number")
+
+        self.assertEqual(nn.connect_genes[2, 0], 2, "input")
+        self.assertEqual(nn.connect_genes[2, 1], 4, "output")
+        self.assertIsInstance(nn.connect_genes[2, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[2, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[2, 4], 2, "innovation number")
+
+        self.assertEqual(nn.connect_genes[3, 0], 3, "input")
+        self.assertEqual(nn.connect_genes[3, 1], 4, "output")
+        self.assertIsInstance(nn.connect_genes[3, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[3, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[3, 4], 3, "innovation number")
+
+        # innov_history check
+        self.assertEqual(workplace.innov_history, {(0, 4): 0,
+                                                   (1, 4): 1,
+                                                   (2, 4): 2})
+
+    def test_initialize_nn__2_inputs_3_outputs_yes_bias(self):
         workplace = Workplace(n_input=2, n_output=3, bias=1)
         worker = Worker(workplace)
         nn = NeuralNetwork()
@@ -507,7 +798,70 @@ class WorkerTest(unittest.TestCase):
                                                    (2, 4): 7,
                                                    (2, 5): 8})
 
-    def test_initialize_workplace__10_nns(self):
+    def test_initialize_nn__2_inputs_3_outputs_no_bias(self):
+        workplace = Workplace(n_input=2, n_output=3, bias=None)
+        worker = Worker(workplace)
+        nn = NeuralNetwork()
+
+        worker.initialize_nn(nn)
+
+        # innov_counter check
+        self.assertEqual(workplace.innov_counter, 5, "incremented innovation counter check")
+
+        # in, out, weight, enabled, innov
+        #  0,   3,     w1,       1,     0,
+        #  0,   4,     w2,       1,     1,
+        #  0,   5,     w3,       1,     2,
+        #  1,   3,     w4,       1,     3,
+        #  1,   4,     w5,       1,     4,
+        #  1,   5,     w6,       1,     5,
+        self.assertEqual(nn.connect_genes.shape, (9, 5), "shape of connect genes")
+
+        self.assertEqual(nn.connect_genes[0, 0], 0, "input")
+        self.assertEqual(nn.connect_genes[0, 1], 3, "output")
+        self.assertIsInstance(nn.connect_genes[0, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[0, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[0, 4], 0, "innovation number")
+
+        self.assertEqual(nn.connect_genes[1, 0], 0, "input")
+        self.assertEqual(nn.connect_genes[1, 1], 4, "output")
+        self.assertIsInstance(nn.connect_genes[1, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[1, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[1, 4], 1, "innovation number")
+
+        self.assertEqual(nn.connect_genes[2, 0], 0, "input")
+        self.assertEqual(nn.connect_genes[2, 1], 5, "output")
+        self.assertIsInstance(nn.connect_genes[2, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[2, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[2, 4], 2, "innovation number")
+
+        self.assertEqual(nn.connect_genes[3, 0], 1, "input")
+        self.assertEqual(nn.connect_genes[3, 1], 3, "output")
+        self.assertIsInstance(nn.connect_genes[3, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[3, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[3, 4], 3, "innovation number")
+
+        self.assertEqual(nn.connect_genes[4, 0], 1, "input")
+        self.assertEqual(nn.connect_genes[4, 1], 4, "output")
+        self.assertIsInstance(nn.connect_genes[4, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[4, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[4, 4], 4, "innovation number")
+
+        self.assertEqual(nn.connect_genes[5, 0], 1, "input")
+        self.assertEqual(nn.connect_genes[5, 1], 5, "output")
+        self.assertIsInstance(nn.connect_genes[5, 2], float, "weight")
+        self.assertEqual(nn.connect_genes[5, 3], 1, "enabled")
+        self.assertEqual(nn.connect_genes[5, 4], 5, "innovation number")
+
+        # innov_history check
+        self.assertEqual(workplace.innov_history, {(0, 3): 0,
+                                                   (0, 4): 1,
+                                                   (0, 5): 2,
+                                                   (1, 3): 3,
+                                                   (1, 4): 4,
+                                                   (1, 5): 5})
+
+    def test_initialize_workplace__yes_bias_10_nns(self):
         workplace = Workplace(n_input=3, n_output=1, bias=1, n_nn=10)
         worker = Worker(workplace)
 
@@ -529,6 +883,30 @@ class WorkerTest(unittest.TestCase):
         gene1_w_removed = np.delete(gene1, 2, 1)
         gene2_w_removed = np.delete(gene2, 2, 1)
         self.assertEqual(gene1.shape, (4, 5))
+        self.assertFalse(np.array_equal(gene1, gene2), "two genes must have different weights")
+        self.assertTrue(np.array_equal(gene1_w_removed, gene2_w_removed), "two genes have identical other elements")
+
+    def test_initialize_workplace__no_bias_10_nns(self):
+        workplace = Workplace(n_input=3, n_output=1, bias=None, n_nn=10)
+        worker = Worker(workplace)
+
+        worker.initialize_workplace()
+
+        self.assertEqual(len(workplace.nns), 10)
+        self.assertEqual(workplace.innov_history, {(0, 4): 0,
+                                                   (1, 4): 1,
+                                                   (2, 4): 2})
+        self.assertEqual(workplace.innov_counter, 3)
+        self.assertEqual(workplace.node_genes, [1, 1, 1, 2])
+
+        # test if two nns have identical genes except weight
+        nn1 = workplace.nns[0]
+        nn2 = workplace.nns[9]
+        gene1 = nn1.connect_genes
+        gene2 = nn2.connect_genes
+        gene1_w_removed = np.delete(gene1, 2, 1)
+        gene2_w_removed = np.delete(gene2, 2, 1)
+        self.assertEqual(gene1.shape, (3, 5))
         self.assertFalse(np.array_equal(gene1, gene2), "two genes must have different weights")
         self.assertTrue(np.array_equal(gene1_w_removed, gene2_w_removed), "two genes have identical other elements")
 
@@ -754,11 +1132,23 @@ class WorkerTest(unittest.TestCase):
         result = worker.feedforward(inputs, nn)
         self.assertEqual(len(result), 1)
         self.assertEqual(result, [2.7])
-        
+
+    def test_add_node__yes_bias(self):
+        workplace = Workplace(2, 1, bias=-1, n_nn=10)
+        worker = Worker(workplace)
+        worker.initialize_workplace()
+
+        counter = workplace.innov_counter
+        history = workplace.innov_history
+        node_genes = workplace.node_genes
 
 
-    def test_add_node(self):
+
+    def test_add_node__no_bias(self):
         pass
+
+
+
 
     def test_mutate_connection(self):
         pass
