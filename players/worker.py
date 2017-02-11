@@ -41,6 +41,9 @@ class Worker:
         :param node_out: index of output node
         :return: exists: innovation number, DNE: None
         """
+
+        # TODO rename to get_connect_innov_num
+
         return self.workplace.innov_history.get((node_in, node_out))
 
     def is_bias_node(self, node):
@@ -201,7 +204,6 @@ class Worker:
         """
 
         assert node_in > -1 and node_out > -1, "node index must be positive integer"
-        assert type(weight) is float, "weight must be float"
         assert type(nn) is NeuralNetwork, "nn must be an instance of Neural Network"
         assert not self.is_connect_exist_nn(node_in, node_out, nn), "connect must not exist in the neural network"
         assert not self.is_in_in_connect(node_in, node_out), "both nodes cannot be input nodes"
@@ -404,17 +406,53 @@ class Worker:
 
         return activ_result[n_bias+n_input : n_bias + n_input + n_output]
 
+    def get_node_between(self, node_in, node_out):
+        """
+        get one node between node_in and node_out.
+
+        if there are multiple nodes between the given node_in and out, it returns whatever it could find first.
+        :param node_in:
+        :param node_out:
+        :return: whatever it can find first. If there is no node between in and out, it returns None
+        """
+
+        # TODO: there must be a better way..
+
+        outs = []
+        for connect_in, connect_out in self.workplace.innov_history:
+            if connect_in == node_in:
+                outs.append(connect_out)
+
+        for connect_in, connect_out in self.workplace.innov_history:
+            if connect_in in outs and connect_out == node_out:
+                return connect_in
+
+        return None
+
     def add_node(self, node_in, node_out, nn):
+        """
+        add node in the given node_in, node_out connection of the neural network.
+
+        :param node_in:
+        :param node_out:
+        :param nn:
+        :return:
+        """
 
         assert self.is_connect_exist_nn(node_in, node_out, nn), "connection must exist to add node in"
         assert nn.connect_genes is not None, "neural network must be initialized first"
         assert self.workplace.is_initialized, "workplace must be initialized first"
 
-        # check if new node exists in global history
-        #
+        ori_weight = self.get_weight_of_connect(node_in, node_out, nn)
 
-        ori_weight = self.get_weight_of_connect(node_in, node_out)
-        self.add_connect(node_in, node_in, )
+        new_node = self.get_node_between(node_in, node_out)
+        if new_node is None:
+            self.workplace.node_genes.append(3)
+            new_node = len(self.workplace.node_genes) - 1
+
+        self.add_connect(node_in, new_node, 1.0, nn)
+        self.add_connect(new_node, node_out, ori_weight, nn)
+
 
 
 
