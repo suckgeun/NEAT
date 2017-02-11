@@ -974,25 +974,25 @@ class WorkerTest(unittest.TestCase):
         worker = Worker(workplace)
 
         nn = NeuralNetwork
-        nn.connect_genes = np.array([[0, 7, 1, 1, 0],
-                                     [1, 4, 3, 1, 1],
-                                     [1, 5, 1, 1, 2],
-                                     [2, 8, 4, 1, 3],
-                                     [3, 9, 1, 1, 4],
-                                     [7, 4, 2, 1, 5],
-                                     [8, 4, 5, 1, 6],
-                                     [8, 6, 1, 1, 7],
-                                     [9, 5, 1, 1, 8],
-                                     [9, 6, 1, 1, 9],
-                                     [8, 9, 1, 1, 10]])
+        nn.connect_genes = np.array([[0, 7, 1.2, 1, 0],
+                                     [1, 4, 3.3, 1, 1],
+                                     [1, 5, 1.4, 1, 2],
+                                     [2, 8, 4.5, 1, 3],
+                                     [3, 9, 1.6, 1, 4],
+                                     [7, 4, 2.7, 1, 5],
+                                     [8, 4, 5.8, 1, 6],
+                                     [8, 6, 1.9, 1, 7],
+                                     [9, 5, 0.1, 1, 8],
+                                     [9, 6, 0.12, 1, 9],
+                                     [8, 9, 0.13, 1, 10]])
 
-        self.assertEqual(worker.get_weight_of_connect(0, 7, nn), 1)
-        self.assertEqual(worker.get_weight_of_connect(1, 4, nn), 3)
-        self.assertEqual(worker.get_weight_of_connect(1, 5, nn), 1)
-        self.assertEqual(worker.get_weight_of_connect(2, 8, nn), 4)
-        self.assertEqual(worker.get_weight_of_connect(3, 9, nn), 1)
-        self.assertEqual(worker.get_weight_of_connect(7, 4, nn), 2)
-        self.assertEqual(worker.get_weight_of_connect(8, 4, nn), 5)
+        self.assertEqual(worker.get_weight_of_connect(0, 7, nn), 1.2)
+        self.assertEqual(worker.get_weight_of_connect(1, 4, nn), 3.3)
+        self.assertEqual(worker.get_weight_of_connect(1, 5, nn), 1.4)
+        self.assertEqual(worker.get_weight_of_connect(2, 8, nn), 4.5)
+        self.assertEqual(worker.get_weight_of_connect(3, 9, nn), 1.6)
+        self.assertEqual(worker.get_weight_of_connect(7, 4, nn), 2.7)
+        self.assertEqual(worker.get_weight_of_connect(8, 4, nn), 5.8)
         self.assertIsNone(worker.get_weight_of_connect(0, 9, nn))
 
     def test_calc_output(self):
@@ -1127,6 +1127,43 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(len(result), 1)
         self.assertEqual(result, [2.7])
 
+    def test_get_node_between(self):
+        workplace = Workplace(3, 3, bias=1, activ_func=linear)
+        worker = Worker(workplace)
+        workplace.innov_history = {(0, 7): 0,
+                                   (1, 4): 1,
+                                   (1, 5): 2,
+                                   (2, 8): 3,
+                                   (3, 9): 4,
+                                   (7, 4): 5,
+                                   (8, 4): 6,
+                                   (8, 6): 7,
+                                   (9, 5): 8,
+                                   (9, 6): 9,
+                                   (8, 9): 10,
+                                   (2, 7): 11,
+                                   (7, 6): 12}
+
+        node_in = 2
+        node_out = 6
+        result = worker.get_node_between(node_in, node_out)
+        self.assertTrue(result in (7, 8))
+
+        node_in = 0
+        node_out = 4
+        result = worker.get_node_between(node_in, node_out)
+        self.assertTrue(result in (7, ))
+
+        node_in = 8
+        node_out = 6
+        result = worker.get_node_between(node_in, node_out)
+        self.assertTrue(result in (9, ))
+
+        node_in = 9
+        node_out = 6
+        result = worker.get_node_between(node_in, node_out)
+        self.assertIsNone(result)
+
     def test_add_node__yes_bias(self):
         workplace = Workplace(2, 1, bias=-1, n_nn=10)
         worker = Worker(workplace)
@@ -1199,14 +1236,6 @@ class WorkerTest(unittest.TestCase):
                                                                  [2, 3, 1, 2],
                                                                  [1, 4, 1, 3],
                                                                  [4, 3, 1, 4]])))
-
-
-
-    def test_add_node__no_bias(self):
-        pass
-
-
-
 
     def test_mutate_connection(self):
         pass
