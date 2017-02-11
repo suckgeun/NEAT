@@ -273,6 +273,8 @@ class Worker:
             self.initialize_nn(nn)
             self.workplace.nns.append(nn)
 
+        self.workplace.is_initialized = True
+
     def activate(self, xs, weights):
         """
         calculate the activation using the given xs and weights
@@ -401,6 +403,21 @@ class Worker:
             self.calc_output(output, activ_result, inputs, nn)
 
         return activ_result[n_bias+n_input : n_bias + n_input + n_output]
+
+    def add_node(self, node_in, node_out, nn):
+
+        assert self.is_connect_exist_nn(node_in, node_out, nn), "connection must exist to add node in"
+        assert nn.connect_genes is not None, "neural network must be initialized first"
+        assert self.workplace.is_initialized, "workplace must be initialized first"
+
+        # check if new node exists in global history
+        #
+
+        ori_weight = self.get_weight_of_connect(node_in, node_out)
+        self.add_connect(node_in, node_in, )
+
+
+
 
 
 
