@@ -1135,7 +1135,6 @@ class WorkerTest(unittest.TestCase):
         counter = workplace.innov_counter
         history = workplace.innov_history
         node_genes = workplace.node_genes
-
         self.assertEqual(counter, 2)
         self.assertEqual(history, {(0, 3): 0,
                                    (1, 3): 1,
@@ -1148,6 +1147,9 @@ class WorkerTest(unittest.TestCase):
         ori_weight = worker.get_weight_of_connect(node_in, node_out, nn)
         worker.add_node(node_in, node_out, nn)
 
+        counter = workplace.innov_counter
+        history = workplace.innov_history
+        node_genes = workplace.node_genes
         self.assertEqual(counter, 4)
         self.assertEqual(history, {(0, 3): 0,
                                    (1, 3): 1,
@@ -1155,12 +1157,43 @@ class WorkerTest(unittest.TestCase):
                                    (1, 4): 3,
                                    (4, 3): 4})
         self.assertEqual(node_genes, [0, 1, 1, 2, 3])
+
         front_connect_weight = worker.get_weight_of_connect(node_in, 4, nn)
         back_connect_weight = worker.get_weight_of_connect(4, node_out, nn)
         self.assertEqual(front_connect_weight, 1)
         self.assertEqual(back_connect_weight, ori_weight)
+
         self.assertEqual(nn.connect_genes.shape, (5, 5))
         gene_w_removed = np.delete(nn.connect_genes, 2, 1)
+        self.assertTrue(np.array_equal(gene_w_removed, np.array([[0, 3, 1, 0],
+                                                                 [1, 3, 1, 1],
+                                                                 [2, 3, 1, 2],
+                                                                 [1, 4, 1, 3],
+                                                                 [4, 3, 1, 4]])))
+
+        nn2 = workplace.nns[1]
+        node_in = 1
+        node_out = 3
+        ori_weight = worker.get_weight_of_connect(node_in, node_out, nn2)
+        worker.add_node(node_in, node_out, nn2)
+
+        counter = workplace.innov_counter
+        history = workplace.innov_history
+        node_genes = workplace.node_genes
+        self.assertEqual(counter, 4)
+        self.assertEqual(history, {(0, 3): 0,
+                                   (1, 3): 1,
+                                   (2, 3): 2,
+                                   (1, 4): 3,
+                                   (4, 3): 4})
+        self.assertEqual(node_genes, [0, 1, 1, 2, 3])
+
+        front_connect_weight = worker.get_weight_of_connect(node_in, 4, nn2)
+        back_connect_weight = worker.get_weight_of_connect(4, node_out, nn2)
+        self.assertEqual(front_connect_weight, 1)
+        self.assertEqual(back_connect_weight, ori_weight)
+        self.assertEqual(nn2.connect_genes.shape, (5, 5))
+        gene_w_removed = np.delete(nn2.connect_genes, 2, 1)
         self.assertTrue(np.array_equal(gene_w_removed, np.array([[0, 3, 1, 0],
                                                                  [1, 3, 1, 1],
                                                                  [2, 3, 1, 2],
