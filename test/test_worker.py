@@ -1299,9 +1299,55 @@ class WorkerTest(unittest.TestCase):
 
         worker, nn1, nn2 = self.create_env_same_as_paper()
 
-        # new_nn = worker.crossover(nn1, nn2)
+        genes_nn1 = nn1.connect_genes
+        genes_nn2 = nn2.connect_genes
 
-        # self.assertEqual(new_nn.)
+        worker.workplace.fitnesses[0] = 1
+        worker.workplace.fitnesses[1] = 2
+
+        nn_new = worker.crossover(nn1, nn2)
+
+        self.assertTrue(np.array_equal(nn_new[0], genes_nn1[0]) or np.array_equal(nn_new[0], genes_nn2[0]))
+        self.assertTrue(np.array_equal(nn_new[1], genes_nn1[1]) or np.array_equal(nn_new[1], genes_nn2[1]))
+        self.assertTrue(np.array_equal(nn_new[2], genes_nn1[2]) or np.array_equal(nn_new[2], genes_nn2[2]))
+        self.assertTrue(np.array_equal(nn_new[3], genes_nn1[3]) or np.array_equal(nn_new[3], genes_nn2[3]))
+        self.assertTrue(np.array_equal(nn_new[4], genes_nn1[4]) or np.array_equal(nn_new[4], genes_nn2[4]))
+
+        self.assertTrue(np.array_equal(nn_new[5], genes_nn2[5]))
+        self.assertTrue(np.array_equal(nn_new[6], genes_nn2[6]))
+        self.assertTrue(np.array_equal(nn_new[7], genes_nn2[7]))
+        self.assertTrue(np.array_equal(nn_new[8], genes_nn2[8]))
+
+        worker.workplace.fitnesses[0] = 2
+        worker.workplace.fitnesses[1] = 1
+
+        nn_new = worker.crossover(nn1, nn2)
+
+        self.assertTrue(np.array_equal(nn_new[0], genes_nn1[0]) or np.array_equal(nn_new[0], genes_nn2[0]))
+        self.assertTrue(np.array_equal(nn_new[1], genes_nn1[1]) or np.array_equal(nn_new[1], genes_nn2[1]))
+        self.assertTrue(np.array_equal(nn_new[2], genes_nn1[2]) or np.array_equal(nn_new[2], genes_nn2[2]))
+        self.assertTrue(np.array_equal(nn_new[3], genes_nn1[3]) or np.array_equal(nn_new[3], genes_nn2[3]))
+        self.assertTrue(np.array_equal(nn_new[4], genes_nn1[4]) or np.array_equal(nn_new[4], genes_nn2[4]))
+
+        self.assertTrue(np.array_equal(nn_new[5], genes_nn1[5]))
+
+        worker.workplace.fitnesses[0] = 1
+        worker.workplace.fitnesses[1] = 1
+
+        nn_new = worker.crossover(nn1, nn2)
+
+        self.assertTrue(np.array_equal(nn_new[0], genes_nn1[0]) or np.array_equal(nn_new[0], genes_nn2[0]))
+        self.assertTrue(np.array_equal(nn_new[1], genes_nn1[1]) or np.array_equal(nn_new[1], genes_nn2[1]))
+        self.assertTrue(np.array_equal(nn_new[2], genes_nn1[2]) or np.array_equal(nn_new[2], genes_nn2[2]))
+        self.assertTrue(np.array_equal(nn_new[3], genes_nn1[3]) or np.array_equal(nn_new[3], genes_nn2[3]))
+        self.assertTrue(np.array_equal(nn_new[4], genes_nn1[4]) or np.array_equal(nn_new[4], genes_nn2[4]))
+
+        self.assertTrue(np.array_equal(nn_new[5], genes_nn2[5]))
+        self.assertTrue(np.array_equal(nn_new[6], genes_nn2[6]))
+        self.assertTrue(np.array_equal(nn_new[7], genes_nn2[7]))
+        self.assertTrue(np.array_equal(nn_new[8], genes_nn2[8]))
+        self.assertTrue(np.array_equal(nn_new[9], genes_nn1[5]))
+
 
         # find matching genes
         # find disjoints
