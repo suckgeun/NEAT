@@ -404,7 +404,7 @@ class Worker:
         for output in outputs:
             self.calc_output(output, activ_result, inputs, nn)
 
-        return activ_result[n_bias+n_input : n_bias + n_input + n_output]
+        return activ_result[(n_bias+n_input):(n_bias + n_input + n_output)]
 
     def get_node_between(self, node_in, node_out):
         """
@@ -453,6 +453,37 @@ class Worker:
         self.add_connect(node_in, new_node, 1.0, nn)
         self.add_connect(new_node, node_out, ori_weight, nn)
 
+    def disable_connect(self, node_in, node_out, nn):
+        """
+        disable connect
+
+        :param node_in:
+        :param node_out:
+        :param nn:
+        :return:
+        """
+
+        assert self.is_connect_exist_nn(node_in, node_out, nn), "connect must exist"
+
+        for gene in nn.connect_genes:
+            if gene[0] == node_in and gene[1] == node_out:
+                gene[3] = 0
+
+    def enable_connect(self, node_in, node_out, nn):
+        """
+        enable connect
+
+        :param node_in:
+        :param node_out:
+        :param nn:
+        :return:
+        """
+
+        assert self.is_connect_exist_nn(node_in, node_out, nn), "connect must exist"
+
+        for gene in nn.connect_genes:
+            if gene[0] == node_in and gene[1] == node_out:
+                gene[3] = 1
 
 
 
