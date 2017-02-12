@@ -27,6 +27,7 @@ class Workplace:
             self.n_bias = 0
             self.bias = None
         self.is_initialized = False
+        self.fitnesses = None
 
 
 

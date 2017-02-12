@@ -276,6 +276,7 @@ class Worker:
             self.workplace.nns.append(nn)
 
         self.workplace.is_initialized = True
+        self.workplace.fitnesses = [None]*n_nn
 
     def activate(self, xs, weights):
         """
