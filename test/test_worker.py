@@ -868,6 +868,7 @@ class WorkerTest(unittest.TestCase):
                                                    (3, 4): 3})
         self.assertEqual(workplace.innov_counter, 3)
         self.assertEqual(workplace.node_genes, [0, 1, 1, 1, 2])
+        self.assertEqual(workplace.fitnesses, [None]*workplace.n_nn)
 
         # test if two nns have identical genes except weight
         nn1 = workplace.nns[0]
@@ -892,6 +893,7 @@ class WorkerTest(unittest.TestCase):
                                                    (2, 3): 2})
         self.assertEqual(workplace.innov_counter, 2)
         self.assertEqual(workplace.node_genes, [1, 1, 1, 2])
+        self.assertEqual(workplace.fitnesses, [None]*workplace.n_nn)
 
         # test if two nns have identical genes except weight
         nn1 = workplace.nns[0]
@@ -1294,6 +1296,13 @@ class WorkerTest(unittest.TestCase):
         return worker, nn1, nn2
 
     def test_crossover(self):
+
+        worker, nn1, nn2 = self.create_env_same_as_paper()
+
+        # new_nn = worker.crossover(nn1, nn2)
+
+        # self.assertEqual(new_nn.)
+
         # find matching genes
         # find disjoints
         # find excess
