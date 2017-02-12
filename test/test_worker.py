@@ -1237,11 +1237,81 @@ class WorkerTest(unittest.TestCase):
                                                                  [1, 4, 1, 3],
                                                                  [4, 3, 1, 4]])))
 
+    def test_disable_connect(self):
+        workplace = Workplace(3, 1)
+        worker = Worker(workplace)
+        nn = NeuralNetwork()
+        nn.connect_genes = np.array([[0, 3, 10, 1, 0],
+                                     [1, 3, 11, 1, 1],
+                                     [2, 3, 12, 1, 2]])
+
+        worker.disable_connect(0, 3, nn)
+        self.assertEqual(nn.connect_genes[0, 3], 0)
+        worker.disable_connect(1, 3, nn)
+        self.assertEqual(nn.connect_genes[1, 3], 0)
+        worker.disable_connect(2, 3, nn)
+        self.assertEqual(nn.connect_genes[2, 3], 0)
+    
+    def test_enable_connect(self):
+        workplace = Workplace(3, 1)
+        worker = Worker(workplace)
+        nn = NeuralNetwork()
+        nn.connect_genes = np.array([[0, 3, 10, 0, 0],
+                                     [1, 3, 11, 0, 1],
+                                     [2, 3, 12, 0, 2]])
+
+        worker.enable_connect(0, 3, nn)
+        self.assertEqual(nn.connect_genes[0, 3], 1)
+        worker.enable_connect(1, 3, nn)
+        self.assertEqual(nn.connect_genes[1, 3], 1)
+        worker.enable_connect(2, 3, nn)
+        self.assertEqual(nn.connect_genes[2, 3], 1)
+
+    @staticmethod
+    def create_env_same_as_paper():
+        # creating the same test case of the NEAT paper
+        workplace = Workplace(3, 1, bias=None, n_nn=3)
+        worker = Worker(workplace)
+        worker.initialize_workplace()
+
+        nn1 = worker.workplace.nns[0]
+        nn2 = worker.workplace.nns[1]
+
+        worker.add_node(1, 3, nn1)
+        worker.add_node(1, 3, nn2)
+
+        worker.add_node(4, 3, nn2)
+
+        worker.add_connect(0, 4, 11, nn1)
+
+        worker.add_connect(2, 4, 21, nn2)
+        worker.add_connect(0, 5, 22, nn2)
+
+        worker.disable_connect(1, 3, nn1)
+        worker.disable_connect(1, 3, nn2)
+        worker.disable_connect(4, 3, nn2)
+
+        return worker, nn1, nn2
+
+    def test_crossover(self):
+        # find matching genes
+        # find disjoints
+        # find excess
+
+        # matching genes inherited randomly
+
+        # disjoints and excesses inherited from more fit parent.
+        # if fitness is the same, inherit randomly
+
+        # if a gene is disabled,
+        # enable it with preset probability
+
+        pass
+
+
     def test_mutate_connection(self):
         pass
 
     def test_mutate_weight(self):
         pass
 
-    def test_crossover(self):
-        pass
