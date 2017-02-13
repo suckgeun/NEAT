@@ -5,6 +5,8 @@ class NeuralNetwork:
 
     def __init__(self):
         self.connect_genes = None
+        self.fitness = None
+
 
 
 

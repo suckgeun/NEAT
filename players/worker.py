@@ -486,6 +486,112 @@ class Worker:
             if gene[0] == node_in and gene[1] == node_out:
                 gene[3] = 1
 
+    @staticmethod
+    def get_matching_innov_num(nn1, nn2):
+        """
+        get a list of innovation numbers common in nn1 and nn2
+
+        :param nn1:
+        :param nn2:
+        :return: list of matching innovation numbers. [] if none
+        """
+        match = []
+        genes1 = nn1.connect_genes
+        genes2 = nn2.connect_genes
+
+        if genes1.shape[0] >= genes2.shape[0]:
+            matching_size = genes2.shape[0]
+        else:
+            matching_size = genes1.shape[0]
+
+        for i in range(matching_size):
+            if genes1[i, 4] == genes2[i, 4]:
+                match.append(genes1[i, 4])
+
+        return match
+
+    @staticmethod
+    def inherit_match(match, nn1, nn2):
+        """
+        inherit matching genes randomly from nn1 and nn2.
+
+        :param match: list of common innovation numbers in nn1 and nn2
+        :param nn1:
+        :param nn2:
+        :return: matching connection genes randomly chosen from nn1 or nn2
+        """
+
+        genes1 = nn1.connect_genes
+        genes2 = nn2.connect_genes
+        genes_new = None
+
+        for innov_num in match:
+            rand = random.random()
+            if rand > 0.5:
+                gene_to_add = genes1[genes1[:, 4] == innov_num]
+            else:
+                gene_to_add = genes2[genes2[:, 4] == innov_num]
+
+            if genes_new is None:
+                genes_new = gene_to_add
+            else:
+                genes_new = np.vstack((genes_new, gene_to_add))
+
+        return genes_new
+
+    @staticmethod
+    def inherit_disjoint_excess(match, nn1, nn2):
+        """
+        inherit disjoint and excess genes from more fit nn.
+
+        if nn1 and nn2 have the same fitness, all disjoints and excesses from both nns are inherited
+
+        :param match: matching genes of the two nns
+        :param nn1:
+        :param nn2:
+        :return: inherited genes from nn1 and nn2
+        """
+
+        genes1 = nn1.connect_genes
+        genes2 = nn2.connect_genes
+
+        if nn1.fitness > nn2.fitness:
+            genes_more_fit = genes1
+        elif nn1.fitness < nn2.fitness:
+            genes_more_fit = genes2
+        else:
+            genes_more_fit = None
+
+        if genes_more_fit is None:
+            return np.vstack((genes1[len(match):, :], genes2[len(match):, :]))
+        else:
+            return genes_more_fit[len(match):, :]
+
+    def crossover(self, nn1, nn2):
+        """
+        crossover the two nns
+
+        it creates a new neural network from nn1 and nn2.
+        first, matching genes are inherited,
+        then matching genes disability are modified using enablilty_preset,
+        then disjoints and excess genes are inherited.
+
+        :param nn1:
+        :param nn2:
+        :return: newly inherited neural network.
+        """
+        nn_new = NeuralNetwork()
+
+        match = self.get_matching_innov_num(nn1, nn2)
+
+        genes_matching = self.inherit_match(match, nn1, nn2)
+        genes_disj_exc = self.inherit_disjoint_excess(match, nn1, nn2)
+        genes_new = np.vstack((genes_matching, genes_disj_exc))
+
+        nn_new.connect_genes = genes_new
+
+        return nn_new
+
 
 
 
