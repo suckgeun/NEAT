@@ -1295,6 +1295,61 @@ class WorkerTest(unittest.TestCase):
 
         return worker, nn1, nn2
 
+    def test_get_matching_innov_num(self):
+        worker, nn1, nn2 = self.create_env_same_as_paper()
+
+        matching = worker.get_matching_innov_num(nn1, nn2)
+        self.assertEqual(matching, [0, 1, 2, 3, 4])
+
+    def test_inherit_match(self):
+        worker, nn1, nn2 = self.create_env_same_as_paper()
+
+        matching = worker.get_matching_innov_num(nn1, nn2)
+
+        genes_nn1 = nn1.connect_genes
+        genes_nn2 = nn2.connect_genes
+        genes_new = worker.inherit_match(matching, nn1, nn2)
+
+        self.assertTrue(np.array_equal(genes_new[0], genes_nn1[0]) or np.array_equal(genes_new[0], genes_nn2[0]))
+        self.assertTrue(np.array_equal(genes_new[1], genes_nn1[1]) or np.array_equal(genes_new[1], genes_nn2[1]))
+        self.assertTrue(np.array_equal(genes_new[2], genes_nn1[2]) or np.array_equal(genes_new[2], genes_nn2[2]))
+        self.assertTrue(np.array_equal(genes_new[3], genes_nn1[3]) or np.array_equal(genes_new[3], genes_nn2[3]))
+        self.assertTrue(np.array_equal(genes_new[4], genes_nn1[4]) or np.array_equal(genes_new[4], genes_nn2[4]))
+
+    def test_inherit_disjoint_excess(self):
+        worker, nn1, nn2 = self.create_env_same_as_paper()
+
+        matching = worker.get_matching_innov_num(nn1, nn2)
+        nn1.fitness = 1
+        nn2.fitness = 2
+
+        genes_nn2 = nn2.connect_genes
+        genes_new = worker.inherit_disjoint_excess(matching, nn1, nn2)
+
+        self.assertTrue(np.array_equal(genes_new[0], genes_nn2[5]))
+        self.assertTrue(np.array_equal(genes_new[1], genes_nn2[6]))
+        self.assertTrue(np.array_equal(genes_new[2], genes_nn2[7]))
+        self.assertTrue(np.array_equal(genes_new[3], genes_nn2[8]))
+
+        nn1.fitness = 2
+        nn2.fitness = 1
+        genes_nn1 = nn1.connect_genes
+        genes_new = worker.inherit_disjoint_excess(matching, nn1, nn2)
+
+        self.assertTrue(np.array_equal(genes_new[0], genes_nn1[5]))
+
+        nn1.fitness = 1
+        nn2.fitness = 1
+        genes_nn1 = nn1.connect_genes
+        genes_nn2 = nn2.connect_genes
+        genes_new = worker.inherit_disjoint_excess(matching, nn1, nn2)
+
+        self.assertTrue(np.array_equal(genes_new[0], genes_nn1[5]))
+        self.assertTrue(np.array_equal(genes_new[1], genes_nn2[5]))
+        self.assertTrue(np.array_equal(genes_new[2], genes_nn2[6]))
+        self.assertTrue(np.array_equal(genes_new[3], genes_nn2[7]))
+        self.assertTrue(np.array_equal(genes_new[4], genes_nn2[8]))
+
     def test_crossover(self):
 
         worker, nn1, nn2 = self.create_env_same_as_paper()
@@ -1302,67 +1357,51 @@ class WorkerTest(unittest.TestCase):
         genes_nn1 = nn1.connect_genes
         genes_nn2 = nn2.connect_genes
 
-        worker.workplace.fitnesses[0] = 1
-        worker.workplace.fitnesses[1] = 2
-
+        nn1.fitness = 1
+        nn2.fitness = 2
         nn_new = worker.crossover(nn1, nn2)
+        genes_new = nn_new.connect_genes
 
-        self.assertTrue(np.array_equal(nn_new[0], genes_nn1[0]) or np.array_equal(nn_new[0], genes_nn2[0]))
-        self.assertTrue(np.array_equal(nn_new[1], genes_nn1[1]) or np.array_equal(nn_new[1], genes_nn2[1]))
-        self.assertTrue(np.array_equal(nn_new[2], genes_nn1[2]) or np.array_equal(nn_new[2], genes_nn2[2]))
-        self.assertTrue(np.array_equal(nn_new[3], genes_nn1[3]) or np.array_equal(nn_new[3], genes_nn2[3]))
-        self.assertTrue(np.array_equal(nn_new[4], genes_nn1[4]) or np.array_equal(nn_new[4], genes_nn2[4]))
+        self.assertTrue(np.array_equal(genes_new[0], genes_nn1[0]) or np.array_equal(genes_new[0], genes_nn2[0]))
+        self.assertTrue(np.array_equal(genes_new[1], genes_nn1[1]) or np.array_equal(genes_new[1], genes_nn2[1]))
+        self.assertTrue(np.array_equal(genes_new[2], genes_nn1[2]) or np.array_equal(genes_new[2], genes_nn2[2]))
+        self.assertTrue(np.array_equal(genes_new[3], genes_nn1[3]) or np.array_equal(genes_new[3], genes_nn2[3]))
+        self.assertTrue(np.array_equal(genes_new[4], genes_nn1[4]) or np.array_equal(genes_new[4], genes_nn2[4]))
 
-        self.assertTrue(np.array_equal(nn_new[5], genes_nn2[5]))
-        self.assertTrue(np.array_equal(nn_new[6], genes_nn2[6]))
-        self.assertTrue(np.array_equal(nn_new[7], genes_nn2[7]))
-        self.assertTrue(np.array_equal(nn_new[8], genes_nn2[8]))
+        self.assertTrue(np.array_equal(genes_new[5], genes_nn2[5]))
+        self.assertTrue(np.array_equal(genes_new[6], genes_nn2[6]))
+        self.assertTrue(np.array_equal(genes_new[7], genes_nn2[7]))
+        self.assertTrue(np.array_equal(genes_new[8], genes_nn2[8]))
 
-        worker.workplace.fitnesses[0] = 2
-        worker.workplace.fitnesses[1] = 1
-
+        nn1.fitness = 2
+        nn2.fitness = 1
         nn_new = worker.crossover(nn1, nn2)
+        genes_new = nn_new.connect_genes
 
-        self.assertTrue(np.array_equal(nn_new[0], genes_nn1[0]) or np.array_equal(nn_new[0], genes_nn2[0]))
-        self.assertTrue(np.array_equal(nn_new[1], genes_nn1[1]) or np.array_equal(nn_new[1], genes_nn2[1]))
-        self.assertTrue(np.array_equal(nn_new[2], genes_nn1[2]) or np.array_equal(nn_new[2], genes_nn2[2]))
-        self.assertTrue(np.array_equal(nn_new[3], genes_nn1[3]) or np.array_equal(nn_new[3], genes_nn2[3]))
-        self.assertTrue(np.array_equal(nn_new[4], genes_nn1[4]) or np.array_equal(nn_new[4], genes_nn2[4]))
+        self.assertTrue(np.array_equal(genes_new[0], genes_nn1[0]) or np.array_equal(genes_new[0], genes_nn2[0]))
+        self.assertTrue(np.array_equal(genes_new[1], genes_nn1[1]) or np.array_equal(genes_new[1], genes_nn2[1]))
+        self.assertTrue(np.array_equal(genes_new[2], genes_nn1[2]) or np.array_equal(genes_new[2], genes_nn2[2]))
+        self.assertTrue(np.array_equal(genes_new[3], genes_nn1[3]) or np.array_equal(genes_new[3], genes_nn2[3]))
+        self.assertTrue(np.array_equal(genes_new[4], genes_nn1[4]) or np.array_equal(genes_new[4], genes_nn2[4]))
 
-        self.assertTrue(np.array_equal(nn_new[5], genes_nn1[5]))
+        self.assertTrue(np.array_equal(nn_new.connect_genes[5], genes_nn1[5]))
 
-        worker.workplace.fitnesses[0] = 1
-        worker.workplace.fitnesses[1] = 1
-
+        nn1.fitness = 1
+        nn2.fitness = 1
         nn_new = worker.crossover(nn1, nn2)
+        genes_new = nn_new.connect_genes
 
-        self.assertTrue(np.array_equal(nn_new[0], genes_nn1[0]) or np.array_equal(nn_new[0], genes_nn2[0]))
-        self.assertTrue(np.array_equal(nn_new[1], genes_nn1[1]) or np.array_equal(nn_new[1], genes_nn2[1]))
-        self.assertTrue(np.array_equal(nn_new[2], genes_nn1[2]) or np.array_equal(nn_new[2], genes_nn2[2]))
-        self.assertTrue(np.array_equal(nn_new[3], genes_nn1[3]) or np.array_equal(nn_new[3], genes_nn2[3]))
-        self.assertTrue(np.array_equal(nn_new[4], genes_nn1[4]) or np.array_equal(nn_new[4], genes_nn2[4]))
+        self.assertTrue(np.array_equal(genes_new[0], genes_nn1[0]) or np.array_equal(genes_new[0], genes_nn2[0]))
+        self.assertTrue(np.array_equal(genes_new[1], genes_nn1[1]) or np.array_equal(genes_new[1], genes_nn2[1]))
+        self.assertTrue(np.array_equal(genes_new[2], genes_nn1[2]) or np.array_equal(genes_new[2], genes_nn2[2]))
+        self.assertTrue(np.array_equal(genes_new[3], genes_nn1[3]) or np.array_equal(genes_new[3], genes_nn2[3]))
+        self.assertTrue(np.array_equal(genes_new[4], genes_nn1[4]) or np.array_equal(genes_new[4], genes_nn2[4]))
 
-        self.assertTrue(np.array_equal(nn_new[5], genes_nn2[5]))
-        self.assertTrue(np.array_equal(nn_new[6], genes_nn2[6]))
-        self.assertTrue(np.array_equal(nn_new[7], genes_nn2[7]))
-        self.assertTrue(np.array_equal(nn_new[8], genes_nn2[8]))
-        self.assertTrue(np.array_equal(nn_new[9], genes_nn1[5]))
-
-
-        # find matching genes
-        # find disjoints
-        # find excess
-
-        # matching genes inherited randomly
-
-        # disjoints and excesses inherited from more fit parent.
-        # if fitness is the same, inherit randomly
-
-        # if a gene is disabled,
-        # enable it with preset probability
-
-        pass
-
+        self.assertTrue(np.array_equal(genes_new[5], genes_nn1[5]))
+        self.assertTrue(np.array_equal(genes_new[6], genes_nn2[5]))
+        self.assertTrue(np.array_equal(genes_new[7], genes_nn2[6]))
+        self.assertTrue(np.array_equal(genes_new[8], genes_nn2[7]))
+        self.assertTrue(np.array_equal(genes_new[9], genes_nn2[8]))
 
     def test_mutate_connection(self):
         pass
