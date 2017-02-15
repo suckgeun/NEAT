@@ -206,11 +206,6 @@ class Worker:
         assert node_in > -1 and node_out > -1, "node index must be positive integer"
         assert type(nn) is NeuralNetwork, "nn must be an instance of Neural Network"
         assert not self.is_connect_exist_nn(node_in, node_out, nn), "connect must not exist in the neural network"
-        assert not self.is_in_in_connect(node_in, node_out), "both nodes cannot be input nodes"
-        assert not self.is_out_out_connect(node_in, node_out), "both nodes cannot be output nodes"
-        assert not self.is_recursive_connect(node_in, node_out), "recursive connect not allowed"
-        assert not self.is_bias_in_connect(node_in, node_out), "both node cannot be bias and input node"
-        assert not self.is_in_bias_at_end_connect(node_out, node_out), "output node cannot be bias or input node"
 
         innov_num = self.is_connect_exist_global(node_in, node_out)
 
