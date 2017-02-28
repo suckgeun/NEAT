@@ -236,12 +236,25 @@ class Worker:
         n_node_in = n_bias + n_input
         n_node_out = n_output
 
+        # initialize node_genes
+        nn.node_genes = list(range(n_node_in + n_node_out))
+
+        # initialize connect_genes
         for node_in in range(n_node_in):
             # TODO change to get_output_nodes
             for node_out in range(n_node_in, n_node_in + n_node_out):
 
                 # TODO decide how to cap the random weights.
                 self.add_connect(node_in, node_out, random.uniform(-1.0, 1.0), nn)
+
+        # initialize outputs_prev and outputs_cur
+        outputs_prev = [None] * (n_input + n_output)
+        outputs_cur = [None] * (n_input + n_output)
+        if n_bias != 0:
+            outputs_prev = [self.workplace.bias] + outputs_prev
+            outputs_cur = [self.workplace.bias] + outputs_cur
+        nn.outputs_prev = outputs_prev
+        nn.outputs_cur = outputs_cur
 
     def initialize_workplace(self):
         """
