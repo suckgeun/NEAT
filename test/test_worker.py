@@ -1114,6 +1114,154 @@ class WorkerTest(unittest.TestCase):
 
         self.assertEqual(worker.get_output_nodes(), [3, 4, 5])
 
+    def test_activate_genes__AND(self):
+        workplace = Workplace(2, 1, bias=-1, n_nn=1)
+        workplace.activ_func = linear
+        worker = Worker(workplace)
+        worker.initialize_workplace()
+
+        nn1 = worker.workplace.nns[0]
+
+        nn1.connect_genes = np.array([[0, 3, 2, 1, 0],
+                                      [1, 3, 2, 1, 1],
+                                      [2, 3, 2, 1, 2]])
+
+        inputs = np.array([0, 0])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, None, None, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, None])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -1])
+
+        inputs = np.array([1, 0])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, None, None, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, None])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, 0])
+
+        inputs = np.array([0, 1])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, None, None, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, None])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 0])
+
+        inputs = np.array([1, 1])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, None, None, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, None])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 1])
+        
+    def test_activate_genes__OR(self):
+        workplace = Workplace(2, 1, bias=-1, n_nn=1)
+        workplace.activ_func = linear
+        worker = Worker(workplace)
+        worker.initialize_workplace()
+
+        nn1 = worker.workplace.nns[0]
+
+        nn1.connect_genes = np.array([[0, 3, 1.0, 1, 0],
+                                      [1, 3, 3.0, 1, 1],
+                                      [2, 3, 3.0, 1, 2]])
+
+        inputs = np.array([0, 0])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, None, None, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, None])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -0.5])
+
+        inputs = np.array([1, 0])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, None, None, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, None])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, 1])
+
+        inputs = np.array([0, 1])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, None, None, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, None])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 1])
+
+        inputs = np.array([1, 1])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, None, None, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, None])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 2.5])
+    
+    def test_activate_genes__XOR(self):
+        workplace = Workplace(2, 1, bias=-1, n_nn=1)
+        workplace.activ_func = linear
+        worker = Worker(workplace)
+        worker.initialize_workplace()
+
+        nn1 = worker.workplace.nns[0]
+        # [0, 1, 1, 2, 3]
+        nn1.connect_genes = np.array([[0, 3, 0.6, 1, 0],
+                                      [1, 3, 2.0, 1, 1],
+                                      [2, 3, 2.0, 1, 2],
+                                      [1, 4, 2.0, 1, 3],
+                                      [4, 3, 2.0, 1, 4],
+                                      [2, 4, 2.0, 1, 5],
+                                      [0, 4, 2.0, 1, 6]])
+
+        inputs = np.array([0, 0])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, None, None, None, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, None, None])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, None, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, None, -1])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, None, -1])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -1.3, -1])
+
+        inputs = np.array([1, 0])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, None, None, None, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, None, None])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, None, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, None, 0])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, None, 0])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, 0.7, 0])
+
+        inputs = np.array([0, 1])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, None, None, None, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, None, None])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, None, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, None, 0])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, None, 0])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 0.7, 0])
+
+        inputs = np.array([1, 1])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, None, None, None, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, None, None])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, None, None])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, None, 1])
+        worker.activate_genes(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, None, 1])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 2.7, 1])
+
     def test_feedforward__AND(self):
         workplace = Workplace(2, 1, bias=-1)
         workplace.activ_func = linear
