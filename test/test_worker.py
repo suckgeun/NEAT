@@ -3,7 +3,7 @@ import numpy as np
 from players.neuralnet import NeuralNetwork
 from players.worker import Worker
 from globaladmin.workplace import Workplace
-from players.activation import sigmoid, linear
+from players.activation import linear
 
 
 class WorkerTest(unittest.TestCase):
@@ -971,34 +971,6 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(gene1.shape, (3, 5))
         self.assertFalse(np.array_equal(gene1, gene2), "two genes must have different weights")
         self.assertTrue(np.array_equal(gene1_w_removed, gene2_w_removed), "two genes have identical other elements")
-
-    def test_activate__valid_input(self):
-        workplace = Workplace(3, 4)
-        worker = Worker(workplace)
-
-        xs = np.array([[1, 2, 3]])
-        ws = np.array([[1], [1], [1]])
-        y = worker.activate(xs, ws)
-
-        self.assertEqual(y, sigmoid(np.dot(xs, ws)))
-
-    def test_activate__ws_xs_size_mismatch(self):
-        workplace = Workplace(3, 4)
-        worker = Worker(workplace)
-
-        xs = np.array([[1, 2, 3, 4]])
-        ws = np.array([[1], [1], [1]])
-
-        self.assertRaises(AssertionError, worker.activate, xs, ws)
-
-    def test_activate__xs_invalid_shape(self):
-        workplace = Workplace(3, 4)
-        worker = Worker(workplace)
-
-        xs = np.array([[1], [1], [1]])
-        ws = np.array([[1, 2, 3]])
-
-        self.assertRaises(AssertionError, worker.activate, xs, ws)
 
     def test_get_nodes_in_of_node(self):
         workplace = Workplace(3, 3, bias=1)
