@@ -686,7 +686,8 @@ class WorkerTest(unittest.TestCase):
         self.assertRaises(AssertionError, worker.add_connect, node_in=7, node_out=8, weight=1.0, nn=nn)
 
     def test_initialize_nn__3_inputs_1_output_yes_bias(self):
-        workplace = Workplace(n_input=3, n_output=1, bias=1)
+        bias = 1
+        workplace = Workplace(n_input=3, n_output=1, bias=bias)
         worker = Worker(workplace)
         nn = NeuralNetwork()
 
@@ -695,6 +696,11 @@ class WorkerTest(unittest.TestCase):
         # innov_counter check
         self.assertEqual(workplace.innov_counter, 3, "incremented innovation counter check")
 
+        # node_genes check
+        # [0, 1, 2, 3, 4]
+        self.assertEqual(nn.node_genes, [0, 1, 2, 3, 4])
+
+        # connect_genes check
         # in, out, weight, enabled, innov
         #  0,   4,     w1,       1,     0,
         #  1,   4,     w2,       1,     1,
@@ -726,6 +732,12 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn.connect_genes[3, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[3, 4], 3, "innovation number")
 
+        # outputs_prev check
+        self.assertEqual(nn.outputs_prev, [bias, None, None, None, None])
+
+        # outputs_cur check
+        self.assertEqual(nn.outputs_cur, [bias, None, None, None, None])
+
         # innov_history check
         self.assertEqual(workplace.innov_history, {(0, 4): 0,
                                                    (1, 4): 1,
@@ -742,6 +754,11 @@ class WorkerTest(unittest.TestCase):
         # innov_counter check
         self.assertEqual(workplace.innov_counter, 2, "incremented innovation counter check")
 
+        # node_genes check
+        # [0, 1, 2, 3, 4]
+        self.assertEqual(nn.node_genes, [0, 1, 2, 3])
+
+        # connect_genes check
         # in, out, weight, enabled, innov
         #  0,   3,     w1,       1,     0,
         #  1,   3,     w2,       1,     1,
@@ -766,13 +783,20 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn.connect_genes[2, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[2, 4], 2, "innovation number")
 
+        # outputs_prev check
+        self.assertEqual(nn.outputs_prev, [None, None, None, None])
+
+        # outputs_cur check
+        self.assertEqual(nn.outputs_cur, [None, None, None, None])
+
         # innov_history check
         self.assertEqual(workplace.innov_history, {(0, 3): 0,
                                                    (1, 3): 1,
                                                    (2, 3): 2})
 
     def test_initialize_nn__2_inputs_3_outputs_yes_bias(self):
-        workplace = Workplace(n_input=2, n_output=3, bias=1)
+        bias = 1
+        workplace = Workplace(n_input=2, n_output=3, bias=bias)
         worker = Worker(workplace)
         nn = NeuralNetwork()
 
@@ -780,6 +804,10 @@ class WorkerTest(unittest.TestCase):
 
         # innov_counter check
         self.assertEqual(workplace.innov_counter, 8, "incremented innovation counter check")
+
+        # node_genes check
+        # [0, 1, 2, 3, 4, 5]
+        self.assertEqual(nn.node_genes, [0, 1, 2, 3, 4, 5])
 
         # in, out, weight, enabled, innov
         #  0,   3,     w1,       1,     0,
@@ -847,6 +875,12 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn.connect_genes[8, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[8, 4], 8, "innovation number")
 
+        # outputs_prev check
+        self.assertEqual(nn.outputs_prev, [bias, None, None, None, None, None])
+
+        # outputs_cur check
+        self.assertEqual(nn.outputs_cur, [bias, None, None, None, None, None])
+
         # innov_history check
         self.assertEqual(workplace.innov_history, {(0, 3): 0,
                                                    (0, 4): 1,
@@ -867,6 +901,10 @@ class WorkerTest(unittest.TestCase):
 
         # innov_counter check
         self.assertEqual(workplace.innov_counter, 5, "incremented innovation counter check")
+
+        # node_genes check
+        # [0, 1, 2, 3, 4, 5]
+        self.assertEqual(nn.node_genes, [0, 1, 2, 3, 4])
 
         # in, out, weight, enabled, innov
         #  0,   2,     w1,       1,     0,
@@ -912,6 +950,12 @@ class WorkerTest(unittest.TestCase):
         self.assertIsInstance(nn.connect_genes[5, 2], float, "weight")
         self.assertEqual(nn.connect_genes[5, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[5, 4], 5, "innovation number")
+
+        # outputs_prev check
+        self.assertEqual(nn.outputs_prev, [None, None, None, None, None])
+
+        # outputs_cur check
+        self.assertEqual(nn.outputs_cur, [None, None, None, None, None])
 
         # innov_history check
         self.assertEqual(workplace.innov_history, {(0, 2): 0,
