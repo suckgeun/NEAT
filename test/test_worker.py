@@ -1114,6 +1114,22 @@ class WorkerTest(unittest.TestCase):
 
         self.assertEqual(worker.get_output_nodes(), [3, 4, 5])
 
+    def test_toggle_outputs_list(self):
+        nn = NeuralNetwork()
+
+        nn.outputs_cur = [1]
+        nn.outputs_prev = [2]
+
+        nn.toggle()
+
+        self.assertEqual(nn.outputs_cur, [2])
+        self.assertEqual(nn.outputs_prev, [1])
+
+        nn.toggle()
+
+        self.assertEqual(nn.outputs_cur, [1])
+        self.assertEqual(nn.outputs_prev, [2])
+
     def test_activate_genes__AND(self):
         workplace = Workplace(2, 1, bias=-1, n_nn=1)
         workplace.activ_func = linear
