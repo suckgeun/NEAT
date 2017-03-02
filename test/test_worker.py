@@ -1507,7 +1507,7 @@ class WorkerTest(unittest.TestCase):
         counter = workplace.innov_counter
         history = workplace.innov_history
         node_genes_global = workplace.node_genes_global
-        self.assertEqual(counter, 4)
+        self.assertEqual(counter, 6)
         self.assertEqual(history, {(0, 3): 0,
                                    (1, 3): 1,
                                    (2, 3): 2,
@@ -1527,8 +1527,8 @@ class WorkerTest(unittest.TestCase):
         self.assertTrue(np.array_equal(gene_w_removed, np.array([[0, 3, 1, 0],
                                                                  [1, 3, 1, 1],
                                                                  [2, 3, 1, 2],
-                                                                 [2, 5, 1, 3],
-                                                                 [5, 3, 1, 4]])))
+                                                                 [2, 5, 1, 5],
+                                                                 [5, 3, 1, 6]])))
 
     def test_disable_connect(self):
         workplace = Workplace(3, 1)
