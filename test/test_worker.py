@@ -1436,6 +1436,8 @@ class WorkerTest(unittest.TestCase):
                                    (2, 3): 2})
         self.assertEqual(node_genes_global, [0, 1, 1, 2])
         self.assertEqual(nn.node_index, [0, 1, 2, 3])
+        self.assertEqual(nn.outputs_prev, [-1, None, None, None])
+        self.assertEqual(nn.outputs_cur, [-1, None, None, None])
 
         nn = workplace.nns[0]
         node_in = 1
@@ -1454,6 +1456,8 @@ class WorkerTest(unittest.TestCase):
                                    (4, 3): 4})
         self.assertEqual(node_genes_global, [0, 1, 1, 2, 3])
         self.assertEqual(nn.node_index, [0, 1, 2, 3, 4])
+        self.assertEqual(nn.outputs_prev, [-1, None, None, None, None])
+        self.assertEqual(nn.outputs_cur, [-1, None, None, None, None])
 
         front_connect_weight = worker.get_weight_of_connect(node_in, 4, nn)
         back_connect_weight = worker.get_weight_of_connect(4, node_out, nn)
@@ -1485,6 +1489,8 @@ class WorkerTest(unittest.TestCase):
                                    (4, 3): 4})
         self.assertEqual(node_genes_global, [0, 1, 1, 2, 3])
         self.assertEqual(nn2.node_index, [0, 1, 2, 3, 4])
+        self.assertEqual(nn2.outputs_prev, [-1, None, None, None, None])
+        self.assertEqual(nn2.outputs_cur, [-1, None, None, None, None])
 
         front_connect_weight = worker.get_weight_of_connect(node_in, 4, nn2)
         back_connect_weight = worker.get_weight_of_connect(4, node_out, nn2)
@@ -1517,6 +1523,8 @@ class WorkerTest(unittest.TestCase):
                                    (5, 3): 6})
         self.assertEqual(node_genes_global, [0, 1, 1, 2, 3, 3])
         self.assertEqual(nn3.node_index, [0, 1, 2, 3, 5])
+        self.assertEqual(nn3.outputs_prev, [-1, None, None, None, None])
+        self.assertEqual(nn3.outputs_cur, [-1, None, None, None, None])
 
         front_connect_weight = worker.get_weight_of_connect(node_in, 5, nn3)
         back_connect_weight = worker.get_weight_of_connect(5, node_out, nn3)
