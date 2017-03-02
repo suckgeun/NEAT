@@ -696,7 +696,7 @@ class WorkerTest(unittest.TestCase):
         # innov_counter check
         self.assertEqual(workplace.innov_counter, 3, "incremented innovation counter check")
 
-        # node_genes check
+        # node_genes_global check
         # [0, 1, 2, 3, 4]
         self.assertEqual(nn.node_genes, [0, 1, 2, 3, 4])
 
@@ -754,7 +754,7 @@ class WorkerTest(unittest.TestCase):
         # innov_counter check
         self.assertEqual(workplace.innov_counter, 2, "incremented innovation counter check")
 
-        # node_genes check
+        # node_genes_global check
         # [0, 1, 2, 3, 4]
         self.assertEqual(nn.node_genes, [0, 1, 2, 3])
 
@@ -805,7 +805,7 @@ class WorkerTest(unittest.TestCase):
         # innov_counter check
         self.assertEqual(workplace.innov_counter, 8, "incremented innovation counter check")
 
-        # node_genes check
+        # node_genes_global check
         # [0, 1, 2, 3, 4, 5]
         self.assertEqual(nn.node_genes, [0, 1, 2, 3, 4, 5])
 
@@ -902,7 +902,7 @@ class WorkerTest(unittest.TestCase):
         # innov_counter check
         self.assertEqual(workplace.innov_counter, 5, "incremented innovation counter check")
 
-        # node_genes check
+        # node_genes_global check
         # [0, 1, 2, 3, 4, 5]
         self.assertEqual(nn.node_genes, [0, 1, 2, 3, 4])
 
@@ -977,7 +977,7 @@ class WorkerTest(unittest.TestCase):
                                                    (2, 4): 2,
                                                    (3, 4): 3})
         self.assertEqual(workplace.innov_counter, 3)
-        self.assertEqual(workplace.node_genes, [0, 1, 1, 1, 2])
+        self.assertEqual(workplace.node_genes_global, [0, 1, 1, 1, 2])
         self.assertEqual(workplace.fitnesses, [None]*workplace.n_nn)
 
         # test if two nns have identical genes except weight
@@ -1002,7 +1002,7 @@ class WorkerTest(unittest.TestCase):
                                                    (1, 3): 1,
                                                    (2, 3): 2})
         self.assertEqual(workplace.innov_counter, 2)
-        self.assertEqual(workplace.node_genes, [1, 1, 1, 2])
+        self.assertEqual(workplace.node_genes_global, [1, 1, 1, 2])
         self.assertEqual(workplace.fitnesses, [None]*workplace.n_nn)
 
         # test if two nns have identical genes except weight
@@ -1290,7 +1290,7 @@ class WorkerTest(unittest.TestCase):
     def test_feedforward__AND(self):
         workplace = Workplace(2, 1, bias=-1)
         workplace.activ_func = linear
-        workplace.node_genes = [0, 1, 1, 2]
+        workplace.node_genes_global = [0, 1, 1, 2]
         worker = Worker(workplace)
 
         nn = NeuralNetwork()
@@ -1321,7 +1321,7 @@ class WorkerTest(unittest.TestCase):
     def test_feedforward__OR(self):
         workplace = Workplace(2, 1, bias=-1)
         workplace.activ_func = linear
-        workplace.node_genes = [0, 1, 1, 2]
+        workplace.node_genes_global = [0, 1, 1, 2]
         worker = Worker(workplace)
 
         nn = NeuralNetwork()
@@ -1352,7 +1352,7 @@ class WorkerTest(unittest.TestCase):
     def test_feedforward__XOR(self):
         workplace = Workplace(2, 1, bias=-1)
         workplace.activ_func = linear
-        workplace.node_genes = [0, 1, 1, 2, 3]
+        workplace.node_genes_global = [0, 1, 1, 2, 3]
         worker = Worker(workplace)
 
         nn = NeuralNetwork()
@@ -1428,7 +1428,7 @@ class WorkerTest(unittest.TestCase):
 
         counter = workplace.innov_counter
         history = workplace.innov_history
-        node_genes = workplace.node_genes
+        node_genes = workplace.node_genes_global
         self.assertEqual(counter, 2)
         self.assertEqual(history, {(0, 3): 0,
                                    (1, 3): 1,
@@ -1443,7 +1443,7 @@ class WorkerTest(unittest.TestCase):
 
         counter = workplace.innov_counter
         history = workplace.innov_history
-        node_genes = workplace.node_genes
+        node_genes = workplace.node_genes_global
         self.assertEqual(counter, 4)
         self.assertEqual(history, {(0, 3): 0,
                                    (1, 3): 1,
@@ -1473,7 +1473,7 @@ class WorkerTest(unittest.TestCase):
 
         counter = workplace.innov_counter
         history = workplace.innov_history
-        node_genes = workplace.node_genes
+        node_genes = workplace.node_genes_global
         self.assertEqual(counter, 4)
         self.assertEqual(history, {(0, 3): 0,
                                    (1, 3): 1,

@@ -18,7 +18,7 @@ class Workplace:
         self.n_nn = n_nn
         self.nns = []
         self.activ_func = activ_func
-        self.node_genes = []
+        self.node_genes_global = []
         self.inputs = None
         if bias is not None:
             self.n_bias = 1

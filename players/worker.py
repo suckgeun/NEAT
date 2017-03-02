@@ -263,7 +263,7 @@ class Worker:
         :return:
         """
 
-        node_genes = self.workplace.node_genes
+        node_genes = self.workplace.node_genes_global
         n_bias = self.workplace.n_bias
         n_input = self.workplace.n_input
         n_output = self.workplace.n_output
@@ -387,7 +387,7 @@ class Worker:
         n_input = self.workplace.n_input
         n_output = self.workplace.n_output
         n_bias = self.workplace.n_bias
-        n_total = len(self.workplace.node_genes)
+        n_total = len(self.workplace.node_genes_global)
         activ_result = [None] * n_total
 
         outputs = self.get_output_nodes()
@@ -437,8 +437,8 @@ class Worker:
 
         new_node = self.get_node_between(node_in, node_out)
         if new_node is None:
-            self.workplace.node_genes.append(3)
-            new_node = len(self.workplace.node_genes) - 1
+            self.workplace.node_genes_global.append(3)
+            new_node = len(self.workplace.node_genes_global) - 1
 
         self.add_connect(node_in, new_node, 1.0, nn)
         self.add_connect(new_node, node_out, ori_weight, nn)
@@ -580,6 +580,12 @@ class Worker:
         nn_new.connect_genes = genes_new
 
         return nn_new
+
+    def activate_neurons(self, inputs, nn):
+
+
+
+        pass
 
 
 
