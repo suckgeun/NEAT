@@ -440,6 +440,9 @@ class Worker:
             self.workplace.node_genes_global.append(3)
             new_node = len(self.workplace.node_genes_global) - 1
 
+        nn.node_index.append(new_node)
+        nn.outputs_prev.append(None)
+        nn.outputs_cur.append(None)
         self.add_connect(node_in, new_node, 1.0, nn)
         self.add_connect(new_node, node_out, ori_weight, nn)
 
