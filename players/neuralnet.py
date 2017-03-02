@@ -34,9 +34,6 @@ class NeuralNetwork:
         else:
             return self._outputs_front
 
-    def flip_outputs_list(self):
-        self._is_output_front = not self._is_output_front
-
     @outputs_cur.setter
     def outputs_cur(self, val):
         assert type(val) is list, "val must be list"
@@ -45,6 +42,12 @@ class NeuralNetwork:
             self._outputs_back = val
         else:
             self._outputs_front = val
+
+    def flip_outputs_list(self):
+        """
+        exchange the lists of outputs_cur and outputs_prev
+        """
+        self._is_output_front = not self._is_output_front
 
 
 
