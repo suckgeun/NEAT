@@ -1114,18 +1114,18 @@ class WorkerTest(unittest.TestCase):
 
         self.assertEqual(worker.get_output_nodes(), [3, 4, 5])
 
-    def test_toggle_outputs_list(self):
+    def test_flip_outputs_list(self):
         nn = NeuralNetwork()
 
         nn.outputs_cur = [1]
         nn.outputs_prev = [2]
 
-        nn.toggle()
+        nn.flip_outputs_list()
 
         self.assertEqual(nn.outputs_cur, [2])
         self.assertEqual(nn.outputs_prev, [1])
 
-        nn.toggle()
+        nn.flip_outputs_list()
 
         self.assertEqual(nn.outputs_cur, [1])
         self.assertEqual(nn.outputs_prev, [2])
