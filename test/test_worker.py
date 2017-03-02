@@ -1453,7 +1453,7 @@ class WorkerTest(unittest.TestCase):
                                    (1, 4): 3,
                                    (4, 3): 4})
         self.assertEqual(node_genes_global, [0, 1, 1, 2, 3])
-        self.assertEqual(nn.node_index, [])
+        self.assertEqual(nn.node_index, [0, 1, 2, 3, 4])
 
         front_connect_weight = worker.get_weight_of_connect(node_in, 4, nn)
         back_connect_weight = worker.get_weight_of_connect(4, node_out, nn)
@@ -1484,6 +1484,7 @@ class WorkerTest(unittest.TestCase):
                                    (1, 4): 3,
                                    (4, 3): 4})
         self.assertEqual(node_genes_global, [0, 1, 1, 2, 3])
+        self.assertEqual(nn2.node_index, [0, 1, 2, 3, 4])
 
         front_connect_weight = worker.get_weight_of_connect(node_in, 4, nn2)
         back_connect_weight = worker.get_weight_of_connect(4, node_out, nn2)
@@ -1496,6 +1497,38 @@ class WorkerTest(unittest.TestCase):
                                                                  [2, 3, 1, 2],
                                                                  [1, 4, 1, 3],
                                                                  [4, 3, 1, 4]])))
+
+        nn3 = workplace.nns[2]
+        node_in = 2
+        node_out = 3
+        ori_weight = worker.get_weight_of_connect(node_in, node_out, nn3)
+        worker.add_node(node_in, node_out, nn3)
+
+        counter = workplace.innov_counter
+        history = workplace.innov_history
+        node_genes_global = workplace.node_genes_global
+        self.assertEqual(counter, 4)
+        self.assertEqual(history, {(0, 3): 0,
+                                   (1, 3): 1,
+                                   (2, 3): 2,
+                                   (1, 4): 3,
+                                   (4, 3): 4,
+                                   (2, 5): 5,
+                                   (5, 3): 6})
+        self.assertEqual(node_genes_global, [0, 1, 1, 2, 3, 3])
+        self.assertEqual(nn3.node_index, [0, 1, 2, 3, 5])
+
+        front_connect_weight = worker.get_weight_of_connect(node_in, 5, nn3)
+        back_connect_weight = worker.get_weight_of_connect(5, node_out, nn3)
+        self.assertEqual(front_connect_weight, 1)
+        self.assertEqual(back_connect_weight, ori_weight)
+        self.assertEqual(nn3.connect_genes.shape, (5, 5))
+        gene_w_removed = np.delete(nn3.connect_genes, 2, 1)
+        self.assertTrue(np.array_equal(gene_w_removed, np.array([[0, 3, 1, 0],
+                                                                 [1, 3, 1, 1],
+                                                                 [2, 3, 1, 2],
+                                                                 [2, 5, 1, 3],
+                                                                 [5, 3, 1, 4]])))
 
     def test_disable_connect(self):
         workplace = Workplace(3, 1)
