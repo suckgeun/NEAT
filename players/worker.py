@@ -236,8 +236,8 @@ class Worker:
         n_node_in = n_bias + n_input
         n_node_out = n_output
 
-        # initialize node_genes
-        nn.node_genes = list(range(n_node_in + n_node_out))
+        # initialize node_index
+        nn.node_index = list(range(n_node_in + n_node_out))
 
         # initialize connect_genes
         for node_in in range(n_node_in):

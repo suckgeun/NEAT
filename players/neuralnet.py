@@ -4,7 +4,7 @@ class NeuralNetwork:
     """
 
     def __init__(self):
-        self.node_genes = None
+        self.node_index = None
         self.connect_genes = None
         self.fitness = None
         self._outputs_front = None

@@ -698,7 +698,7 @@ class WorkerTest(unittest.TestCase):
 
         # node_genes_global check
         # [0, 1, 2, 3, 4]
-        self.assertEqual(nn.node_genes, [0, 1, 2, 3, 4])
+        self.assertEqual(nn.node_index, [0, 1, 2, 3, 4])
 
         # connect_genes check
         # in, out, weight, enabled, innov
@@ -756,7 +756,7 @@ class WorkerTest(unittest.TestCase):
 
         # node_genes_global check
         # [0, 1, 2, 3, 4]
-        self.assertEqual(nn.node_genes, [0, 1, 2, 3])
+        self.assertEqual(nn.node_index, [0, 1, 2, 3])
 
         # connect_genes check
         # in, out, weight, enabled, innov
@@ -807,7 +807,7 @@ class WorkerTest(unittest.TestCase):
 
         # node_genes_global check
         # [0, 1, 2, 3, 4, 5]
-        self.assertEqual(nn.node_genes, [0, 1, 2, 3, 4, 5])
+        self.assertEqual(nn.node_index, [0, 1, 2, 3, 4, 5])
 
         # in, out, weight, enabled, innov
         #  0,   3,     w1,       1,     0,
@@ -904,7 +904,7 @@ class WorkerTest(unittest.TestCase):
 
         # node_genes_global check
         # [0, 1, 2, 3, 4, 5]
-        self.assertEqual(nn.node_genes, [0, 1, 2, 3, 4])
+        self.assertEqual(nn.node_index, [0, 1, 2, 3, 4])
 
         # in, out, weight, enabled, innov
         #  0,   2,     w1,       1,     0,
@@ -1428,12 +1428,14 @@ class WorkerTest(unittest.TestCase):
 
         counter = workplace.innov_counter
         history = workplace.innov_history
-        node_genes = workplace.node_genes_global
+        node_genes_global = workplace.node_genes_global
+        nn = workplace.nns[0]
         self.assertEqual(counter, 2)
         self.assertEqual(history, {(0, 3): 0,
                                    (1, 3): 1,
                                    (2, 3): 2})
-        self.assertEqual(node_genes, [0, 1, 1, 2])
+        self.assertEqual(node_genes_global, [0, 1, 1, 2])
+        self.assertEqual(nn.node_index, [0, 1, 2, 3])
 
         nn = workplace.nns[0]
         node_in = 1
@@ -1443,14 +1445,15 @@ class WorkerTest(unittest.TestCase):
 
         counter = workplace.innov_counter
         history = workplace.innov_history
-        node_genes = workplace.node_genes_global
+        node_genes_global = workplace.node_genes_global
         self.assertEqual(counter, 4)
         self.assertEqual(history, {(0, 3): 0,
                                    (1, 3): 1,
                                    (2, 3): 2,
                                    (1, 4): 3,
                                    (4, 3): 4})
-        self.assertEqual(node_genes, [0, 1, 1, 2, 3])
+        self.assertEqual(node_genes_global, [0, 1, 1, 2, 3])
+        self.assertEqual(nn.node_index, [])
 
         front_connect_weight = worker.get_weight_of_connect(node_in, 4, nn)
         back_connect_weight = worker.get_weight_of_connect(4, node_out, nn)
@@ -1473,14 +1476,14 @@ class WorkerTest(unittest.TestCase):
 
         counter = workplace.innov_counter
         history = workplace.innov_history
-        node_genes = workplace.node_genes_global
+        node_genes_global = workplace.node_genes_global
         self.assertEqual(counter, 4)
         self.assertEqual(history, {(0, 3): 0,
                                    (1, 3): 1,
                                    (2, 3): 2,
                                    (1, 4): 3,
                                    (4, 3): 4})
-        self.assertEqual(node_genes, [0, 1, 1, 2, 3])
+        self.assertEqual(node_genes_global, [0, 1, 1, 2, 3])
 
         front_connect_weight = worker.get_weight_of_connect(node_in, 4, nn2)
         back_connect_weight = worker.get_weight_of_connect(4, node_out, nn2)
