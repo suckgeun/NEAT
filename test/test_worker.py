@@ -1149,6 +1149,9 @@ class WorkerTest(unittest.TestCase):
         worker.activate_genes(inputs, nn1)
         self.assertEqual(nn1.outputs_prev, [-1, 0, 0, None])
         self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -1])
+        worker.activate_genes([None, None], nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, None])
+        self.assertEqual(nn1.outputs_cur, [-1, None, None, -1])
 
         inputs = np.array([1, 0])
         worker.activate_genes(inputs, nn1)
@@ -1201,6 +1204,9 @@ class WorkerTest(unittest.TestCase):
         worker.activate_genes(inputs, nn1)
         self.assertEqual(nn1.outputs_prev, [-1, 1, 0, None])
         self.assertEqual(nn1.outputs_cur, [-1, 1, 0, 1])
+        worker.activate_genes([None, None], nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, None])
+        self.assertEqual(nn1.outputs_cur, [-1, None, None, -1])
 
         inputs = np.array([0, 1])
         worker.activate_genes(inputs, nn1)
@@ -1277,6 +1283,9 @@ class WorkerTest(unittest.TestCase):
         worker.activate_genes(inputs, nn1)
         self.assertEqual(nn1.outputs_prev, [-1, 1, 1, None, 1])
         self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 2.7, 1])
+        worker.activate_genes([None, None], nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, None, 1])
+        self.assertEqual(nn1.outputs_cur, [-1, None, None, 2.7, 1])
 
     def test_feedforward__AND(self):
         workplace = Workplace(2, 1, bias=-1)
