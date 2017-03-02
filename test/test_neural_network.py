@@ -14,7 +14,7 @@ class NeuralNetworkTest(unittest.TestCase):
         # 0: input
         # 1: output
         # 2: hidden
-        self.assertTrue(np.array_equal(nn.node_genes, np.array([0, 0, 0, 1])), "initial nodes")
+        self.assertTrue(np.array_equal(nn.node_indices, np.array([0, 0, 0, 1])), "initial nodes")
         self.assertIsNone(nn.connect_genes, "before initialization")
 
 
@@ -25,7 +25,7 @@ class NeuralNetworkTest(unittest.TestCase):
 
     def test_add_hidden_node(self):
         nn = NeuralNetwork(2, 1)
-        self.assertTrue(np.array_equal(nn.node_genes, np.array([0, 0, 1])))
+        self.assertTrue(np.array_equal(nn.node_indices, np.array([0, 0, 1])))
 
         # connection_gene
         # in, out, weight, enabled, innov
@@ -35,7 +35,7 @@ class NeuralNetworkTest(unittest.TestCase):
         # if connection number is given, add a hidden node there
         # if not, add a hidden node to a random connection.
         nn.add_hidden_node(target_connection=0)
-        self.assertTrue(np.array_equal(nn.node_genes, np.array([0, 0, 1, 2])))
+        self.assertTrue(np.array_equal(nn.node_indices, np.array([0, 0, 1, 2])))
         # in, out, weight, enabled, innov
         #  0,   2,     w1,       0,     0, (connection_num = 0)
         #  1,   2,     w2,       1,     1, (connection_num = 1)
@@ -64,7 +64,7 @@ class NeuralNetworkTest(unittest.TestCase):
         #  0,   3,   0.99,       1,     2, (connection_num = 2)
         #  3,   2,  -0.99,       1,     3, (connection_num = 3)
         nn.add_hidden_node(target_connection=2)
-        self.assertTrue(np.array_equal(nn.node_genes, np.array([0, 0, 1, 2, 2])))
+        self.assertTrue(np.array_equal(nn.node_indices, np.array([0, 0, 1, 2, 2])))
         # in, out, weight, enabled, innov
         #  0,   2,     w1,       0,     0, (connection_num = 0)
         #  1,   2,     w2,       1,     1, (connection_num = 1)

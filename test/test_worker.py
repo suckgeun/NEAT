@@ -698,7 +698,7 @@ class WorkerTest(unittest.TestCase):
 
         # node_genes_global check
         # [0, 1, 2, 3, 4]
-        self.assertEqual(nn.node_index, [0, 1, 2, 3, 4])
+        self.assertEqual(nn.node_indices, [0, 1, 2, 3, 4])
 
         # connect_genes check
         # in, out, weight, enabled, innov
@@ -756,7 +756,7 @@ class WorkerTest(unittest.TestCase):
 
         # node_genes_global check
         # [0, 1, 2, 3, 4]
-        self.assertEqual(nn.node_index, [0, 1, 2, 3])
+        self.assertEqual(nn.node_indices, [0, 1, 2, 3])
 
         # connect_genes check
         # in, out, weight, enabled, innov
@@ -807,7 +807,7 @@ class WorkerTest(unittest.TestCase):
 
         # node_genes_global check
         # [0, 1, 2, 3, 4, 5]
-        self.assertEqual(nn.node_index, [0, 1, 2, 3, 4, 5])
+        self.assertEqual(nn.node_indices, [0, 1, 2, 3, 4, 5])
 
         # in, out, weight, enabled, innov
         #  0,   3,     w1,       1,     0,
@@ -904,7 +904,7 @@ class WorkerTest(unittest.TestCase):
 
         # node_genes_global check
         # [0, 1, 2, 3, 4, 5]
-        self.assertEqual(nn.node_index, [0, 1, 2, 3, 4])
+        self.assertEqual(nn.node_indices, [0, 1, 2, 3, 4])
 
         # in, out, weight, enabled, innov
         #  0,   2,     w1,       1,     0,
@@ -1435,7 +1435,7 @@ class WorkerTest(unittest.TestCase):
                                    (1, 3): 1,
                                    (2, 3): 2})
         self.assertEqual(node_genes_global, [0, 1, 1, 2])
-        self.assertEqual(nn.node_index, [0, 1, 2, 3])
+        self.assertEqual(nn.node_indices, [0, 1, 2, 3])
         self.assertEqual(nn.outputs_prev, [-1, None, None, None])
         self.assertEqual(nn.outputs_cur, [-1, None, None, None])
 
@@ -1455,7 +1455,7 @@ class WorkerTest(unittest.TestCase):
                                    (1, 4): 3,
                                    (4, 3): 4})
         self.assertEqual(node_genes_global, [0, 1, 1, 2, 3])
-        self.assertEqual(nn.node_index, [0, 1, 2, 3, 4])
+        self.assertEqual(nn.node_indices, [0, 1, 2, 3, 4])
         self.assertEqual(nn.outputs_prev, [-1, None, None, None, None])
         self.assertEqual(nn.outputs_cur, [-1, None, None, None, None])
 
@@ -1488,7 +1488,7 @@ class WorkerTest(unittest.TestCase):
                                    (1, 4): 3,
                                    (4, 3): 4})
         self.assertEqual(node_genes_global, [0, 1, 1, 2, 3])
-        self.assertEqual(nn2.node_index, [0, 1, 2, 3, 4])
+        self.assertEqual(nn2.node_indices, [0, 1, 2, 3, 4])
         self.assertEqual(nn2.outputs_prev, [-1, None, None, None, None])
         self.assertEqual(nn2.outputs_cur, [-1, None, None, None, None])
 
@@ -1522,7 +1522,7 @@ class WorkerTest(unittest.TestCase):
                                    (2, 5): 5,
                                    (5, 3): 6})
         self.assertEqual(node_genes_global, [0, 1, 1, 2, 3, 3])
-        self.assertEqual(nn3.node_index, [0, 1, 2, 3, 5])
+        self.assertEqual(nn3.node_indices, [0, 1, 2, 3, 5])
         self.assertEqual(nn3.outputs_prev, [-1, None, None, None, None])
         self.assertEqual(nn3.outputs_cur, [-1, None, None, None, None])
 

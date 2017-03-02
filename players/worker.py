@@ -236,8 +236,8 @@ class Worker:
         n_node_in = n_bias + n_input
         n_node_out = n_output
 
-        # initialize node_index
-        nn.node_index = list(range(n_node_in + n_node_out))
+        # initialize node_indices
+        nn.node_indices = list(range(n_node_in + n_node_out))
 
         # initialize connect_genes
         for node_in in range(n_node_in):
@@ -440,7 +440,7 @@ class Worker:
             self.workplace.node_genes_global.append(3)
             new_node = len(self.workplace.node_genes_global) - 1
 
-        nn.node_index.append(new_node)
+        nn.node_indices.append(new_node)
         nn.outputs_prev.append(None)
         nn.outputs_cur.append(None)
         self.add_connect(node_in, new_node, 1.0, nn)
@@ -586,9 +586,11 @@ class Worker:
 
     def activate_neurons(self, inputs, nn):
 
+        for node in nn.node_index:
 
 
-        pass
+
+            pass
 
 
 
