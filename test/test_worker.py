@@ -733,10 +733,10 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn.connect_genes[3, 4], 3, "innovation number")
 
         # outputs_prev check
-        self.assertEqual(nn.outputs_prev, [bias, None, None, None, None])
+        self.assertEqual(nn.outputs_prev, [bias, 0, 0, 0, 0])
 
         # outputs_cur check
-        self.assertEqual(nn.outputs_cur, [bias, None, None, None, None])
+        self.assertEqual(nn.outputs_cur, [bias, 0, 0, 0, 0])
 
         # innov_history check
         self.assertEqual(workplace.innov_history, {(0, 4): 0,
@@ -784,10 +784,10 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn.connect_genes[2, 4], 2, "innovation number")
 
         # outputs_prev check
-        self.assertEqual(nn.outputs_prev, [None, None, None, None])
+        self.assertEqual(nn.outputs_prev, [0, 0, 0, 0])
 
         # outputs_cur check
-        self.assertEqual(nn.outputs_cur, [None, None, None, None])
+        self.assertEqual(nn.outputs_cur, [0, 0, 0, 0])
 
         # innov_history check
         self.assertEqual(workplace.innov_history, {(0, 3): 0,
@@ -876,10 +876,10 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn.connect_genes[8, 4], 8, "innovation number")
 
         # outputs_prev check
-        self.assertEqual(nn.outputs_prev, [bias, None, None, None, None, None])
+        self.assertEqual(nn.outputs_prev, [bias, 0, 0, 0, 0, 0])
 
         # outputs_cur check
-        self.assertEqual(nn.outputs_cur, [bias, None, None, None, None, None])
+        self.assertEqual(nn.outputs_cur, [bias, 0, 0, 0, 0, 0])
 
         # innov_history check
         self.assertEqual(workplace.innov_history, {(0, 3): 0,
@@ -952,10 +952,10 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn.connect_genes[5, 4], 5, "innovation number")
 
         # outputs_prev check
-        self.assertEqual(nn.outputs_prev, [None, None, None, None, None])
+        self.assertEqual(nn.outputs_prev, [0, 0, 0, 0, 0])
 
         # outputs_cur check
-        self.assertEqual(nn.outputs_cur, [None, None, None, None, None])
+        self.assertEqual(nn.outputs_cur, [0, 0, 0, 0, 0])
 
         # innov_history check
         self.assertEqual(workplace.innov_history, {(0, 2): 0,
@@ -1130,6 +1130,20 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn.outputs_cur, [1])
         self.assertEqual(nn.outputs_prev, [2])
 
+    def test_get_node_output(self):
+        workplace = Workplace(2, 1, bias=-1, n_nn=1)
+        workplace.activ_func = linear
+        worker = Worker(workplace)
+        worker.initialize_workplace()
+
+        nn1 = worker.workplace.nns[0]
+
+        nn1.outputs_cur = [1, 2, 3, 4]
+        nn1.outputs_prev = [-1, -2, -3, -4]
+        nn1.node_index = [0, 1, 2, 3]
+
+
+
     def test_activate_neurons__AND(self):
         workplace = Workplace(2, 1, bias=-1, n_nn=1)
         workplace.activ_func = linear
@@ -1144,27 +1158,24 @@ class WorkerTest(unittest.TestCase):
 
         inputs = np.array([0, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, None, None, None])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, None])
-        worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, 0])
         self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -1])
-        worker.activate_neurons([None, None], nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, None])
-        self.assertEqual(nn1.outputs_cur, [-1, None, None, -1])
+        worker.activate_neurons(inputs, nn1)
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, -1])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -1])
 
         inputs = np.array([1, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, None, None, None])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, -1])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, -1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, -1])
         self.assertEqual(nn1.outputs_cur, [-1, 1, 0, 0])
 
         inputs = np.array([0, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, None, None, None])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, 0])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 0])
         worker.activate_neurons(inputs, nn1)
         self.assertEqual(nn1.outputs_prev, [-1, 0, 1, None])
         self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 0])
@@ -1436,8 +1447,8 @@ class WorkerTest(unittest.TestCase):
                                    (2, 3): 2})
         self.assertEqual(node_genes_global, [0, 1, 1, 2])
         self.assertEqual(nn.node_indices, [0, 1, 2, 3])
-        self.assertEqual(nn.outputs_prev, [-1, None, None, None])
-        self.assertEqual(nn.outputs_cur, [-1, None, None, None])
+        self.assertEqual(nn.outputs_prev, [-1, 0, 0, 0])
+        self.assertEqual(nn.outputs_cur, [-1, 0, 0, 0])
 
         nn = workplace.nns[0]
         node_in = 1
@@ -1456,8 +1467,8 @@ class WorkerTest(unittest.TestCase):
                                    (4, 3): 4})
         self.assertEqual(node_genes_global, [0, 1, 1, 2, 3])
         self.assertEqual(nn.node_indices, [0, 1, 2, 3, 4])
-        self.assertEqual(nn.outputs_prev, [-1, None, None, None, None])
-        self.assertEqual(nn.outputs_cur, [-1, None, None, None, None])
+        self.assertEqual(nn.outputs_prev, [-1, 0, 0, 0, 0])
+        self.assertEqual(nn.outputs_cur, [-1, 0, 0, 0, 0])
 
         front_connect_weight = worker.get_weight_of_connect(node_in, 4, nn)
         back_connect_weight = worker.get_weight_of_connect(4, node_out, nn)
@@ -1489,8 +1500,8 @@ class WorkerTest(unittest.TestCase):
                                    (4, 3): 4})
         self.assertEqual(node_genes_global, [0, 1, 1, 2, 3])
         self.assertEqual(nn2.node_indices, [0, 1, 2, 3, 4])
-        self.assertEqual(nn2.outputs_prev, [-1, None, None, None, None])
-        self.assertEqual(nn2.outputs_cur, [-1, None, None, None, None])
+        self.assertEqual(nn2.outputs_prev, [-1, 0, 0, 0, 0])
+        self.assertEqual(nn2.outputs_cur, [-1, 0, 0, 0, 0])
 
         front_connect_weight = worker.get_weight_of_connect(node_in, 4, nn2)
         back_connect_weight = worker.get_weight_of_connect(4, node_out, nn2)
@@ -1523,8 +1534,8 @@ class WorkerTest(unittest.TestCase):
                                    (5, 3): 6})
         self.assertEqual(node_genes_global, [0, 1, 1, 2, 3, 3])
         self.assertEqual(nn3.node_indices, [0, 1, 2, 3, 5])
-        self.assertEqual(nn3.outputs_prev, [-1, None, None, None, None])
-        self.assertEqual(nn3.outputs_cur, [-1, None, None, None, None])
+        self.assertEqual(nn3.outputs_prev, [-1, 0, 0, 0, 0])
+        self.assertEqual(nn3.outputs_cur, [-1, 0, 0, 0, 0])
 
         front_connect_weight = worker.get_weight_of_connect(node_in, 5, nn3)
         back_connect_weight = worker.get_weight_of_connect(5, node_out, nn3)

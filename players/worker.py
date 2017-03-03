@@ -248,8 +248,8 @@ class Worker:
                 self.add_connect(node_in, node_out, random.uniform(-1.0, 1.0), nn)
 
         # initialize outputs_prev and outputs_cur
-        outputs_prev = [None] * (n_input + n_output)
-        outputs_cur = [None] * (n_input + n_output)
+        outputs_prev = [0] * (n_input + n_output)
+        outputs_cur = [0] * (n_input + n_output)
         if n_bias != 0:
             outputs_prev = [self.workplace.bias] + outputs_prev
             outputs_cur = [self.workplace.bias] + outputs_cur
@@ -441,8 +441,8 @@ class Worker:
             new_node = len(self.workplace.node_genes_global) - 1
 
         nn.node_indices.append(new_node)
-        nn.outputs_prev.append(None)
-        nn.outputs_cur.append(None)
+        nn.outputs_prev.append(0)
+        nn.outputs_cur.append(0)
         self.add_connect(node_in, new_node, 1.0, nn)
         self.add_connect(new_node, node_out, ori_weight, nn)
 
@@ -586,11 +586,40 @@ class Worker:
 
     def activate_neurons(self, inputs, nn):
 
-        for node in nn.node_index:
+        n_bias = self.workplace.n_bias
 
+        nn.flip_outputs_list()
 
+        for node_index in nn.node_indices:
 
-            pass
+            output_index = nn.node_indices.index(node_index)
+
+            nodes_in = self.get_nodes_in_of_node(node_index, nn)
+
+            if self.is_bias_node(node_index):
+                pass
+
+            elif self.is_input_node(node_index):
+                nn.outputs_cur[output_index] = inputs[output_index - n_bias]
+
+                for node_in in nodes_in:
+                    weight = self.get_weight_of_connect(node_in, node_index, nn)
+                    output_in_index = nn.node_indices.index(node_in)
+                    output_prev = nn.outputs_prev[output_in_index]
+
+                    nn.outputs_cur[output_index] += weight * output_prev
+
+            else:
+                wx_sum = 0
+
+                for node_in in nodes_in:
+                    output_in_index = nn.node_indices.index(node_in)
+                    output_prev = nn.outputs_prev[output_in_index]
+                    weight = self.get_weight_of_connect(node_in, node_index, nn)
+                    wx_sum += weight * output_prev
+
+                nn.outputs_cur[output_index] = self.workplace.activ_func(wx_sum)
+
 
 
 
