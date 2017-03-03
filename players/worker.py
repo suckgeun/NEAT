@@ -603,10 +603,9 @@ class Worker:
                 nn.outputs_cur[output_index] = inputs[output_index - n_bias]
 
                 for node_in in nodes_in:
-                    weight = self.get_weight_of_connect(node_in, node_index, nn)
                     output_in_index = nn.node_indices.index(node_in)
                     output_prev = nn.outputs_prev[output_in_index]
-
+                    weight = self.get_weight_of_connect(node_in, node_index, nn)
                     nn.outputs_cur[output_index] += weight * output_prev
 
             else:
