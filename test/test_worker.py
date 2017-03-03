@@ -1130,20 +1130,6 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn.outputs_cur, [1])
         self.assertEqual(nn.outputs_prev, [2])
 
-    def test_get_node_output(self):
-        workplace = Workplace(2, 1, bias=-1, n_nn=1)
-        workplace.activ_func = linear
-        worker = Worker(workplace)
-        worker.initialize_workplace()
-
-        nn1 = worker.workplace.nns[0]
-
-        nn1.outputs_cur = [1, 2, 3, 4]
-        nn1.outputs_prev = [-1, -2, -3, -4]
-        nn1.node_index = [0, 1, 2, 3]
-
-
-
     def test_activate_neurons__AND(self):
         workplace = Workplace(2, 1, bias=-1, n_nn=1)
         workplace.activ_func = linear
@@ -1177,15 +1163,15 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn1.outputs_prev, [-1, 1, 0, 0])
         self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, 0])
         self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 0])
 
         inputs = np.array([1, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, None, None, None])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, 0])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, 0])
         self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 1])
         
     def test_activate_neurons__OR(self):
@@ -1202,37 +1188,34 @@ class WorkerTest(unittest.TestCase):
 
         inputs = np.array([0, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, None, None, None])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, 0])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -0.5])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, -0.5])
         self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -0.5])
 
         inputs = np.array([1, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, None, None, None])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, -0.5])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, -0.5])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, -0.5])
         self.assertEqual(nn1.outputs_cur, [-1, 1, 0, 1])
-        worker.activate_neurons([None, None], nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, None])
-        self.assertEqual(nn1.outputs_cur, [-1, None, None, -1])
 
         inputs = np.array([0, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, None, None, None])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, 1])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, 1])
         self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 1])
 
         inputs = np.array([1, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, None, None, None])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, 1])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, 1])
         self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 2.5])
     
     def test_activate_neurons__XOR(self):
@@ -1250,53 +1233,55 @@ class WorkerTest(unittest.TestCase):
                                       [4, 3, 2.0, 1, 4],
                                       [2, 4, 2.0, 1, 5],
                                       [0, 4, 2.0, 1, 6]])
+        nn1.node_indices = [0, 1, 2, 3, 4]
+        nn1.outputs_prev = [-1, 0, 0, 0, 0]
+        nn1.outputs_cur = [-1, 0, 0, 0, 0]
 
         inputs = np.array([0, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, None, None, None, None])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, None, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, 0, 0])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -0.3, -1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, None, None])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, None, -1])
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, -0.3, -1])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -1.3, -1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, None, -1])
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, -1.3, -1])
         self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -1.3, -1])
 
         inputs = np.array([1, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, None, None, None, None])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, None, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, -1.3, -1])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, -1.3, -1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, None, None])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, None, 0])
+        nn1.outputs_prev = [round(elem, 2) for elem in nn1.outputs_prev]
+        nn1.outputs_cur = [round(elem, 2) for elem in nn1.outputs_cur]
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, -1.3, -1])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, -0.3, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, None, 0])
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, -0.3, 0])
         self.assertEqual(nn1.outputs_cur, [-1, 1, 0, 0.7, 0])
 
         inputs = np.array([0, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, None, None, None, None])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, None, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, 0.7, 0])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 0.7, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, None, None])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, None, 0])
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, 0.7, 0])
+        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 0.7, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, None, 0])
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, 0.7, 0])
         self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 0.7, 0])
 
         inputs = np.array([1, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, None, None, None, None])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, None, None])
+        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, 0.7, 0])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 0.7, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, None, None])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, None, 1])
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, 0.7, 0])
+        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 1.7, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, None, 1])
+        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, 1.7, 1])
         self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 2.7, 1])
-        worker.activate_neurons([None, None], nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, None, 1])
-        self.assertEqual(nn1.outputs_cur, [-1, None, None, 2.7, 1])
 
     def test_feedforward__AND(self):
         workplace = Workplace(2, 1, bias=-1)
