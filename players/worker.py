@@ -585,7 +585,16 @@ class Worker:
         return nn_new
 
     def activate_neurons(self, inputs, nn):
+        """
+        activate all neurons.
 
+        When activating one neuron, information of previous step is used.
+
+        :param inputs: input of current step
+        :param nn: neural network
+        """
+
+        # TODO: More document and refactoring needed
         n_bias = self.workplace.n_bias
 
         nn.flip_outputs_list()
