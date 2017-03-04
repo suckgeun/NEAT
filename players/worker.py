@@ -284,7 +284,7 @@ class Worker:
             self.workplace.nns.append(nn)
 
         self.workplace.is_initialized = True
-        self.workplace.fitnesses = [None]*n_nn
+        self.workplace.fitnesses_adjusted = [None] * n_nn
 
     @staticmethod
     def get_nodes_in_of_node(node_out, nn):
