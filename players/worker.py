@@ -298,7 +298,7 @@ class Worker:
 
         connects = nn.connect_genes[:, 0:2]
 
-        return {connect[0] for connect in connects if connect[1] == node_out}
+        return connects[connects[:, 1] == node_out][:, 0]
 
     @staticmethod
     def get_weight_of_connect(node_in, node_out, nn):
@@ -627,10 +627,6 @@ class Worker:
                     wx_sum += weight * output_prev
 
                 nn.outputs_cur[output_index] = self.workplace.activ_func(wx_sum)
-
-
-
-
 
 
 
