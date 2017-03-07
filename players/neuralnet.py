@@ -7,47 +7,27 @@ class NeuralNetwork:
         self.node_indices = None
         self.connect_genes = None
         self.fitness = None
-        self._outputs_front = None
-        self._outputs_back = None
-        self._is_output_front = False
+        self.results = None
+        self._is_front = False
+        self._result_col1 = 5
+        self._result_col2 = 6
 
     @property
-    def outputs_prev(self):
-        if self._is_output_front:
-            return self._outputs_front
+    def result_col_prev(self):
+        if self._is_front:
+            return self._result_col1
         else:
-            return self._outputs_back
-
-    @outputs_prev.setter
-    def outputs_prev(self, val):
-        assert type(val) is list, "val must be list"
-
-        if self._is_output_front:
-            self._outputs_front = val
-        else:
-            self._outputs_back = val
+            return self._result_col2
 
     @property
-    def outputs_cur(self):
-        if self._is_output_front:
-            return self._outputs_back
+    def result_col_cur(self):
+        if self._is_front:
+            return self._result_col2
         else:
-            return self._outputs_front
+            return self._result_col1
 
-    @outputs_cur.setter
-    def outputs_cur(self, val):
-        assert type(val) is list, "val must be list"
-
-        if self._is_output_front:
-            self._outputs_back = val
-        else:
-            self._outputs_front = val
-
-    def flip_outputs_list(self):
-        """
-        exchange the lists of outputs_cur and outputs_prev
-        """
-        self._is_output_front = not self._is_output_front
+    def flip(self):
+        self._is_front = not self._is_front
 
 
 

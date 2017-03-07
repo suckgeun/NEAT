@@ -214,7 +214,12 @@ class Worker:
             self.record_innov_history((node_in, node_out))
             innov_num = self.workplace.innov_counter
 
-        new_gene = np.array([[node_in, node_out, weight, ENABLED, innov_num]])
+        result_node_in = 0
+
+        if self.is_bias_node(node_in):
+            result_node_in = self.workplace.bias
+
+        new_gene = np.array([[node_in, node_out, weight, ENABLED, innov_num, result_node_in, result_node_in]])
 
         if nn.connect_genes is None:
             nn.connect_genes = new_gene
@@ -247,14 +252,11 @@ class Worker:
                 # TODO decide how to cap the random weights.
                 self.add_connect(node_in, node_out, random.uniform(-1.0, 1.0), nn)
 
-        # initialize outputs_prev and outputs_cur
-        outputs_prev = [0] * (n_input + n_output)
-        outputs_cur = [0] * (n_input + n_output)
+        # initialize results list
+        results = [0] * (n_input + n_output)
         if n_bias != 0:
-            outputs_prev = [self.workplace.bias] + outputs_prev
-            outputs_cur = [self.workplace.bias] + outputs_cur
-        nn.outputs_prev = outputs_prev
-        nn.outputs_cur = outputs_cur
+            results = [self.workplace.bias] + results
+        nn.results = results
 
     def initialize_workplace(self):
         """
@@ -441,8 +443,7 @@ class Worker:
             new_node = len(self.workplace.node_genes_global) - 1
 
         nn.node_indices.append(new_node)
-        nn.outputs_prev.append(0)
-        nn.outputs_cur.append(0)
+        nn.results.append(0)
         self.add_connect(node_in, new_node, 1.0, nn)
         self.add_connect(new_node, node_out, ori_weight, nn)
 
@@ -594,40 +595,29 @@ class Worker:
         :param nn: neural network
         """
 
-        # TODO: More document and refactoring needed
-        n_bias = self.workplace.n_bias
+        nn.flip()
+        cur = nn.result_col_cur
+        prev = nn.result_col_prev
 
-        nn.flip_outputs_list()
+        nn.connect_genes[:, prev] *= nn.connect_genes[:, 2]
 
-        for node_index in nn.node_indices:
+        m = nn.connect_genes
 
-            output_index = nn.node_indices.index(node_index)
-
-            nodes_in = self.get_nodes_in_of_node(node_index, nn)
+        for i, node_index in enumerate(nn.node_indices):
+            n_bias = self.workplace.n_bias
 
             if self.is_bias_node(node_index):
-                pass
-
+                m[:, cur][m[:, 0] == node_index] = self.workplace.bias
             elif self.is_input_node(node_index):
-                nn.outputs_cur[output_index] = inputs[output_index - n_bias]
-
-                for node_in in nodes_in:
-                    output_in_index = nn.node_indices.index(node_in)
-                    output_prev = nn.outputs_prev[output_in_index]
-                    weight = self.get_weight_of_connect(node_in, node_index, nn)
-                    nn.outputs_cur[output_index] += weight * output_prev
-
+                wx_sum = m[m[:, 1] == node_index][:, prev].sum()
+                val = inputs[i - n_bias] + wx_sum
+                nn.results[i] = val
+                m[:, cur][m[:, 0] == node_index] = val
             else:
-                wx_sum = 0
-
-                for node_in in nodes_in:
-                    output_in_index = nn.node_indices.index(node_in)
-                    output_prev = nn.outputs_prev[output_in_index]
-                    weight = self.get_weight_of_connect(node_in, node_index, nn)
-                    wx_sum += weight * output_prev
-
-                nn.outputs_cur[output_index] = self.workplace.activ_func(wx_sum)
-
+                wx_sum = m[m[:, 1] == node_index][:, prev].sum()
+                val = self.workplace.activ_func(wx_sum)
+                nn.results[i] = val
+                m[:, cur][m[:, 0] == node_index] = val
 
 
 

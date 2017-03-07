@@ -604,7 +604,7 @@ class WorkerTest(unittest.TestCase):
                            weight=0.0,
                            nn=nn)
 
-        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0]])))
+        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0, 0, 0]])))
         self.assertEqual(workplace.innov_counter, 0, "innov counter should be 0")
         self.assertEqual(workplace.innov_history, {(0, 6): 0})
 
@@ -613,8 +613,8 @@ class WorkerTest(unittest.TestCase):
                            weight=1.0,
                            nn=nn)
 
-        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0],
-                                                                   [0, 7, 1, 1, 1]])))
+        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0, 0, 0],
+                                                                   [0, 7, 1, 1, 1, 0, 0]])))
         self.assertEqual(workplace.innov_counter, 1, "innov counter should be 1")
         self.assertEqual(workplace.innov_history, {(0, 6): 0,
                                                    (0, 7): 1})
@@ -624,9 +624,9 @@ class WorkerTest(unittest.TestCase):
                            weight=1.0,
                            nn=nn)
 
-        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0],
-                                                                   [0, 7, 1, 1, 1],
-                                                                   [0, 0, 1, 1, 2]])))
+        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0, 0, 0],
+                                                                   [0, 7, 1, 1, 1, 0, 0],
+                                                                   [0, 0, 1, 1, 2, 0, 0]])))
         self.assertEqual(workplace.innov_counter, 2, "innov counter should be 2")
         self.assertEqual(workplace.innov_history, {(0, 6): 0,
                                                    (0, 7): 1,
@@ -637,10 +637,10 @@ class WorkerTest(unittest.TestCase):
                            weight=1.0,
                            nn=nn)
 
-        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0],
-                                                                   [0, 7, 1, 1, 1],
-                                                                   [0, 0, 1, 1, 2],
-                                                                   [0, 1, 1, 1, 3]])))
+        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0, 0, 0],
+                                                                   [0, 7, 1, 1, 1, 0, 0],
+                                                                   [0, 0, 1, 1, 2, 0, 0],
+                                                                   [0, 1, 1, 1, 3, 0, 0]])))
         self.assertEqual(workplace.innov_counter, 3, "innov counter should be 2")
         self.assertEqual(workplace.innov_history, {(0, 6): 0,
                                                    (0, 7): 1,
@@ -652,11 +652,11 @@ class WorkerTest(unittest.TestCase):
                            weight=1.0,
                            nn=nn)
 
-        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0],
-                                                                   [0, 7, 1, 1, 1],
-                                                                   [0, 0, 1, 1, 2],
-                                                                   [0, 1, 1, 1, 3],
-                                                                   [7, 8, 1, 1, 4]])))
+        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0, 0, 0],
+                                                                   [0, 7, 1, 1, 1, 0, 0],
+                                                                   [0, 0, 1, 1, 2, 0, 0],
+                                                                   [0, 1, 1, 1, 3, 0, 0],
+                                                                   [7, 8, 1, 1, 4, 0, 0]])))
         self.assertEqual(workplace.innov_counter, 4, "innov counter should be 2")
         self.assertEqual(workplace.innov_history, {(0, 6): 0,
                                                    (0, 7): 1,
@@ -669,12 +669,12 @@ class WorkerTest(unittest.TestCase):
                            weight=1.0,
                            nn=nn)
 
-        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0],
-                                                                   [0, 7, 1, 1, 1],
-                                                                   [0, 0, 1, 1, 2],
-                                                                   [0, 1, 1, 1, 3],
-                                                                   [7, 8, 1, 1, 4],
-                                                                   [7, 0, 1, 1, 5]])))
+        self.assertTrue(np.array_equal(nn.connect_genes, np.array([[0, 6, 0, 1, 0, 0, 0],
+                                                                   [0, 7, 1, 1, 1, 0, 0],
+                                                                   [0, 0, 1, 1, 2, 0, 0],
+                                                                   [0, 1, 1, 1, 3, 0, 0],
+                                                                   [7, 8, 1, 1, 4, 0, 0],
+                                                                   [7, 0, 1, 1, 5, 0, 0]])))
         self.assertEqual(workplace.innov_counter, 5, "innov counter should be 2")
         self.assertEqual(workplace.innov_history, {(0, 6): 0,
                                                    (0, 7): 1,
@@ -706,7 +706,7 @@ class WorkerTest(unittest.TestCase):
         #  1,   4,     w2,       1,     1,
         #  2,   4,     w3,       1,     2,
         #  3,   4,     w4,       1,     3,
-        self.assertEqual(nn.connect_genes.shape, (4, 5), "shape of connect genes")
+        self.assertEqual(nn.connect_genes.shape, (4, 7), "shape of connect genes")
 
         self.assertEqual(nn.connect_genes[0, 0], 0, "input")
         self.assertEqual(nn.connect_genes[0, 1], 4, "output")
@@ -732,11 +732,8 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn.connect_genes[3, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[3, 4], 3, "innovation number")
 
-        # outputs_prev check
-        self.assertEqual(nn.outputs_prev, [bias, 0, 0, 0, 0])
-
-        # outputs_cur check
-        self.assertEqual(nn.outputs_cur, [bias, 0, 0, 0, 0])
+        # results check
+        self.assertEqual(nn.results, [bias, 0, 0, 0, 0])
 
         # innov_history check
         self.assertEqual(workplace.innov_history, {(0, 4): 0,
@@ -763,7 +760,7 @@ class WorkerTest(unittest.TestCase):
         #  0,   3,     w1,       1,     0,
         #  1,   3,     w2,       1,     1,
         #  2,   3,     w3,       1,     2,
-        self.assertEqual(nn.connect_genes.shape, (3, 5), "shape of connect genes")
+        self.assertEqual(nn.connect_genes.shape, (3, 7), "shape of connect genes")
 
         self.assertEqual(nn.connect_genes[0, 0], 0, "input")
         self.assertEqual(nn.connect_genes[0, 1], 3, "output")
@@ -783,11 +780,8 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn.connect_genes[2, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[2, 4], 2, "innovation number")
 
-        # outputs_prev check
-        self.assertEqual(nn.outputs_prev, [0, 0, 0, 0])
-
-        # outputs_cur check
-        self.assertEqual(nn.outputs_cur, [0, 0, 0, 0])
+        # results check
+        self.assertEqual(nn.results, [0, 0, 0, 0])
 
         # innov_history check
         self.assertEqual(workplace.innov_history, {(0, 3): 0,
@@ -819,7 +813,7 @@ class WorkerTest(unittest.TestCase):
         #  2,   3,     w7,       1,     6,
         #  2,   4,     w8,       1,     7,
         #  2,   5,     w9,       1,     8,
-        self.assertEqual(nn.connect_genes.shape, (9, 5), "shape of connect genes")
+        self.assertEqual(nn.connect_genes.shape, (9, 7), "shape of connect genes")
 
         self.assertEqual(nn.connect_genes[0, 0], 0, "input")
         self.assertEqual(nn.connect_genes[0, 1], 3, "output")
@@ -875,11 +869,8 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn.connect_genes[8, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[8, 4], 8, "innovation number")
 
-        # outputs_prev check
-        self.assertEqual(nn.outputs_prev, [bias, 0, 0, 0, 0, 0])
-
-        # outputs_cur check
-        self.assertEqual(nn.outputs_cur, [bias, 0, 0, 0, 0, 0])
+        # results check
+        self.assertEqual(nn.results, [bias, 0, 0, 0, 0, 0])
 
         # innov_history check
         self.assertEqual(workplace.innov_history, {(0, 3): 0,
@@ -913,7 +904,7 @@ class WorkerTest(unittest.TestCase):
         #  1,   2,     w4,       1,     3,
         #  1,   3,     w5,       1,     4,
         #  1,   4,     w6,       1,     5,
-        self.assertEqual(nn.connect_genes.shape, (6, 5), "shape of connect genes")
+        self.assertEqual(nn.connect_genes.shape, (6, 7), "shape of connect genes")
 
         self.assertEqual(nn.connect_genes[0, 0], 0, "input")
         self.assertEqual(nn.connect_genes[0, 1], 2, "output")
@@ -951,11 +942,8 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn.connect_genes[5, 3], 1, "enabled")
         self.assertEqual(nn.connect_genes[5, 4], 5, "innovation number")
 
-        # outputs_prev check
-        self.assertEqual(nn.outputs_prev, [0, 0, 0, 0, 0])
-
-        # outputs_cur check
-        self.assertEqual(nn.outputs_cur, [0, 0, 0, 0, 0])
+        # results check
+        self.assertEqual(nn.results, [0, 0, 0, 0, 0])
 
         # innov_history check
         self.assertEqual(workplace.innov_history, {(0, 2): 0,
@@ -987,7 +975,7 @@ class WorkerTest(unittest.TestCase):
         gene2 = nn2.connect_genes
         gene1_w_removed = np.delete(gene1, 2, 1)
         gene2_w_removed = np.delete(gene2, 2, 1)
-        self.assertEqual(gene1.shape, (4, 5))
+        self.assertEqual(gene1.shape, (4, 7))
         self.assertFalse(np.array_equal(gene1, gene2), "two genes must have different weights")
         self.assertTrue(np.array_equal(gene1_w_removed, gene2_w_removed), "two genes have identical other elements")
 
@@ -1012,7 +1000,7 @@ class WorkerTest(unittest.TestCase):
         gene2 = nn2.connect_genes
         gene1_w_removed = np.delete(gene1, 2, 1)
         gene2_w_removed = np.delete(gene2, 2, 1)
-        self.assertEqual(gene1.shape, (3, 5))
+        self.assertEqual(gene1.shape, (3, 7))
         self.assertFalse(np.array_equal(gene1, gene2), "two genes must have different weights")
         self.assertTrue(np.array_equal(gene1_w_removed, gene2_w_removed), "two genes have identical other elements")
 
@@ -1117,18 +1105,15 @@ class WorkerTest(unittest.TestCase):
     def test_flip_outputs_list(self):
         nn = NeuralNetwork()
 
-        nn.outputs_cur = [1]
-        nn.outputs_prev = [2]
+        nn.flip()
 
-        nn.flip_outputs_list()
+        self.assertEqual(nn.result_col_cur, 6)
+        self.assertEqual(nn.result_col_prev, 5)
 
-        self.assertEqual(nn.outputs_cur, [2])
-        self.assertEqual(nn.outputs_prev, [1])
+        nn.flip()
 
-        nn.flip_outputs_list()
-
-        self.assertEqual(nn.outputs_cur, [1])
-        self.assertEqual(nn.outputs_prev, [2])
+        self.assertEqual(nn.result_col_cur, 5)
+        self.assertEqual(nn.result_col_prev, 6)
 
     def test_activate_neurons__AND(self):
         workplace = Workplace(2, 1, bias=-1, n_nn=1)
@@ -1138,41 +1123,49 @@ class WorkerTest(unittest.TestCase):
 
         nn1 = worker.workplace.nns[0]
 
-        nn1.connect_genes = np.array([[0, 3, 2, 1, 0],
-                                      [1, 3, 2, 1, 1],
-                                      [2, 3, 2, 1, 2]])
+        nn1.connect_genes = np.array([[0, 3, 2, 1, 0, -1, -1],
+                                      [1, 3, 2, 1, 1, 0, 0],
+                                      [2, 3, 2, 1, 2, 0, 0]])
 
         inputs = np.array([0, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, 0])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -1])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-2, 0, 0]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 0, 0]))
+        self.assertEqual(nn1.results, [-1, 0, 0, -1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, -1])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -1])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-2, 0, 0]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 0, 0]))
+        self.assertEqual(nn1.results, [-1, 0, 0, -1])
 
         inputs = np.array([1, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, -1])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, -1])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-2, 0, 0]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 1, 0]))
+        self.assertEqual(nn1.results, [-1, 1, 0, -1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, -1])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, 0])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-2, 2, 0]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 1, 0]))
+        self.assertEqual(nn1.results, [-1, 1, 0, 0])
 
         inputs = np.array([0, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, 0])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 0])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-2, 2, 0]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 0, 1]))
+        self.assertEqual(nn1.results, [-1, 0, 1, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, 0])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 0])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-2, 0, 2]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 0, 1]))
+        self.assertEqual(nn1.results, [-1, 0, 1, 0])
 
         inputs = np.array([1, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, 0])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 0])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-2, 0, 2]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 1, 1]))
+        self.assertEqual(nn1.results, [-1, 1, 1, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, 0])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 1])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-2, 2, 2]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 1, 1]))
+        self.assertEqual(nn1.results, [-1, 1, 1, 1])
         
     def test_activate_neurons__OR(self):
         workplace = Workplace(2, 1, bias=-1, n_nn=1)
@@ -1182,41 +1175,49 @@ class WorkerTest(unittest.TestCase):
 
         nn1 = worker.workplace.nns[0]
 
-        nn1.connect_genes = np.array([[0, 3, 1.0, 1, 0],
-                                      [1, 3, 3.0, 1, 1],
-                                      [2, 3, 3.0, 1, 2]])
+        nn1.connect_genes = np.array([[0, 3, 1.0, 1, 0, -1, -1],
+                                      [1, 3, 3.0, 1, 1, 0, 0],
+                                      [2, 3, 3.0, 1, 2, 0, 0]])
 
         inputs = np.array([0, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, 0])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -0.5])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-1, 0, 0]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 0, 0]))
+        self.assertEqual(nn1.results, [-1, 0, 0, -0.5])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, -0.5])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -0.5])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-1, 0, 0]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 0, 0]))
+        self.assertEqual(nn1.results, [-1, 0, 0, -0.5])
 
         inputs = np.array([1, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, -0.5])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, -0.5])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-1, 0, 0]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 1, 0]))
+        self.assertEqual(nn1.results, [-1, 1, 0, -0.5])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, -0.5])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, 1])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-1, 3, 0]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 1, 0]))
+        self.assertEqual(nn1.results, [-1, 1, 0, 1])
 
         inputs = np.array([0, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, 1])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 1])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-1, 3, 0]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 0, 1]))
+        self.assertEqual(nn1.results, [-1, 0, 1, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, 1])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 1])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-1, 0, 3]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 0, 1]))
+        self.assertEqual(nn1.results, [-1, 0, 1, 1])
 
         inputs = np.array([1, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, 1])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 1])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-1, 0, 3]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 1, 1]))
+        self.assertEqual(nn1.results, [-1, 1, 1, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, 1])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 2.5])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-1, 3, 3]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 1, 1]))
+        self.assertEqual(nn1.results, [-1, 1, 1, 2.5])
     
     def test_activate_neurons__XOR(self):
         workplace = Workplace(2, 1, bias=-1, n_nn=1)
@@ -1226,62 +1227,72 @@ class WorkerTest(unittest.TestCase):
 
         nn1 = worker.workplace.nns[0]
         # [0, 1, 1, 2, 3]
-        nn1.connect_genes = np.array([[0, 3, 0.6, 1, 0],
-                                      [1, 3, 2.0, 1, 1],
-                                      [2, 3, 2.0, 1, 2],
-                                      [1, 4, 2.0, 1, 3],
-                                      [4, 3, 2.0, 1, 4],
-                                      [2, 4, 2.0, 1, 5],
-                                      [0, 4, 2.0, 1, 6]])
+        nn1.connect_genes = np.array([[0, 3, 0.6, 1, 0, -1, -1],
+                                      [1, 3, 2.0, 1, 1, 0, 0],
+                                      [2, 3, 2.0, 1, 2, 0, 0],
+                                      [1, 4, 2.0, 1, 3, 0, 0],
+                                      [4, 3, 2.0, 1, 4, 0, 0],
+                                      [2, 4, 2.0, 1, 5, 0, 0],
+                                      [0, 4, 2.0, 1, 6, -1, -1]])
         nn1.node_indices = [0, 1, 2, 3, 4]
-        nn1.outputs_prev = [-1, 0, 0, 0, 0]
-        nn1.outputs_cur = [-1, 0, 0, 0, 0]
+        nn1.results = [-1, 0, 0, 0, 0]
 
         inputs = np.array([0, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, 0, 0])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -0.3, -1])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-0.6, 0, 0, 0, 0, 0, -2]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 0, 0, 0, -1, 0, -1]))
+        self.assertEqual(nn1.results, [-1, 0, 0, -0.3, -1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, -0.3, -1])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -1.3, -1])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-0.6, 0, 0, 0, -2, 0, -2]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 0, 0, 0, -1, 0, -1]))
+        self.assertEqual(nn1.results, [-1, 0, 0, -1.3, -1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, -1.3, -1])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 0, -1.3, -1])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-0.6, 0, 0, 0, -2, 0, -2]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 0, 0, 0, -1, 0, -1]))
+        self.assertEqual(nn1.results, [-1, 0, 0, -1.3, -1])
 
         inputs = np.array([1, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 0, -1.3, -1])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, -1.3, -1])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-0.6, 0, 0, 0, -2, 0, -2]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 1, 0, 1, -1, 0, -1]))
+        self.assertEqual(nn1.results, [-1, 1, 0, -1.3, -1])
         worker.activate_neurons(inputs, nn1)
-        nn1.outputs_prev = [round(elem, 2) for elem in nn1.outputs_prev]
-        nn1.outputs_cur = [round(elem, 2) for elem in nn1.outputs_cur]
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, -1.3, -1])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, -0.3, 0])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-0.6, 2, 0, 2, -2, 0, -2]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 1, 0, 1, 0, 0, -1]))
+        nn1.results = [round(elem, 2) for elem in nn1.results]
+        self.assertEqual(nn1.results, [-1, 1, 0, -0.3, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, -0.3, 0])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 0, 0.7, 0])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-0.6, 2, 0, 2, 0, 0, -2]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 1, 0, 1, 0, 0, -1]))
+        self.assertEqual(nn1.results, [-1, 1, 0, 0.7, 0])
 
         inputs = np.array([0, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 0, 0.7, 0])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 0.7, 0])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-0.6, 2, 0, 2, 0, 0, -2]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 0, 1, 0, 0, 1, -1]))
+        self.assertEqual(nn1.results, [-1, 0, 1, 0.7, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, 0.7, 0])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 0.7, 0])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-0.6, 0, 2, 0, 0, 2, -2]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 0, 1, 0, 0, 1, -1]))
+        self.assertEqual(nn1.results, [-1, 0, 1, 0.7, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, 0.7, 0])
-        self.assertEqual(nn1.outputs_cur, [-1, 0, 1, 0.7, 0])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-0.6, 0, 2, 0, 0, 2, -2]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 0, 1, 0, 0, 1, -1]))
+        self.assertEqual(nn1.results, [-1, 0, 1, 0.7, 0])
 
         inputs = np.array([1, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 0, 1, 0.7, 0])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 0.7, 0])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-0.6, 0, 2, 0, 0, 2, -2]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 1, 1, 1, 0, 1, -1]))
+        self.assertEqual(nn1.results, [-1, 1, 1, 0.7, 0])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, 0.7, 0])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 1.7, 1])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-0.6, 2, 2, 2, 0, 2, -2]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 1, 1, 1, 1, 1, -1]))
+        self.assertEqual(nn1.results, [-1, 1, 1, 1.7, 1])
         worker.activate_neurons(inputs, nn1)
-        self.assertEqual(nn1.outputs_prev, [-1, 1, 1, 1.7, 1])
-        self.assertEqual(nn1.outputs_cur, [-1, 1, 1, 2.7, 1])
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-0.6, 2, 2, 2, 2, 2, -2]))
+        self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 1, 1, 1, 1, 1, -1]))
+        self.assertEqual(nn1.results, [-1, 1, 1, 2.7, 1])
 
     def test_feedforward__AND(self):
         workplace = Workplace(2, 1, bias=-1)
@@ -1432,8 +1443,7 @@ class WorkerTest(unittest.TestCase):
                                    (2, 3): 2})
         self.assertEqual(node_genes_global, [0, 1, 1, 2])
         self.assertEqual(nn.node_indices, [0, 1, 2, 3])
-        self.assertEqual(nn.outputs_prev, [-1, 0, 0, 0])
-        self.assertEqual(nn.outputs_cur, [-1, 0, 0, 0])
+        self.assertEqual(nn.results, [-1, 0, 0, 0])
 
         nn = workplace.nns[0]
         node_in = 1
@@ -1452,21 +1462,20 @@ class WorkerTest(unittest.TestCase):
                                    (4, 3): 4})
         self.assertEqual(node_genes_global, [0, 1, 1, 2, 3])
         self.assertEqual(nn.node_indices, [0, 1, 2, 3, 4])
-        self.assertEqual(nn.outputs_prev, [-1, 0, 0, 0, 0])
-        self.assertEqual(nn.outputs_cur, [-1, 0, 0, 0, 0])
+        self.assertEqual(nn.results, [-1, 0, 0, 0, 0])
 
         front_connect_weight = worker.get_weight_of_connect(node_in, 4, nn)
         back_connect_weight = worker.get_weight_of_connect(4, node_out, nn)
         self.assertEqual(front_connect_weight, 1)
         self.assertEqual(back_connect_weight, ori_weight)
 
-        self.assertEqual(nn.connect_genes.shape, (5, 5))
+        self.assertEqual(nn.connect_genes.shape, (5, 7))
         gene_w_removed = np.delete(nn.connect_genes, 2, 1)
-        self.assertTrue(np.array_equal(gene_w_removed, np.array([[0, 3, 1, 0],
-                                                                 [1, 3, 1, 1],
-                                                                 [2, 3, 1, 2],
-                                                                 [1, 4, 1, 3],
-                                                                 [4, 3, 1, 4]])))
+        self.assertTrue(np.array_equal(gene_w_removed, np.array([[0, 3, 1, 0, -1, -1],
+                                                                 [1, 3, 1, 1, 0, 0],
+                                                                 [2, 3, 1, 2, 0, 0],
+                                                                 [1, 4, 1, 3, 0, 0],
+                                                                 [4, 3, 1, 4, 0, 0]])))
 
         nn2 = workplace.nns[1]
         node_in = 1
@@ -1485,20 +1494,19 @@ class WorkerTest(unittest.TestCase):
                                    (4, 3): 4})
         self.assertEqual(node_genes_global, [0, 1, 1, 2, 3])
         self.assertEqual(nn2.node_indices, [0, 1, 2, 3, 4])
-        self.assertEqual(nn2.outputs_prev, [-1, 0, 0, 0, 0])
-        self.assertEqual(nn2.outputs_cur, [-1, 0, 0, 0, 0])
+        self.assertEqual(nn2.results, [-1, 0, 0, 0, 0])
 
         front_connect_weight = worker.get_weight_of_connect(node_in, 4, nn2)
         back_connect_weight = worker.get_weight_of_connect(4, node_out, nn2)
         self.assertEqual(front_connect_weight, 1)
         self.assertEqual(back_connect_weight, ori_weight)
-        self.assertEqual(nn2.connect_genes.shape, (5, 5))
+        self.assertEqual(nn2.connect_genes.shape, (5, 7))
         gene_w_removed = np.delete(nn2.connect_genes, 2, 1)
-        self.assertTrue(np.array_equal(gene_w_removed, np.array([[0, 3, 1, 0],
-                                                                 [1, 3, 1, 1],
-                                                                 [2, 3, 1, 2],
-                                                                 [1, 4, 1, 3],
-                                                                 [4, 3, 1, 4]])))
+        self.assertTrue(np.array_equal(gene_w_removed, np.array([[0, 3, 1, 0, -1, -1],
+                                                                 [1, 3, 1, 1, 0, 0],
+                                                                 [2, 3, 1, 2, 0, 0],
+                                                                 [1, 4, 1, 3, 0, 0],
+                                                                 [4, 3, 1, 4, 0, 0]])))
 
         nn3 = workplace.nns[2]
         node_in = 2
@@ -1519,20 +1527,19 @@ class WorkerTest(unittest.TestCase):
                                    (5, 3): 6})
         self.assertEqual(node_genes_global, [0, 1, 1, 2, 3, 3])
         self.assertEqual(nn3.node_indices, [0, 1, 2, 3, 5])
-        self.assertEqual(nn3.outputs_prev, [-1, 0, 0, 0, 0])
-        self.assertEqual(nn3.outputs_cur, [-1, 0, 0, 0, 0])
+        self.assertEqual(nn3.results, [-1, 0, 0, 0, 0])
 
         front_connect_weight = worker.get_weight_of_connect(node_in, 5, nn3)
         back_connect_weight = worker.get_weight_of_connect(5, node_out, nn3)
         self.assertEqual(front_connect_weight, 1)
         self.assertEqual(back_connect_weight, ori_weight)
-        self.assertEqual(nn3.connect_genes.shape, (5, 5))
+        self.assertEqual(nn3.connect_genes.shape, (5, 7))
         gene_w_removed = np.delete(nn3.connect_genes, 2, 1)
-        self.assertTrue(np.array_equal(gene_w_removed, np.array([[0, 3, 1, 0],
-                                                                 [1, 3, 1, 1],
-                                                                 [2, 3, 1, 2],
-                                                                 [2, 5, 1, 5],
-                                                                 [5, 3, 1, 6]])))
+        self.assertTrue(np.array_equal(gene_w_removed, np.array([[0, 3, 1, 0, -1, -1],
+                                                                 [1, 3, 1, 1, 0, 0],
+                                                                 [2, 3, 1, 2, 0, 0],
+                                                                 [2, 5, 1, 5, 0, 0],
+                                                                 [5, 3, 1, 6, 0, 0]])))
 
     def test_disable_connect(self):
         workplace = Workplace(3, 1)
