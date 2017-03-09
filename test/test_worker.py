@@ -1780,6 +1780,30 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(workplace.species_repr, [nn1, nn2])
         self.assertEqual(workplace.species_of_nns, [1, 2, 2])
 
+    def test_calc_fitness_adjusted(self):
+        workplace = Workplace(3, 1, bias=None, n_nn=3, c1=1, c2=2, c3=3, cmp_thr=1)
+        worker = Worker(workplace)
+        worker.initialize_workplace()
+
+        nn1 = worker.workplace.nns[0]
+        nn2 = worker.workplace.nns[1]
+        nn3 = worker.workplace.nns[2]
+
+        worker.add_node(1, 3, nn1)
+        worker.add_node(1, 3, nn2)
+        worker.add_connect(0, 4, 21, nn2)
+        worker.add_connect(0, 4, 21, nn3)
+
+        worker.speciate()
+
+        nn1.fitness = 10
+        nn2.fitness = 20
+        nn3.fitness = 30
+
+        worker.calc_fitness_adjusted()
+
+        self.assertEqual(workplace.fitnesses_adjusted, [10, 10, 15])
+
     def test_find_unconnected_pairs(self):
 
         pass
