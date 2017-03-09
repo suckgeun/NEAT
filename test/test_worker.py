@@ -967,6 +967,9 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(workplace.innov_counter, 3)
         self.assertEqual(workplace.node_genes_global, [0, 1, 1, 1, 2])
         self.assertEqual(workplace.fitnesses_adjusted, [None]*workplace.n_nn)
+        self.assertEqual(workplace.species, [0])
+        self.assertEqual(workplace.species_repr, [workplace.nns[0]])
+        self.assertEqual(workplace.species_of_nns, [0]*workplace.n_nn)
 
         # test if two nns have identical genes except weight
         nn1 = workplace.nns[0]
@@ -1740,6 +1743,42 @@ class WorkerTest(unittest.TestCase):
         w = ((3-2) + (3-2) + (3-2) + (3-2) + (3-2)) / 5
 
         self.assertEqual(compatibility_dist, c1*1/7 + c2*2/7 + c3*w)
+
+    def test_speciate(self):
+        workplace = Workplace(3, 1, bias=None, n_nn=3, c1=1, c2=2, c3=3, cmp_thr=1)
+        worker = Worker(workplace)
+        worker.initialize_workplace()
+
+        nn1 = worker.workplace.nns[0]
+        nn2 = worker.workplace.nns[1]
+        nn3 = worker.workplace.nns[2]
+
+        worker.speciate()
+
+        self.assertEqual(workplace.species, [0])
+        self.assertEqual(workplace.species_repr, [nn1])
+        self.assertEqual(workplace.species_of_nns, [0, 0, 0])
+
+        worker.add_node(1, 3, nn1)
+        worker.add_node(1, 3, nn2)
+
+        worker.speciate()
+
+        self.assertEqual(workplace.species, [0, 1])
+        self.assertEqual(workplace.species_repr, [nn3, nn1])
+        self.assertEqual(workplace.species_of_nns, [1, 1, 0])
+
+        worker.add_connect(0, 4, 21, nn2)
+
+        self.assertEqual(workplace.species, [0, 1, 2])
+        self.assertEqual(workplace.species_repr, [nn3, nn1, nn2])
+        self.assertEqual(workplace.species_of_nns, [1, 2, 0])
+
+        worker.add_connect(0, 4, 21, nn3)
+
+        self.assertEqual(workplace.species, [1, 2])
+        self.assertEqual(workplace.species_repr, [nn1, nn2])
+        self.assertEqual(workplace.species_of_nns, [1, 2, 2])
 
     def test_find_unconnected_pairs(self):
 
