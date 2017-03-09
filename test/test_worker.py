@@ -1705,6 +1705,42 @@ class WorkerTest(unittest.TestCase):
         self.assertTrue(np.array_equal(genes_new[8], genes_nn2[7]))
         self.assertTrue(np.array_equal(genes_new[9], genes_nn2[8]))
 
+    def test_sharing_func(self):
+
+        c1 = 10
+        c2 = 20
+        c3 = 30
+
+        workplace = Workplace(2, 1, bias=-1, c1=c1, c2=c2, c3=c3)
+        workplace.activ_func = linear
+        workplace.node_genes_global = [0, 1, 1, 2]
+        worker = Worker(workplace)
+
+        nn1 = NeuralNetwork()
+        nn2 = NeuralNetwork()
+
+        nn1.fitness = 2
+        nn1.connect_genes = np.array([[0, 3, 3, 1, 0],
+                                      [1, 3, 3, 1, 1],
+                                      [2, 3, 3, 0, 2],
+                                      [1, 4, 3, 1, 3],
+                                      [4, 3, 3, 1, 4],
+                                      [4, 4, 3, 0, 7]])
+        nn2.fitness = 1
+        nn2.connect_genes = np.array([[0, 3, 2, 0, 0],
+                                      [1, 3, 2, 1, 1],
+                                      [2, 3, 2, 1, 2],
+                                      [1, 4, 2, 1, 3],
+                                      [4, 3, 2, 1, 4],
+                                      [2, 4, 2, 1, 5],
+                                      [0, 4, 2, 1, 6]])
+
+        compatibility_dist = worker.sharing_func(nn1, nn2)
+
+        w = ((3-2) + (3-2) + (3-2) + (3-2) + (3-2)) / 5
+
+        self.assertEqual(compatibility_dist, c1*1/7 + c2*2/7 + c3*w)
+
     def test_find_unconnected_pairs(self):
 
         pass
