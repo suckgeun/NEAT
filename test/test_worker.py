@@ -995,6 +995,9 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(workplace.innov_counter, 2)
         self.assertEqual(workplace.node_genes_global, [1, 1, 1, 2])
         self.assertEqual(workplace.fitnesses_adjusted, [None]*workplace.n_nn)
+        self.assertEqual(workplace.species, [0])
+        self.assertEqual(workplace.species_repr, [workplace.nns[0]])
+        self.assertEqual(workplace.species_of_nns, [0]*workplace.n_nn)
 
         # test if two nns have identical genes except weight
         nn1 = workplace.nns[0]
