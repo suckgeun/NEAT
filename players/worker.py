@@ -495,10 +495,7 @@ class Worker:
         genes1 = nn1.connect_genes
         genes2 = nn2.connect_genes
 
-        if genes1.shape[0] >= genes2.shape[0]:
-            matching_size = genes2.shape[0]
-        else:
-            matching_size = genes1.shape[0]
+        matching_size = min(genes1.shape[0], genes2.shape[0])
 
         for i in range(matching_size):
             if genes1[i, 4] == genes2[i, 4]:
