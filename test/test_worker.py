@@ -1713,9 +1713,8 @@ class WorkerTest(unittest.TestCase):
 
     def test_get_disjoint_excess_num(self):
         worker, nn1, nn2 = self.create_env_same_as_paper()
-        matching = worker.get_matching_innov_num(nn1, nn2)
 
-        n_disjoint, n_excess = worker.get_disjoint_excess_num(matching)
+        n_disjoint, n_excess = worker.get_disjoint_excess_num(nn1, nn2)
 
         self.assertEqual(n_disjoint, 3)
         self.assertEqual(n_excess, 2)
