@@ -1711,6 +1711,15 @@ class WorkerTest(unittest.TestCase):
         self.assertTrue(np.array_equal(genes_new[8], genes_nn2[7]))
         self.assertTrue(np.array_equal(genes_new[9], genes_nn2[8]))
 
+    def test_get_disjoint_excess_num(self):
+        worker, nn1, nn2 = self.create_env_same_as_paper()
+        matching = worker.get_matching_innov_num(nn1, nn2)
+
+        n_disjoint, n_excess = worker.get_disjoint_excess_num(matching)
+
+        self.assertEqual(n_disjoint, 3)
+        self.assertEqual(n_excess, 2)
+
     def test_sharing_func(self):
 
         c1 = 10
