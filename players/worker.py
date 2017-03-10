@@ -287,6 +287,9 @@ class Worker:
 
         self.workplace.is_initialized = True
         self.workplace.fitnesses_adjusted = [None] * n_nn
+        self.workplace.species.append(0)
+        self.workplace.species_repr.append(self.workplace.nns[0])
+        self.workplace.species_of_nns = [0] * n_nn
 
     @staticmethod
     def get_nodes_in_of_node(node_out, nn):

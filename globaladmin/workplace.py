@@ -28,6 +28,9 @@ class Workplace:
             self.bias = None
         self.is_initialized = False
         self.fitnesses_adjusted = None
+        self.species = []
+        self.species_repr = []
+        self.species_of_nns = []
 
 
 
