@@ -622,7 +622,35 @@ class Worker:
                 nn.results[i] = val
                 m[:, cur][m[:, 0] == node_index] = val
 
+    @staticmethod
+    def get_disjoint_excess_num(nn1, nn2):
 
+        innov1 = nn1.connect_genes[:, 4]
+        innov2 = nn2.connect_genes[:, 4]
+
+        max_num1 = innov1.max()
+        max_num2 = innov2.max()
+
+        n_disjoint = 0
+        n_excess = 0
+
+        for num in innov1:
+            if num in innov2:
+                pass
+            elif num > max_num2:
+                n_excess += 1
+            else:
+                n_disjoint += 1
+
+        for num in innov2:
+            if num in innov1:
+                pass
+            elif num > max_num1:
+                n_excess += 1
+            else:
+                n_disjoint += 1
+
+        return n_disjoint, n_excess
 
 
 
