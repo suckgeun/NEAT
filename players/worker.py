@@ -692,7 +692,7 @@ class Worker:
 
             is_assigned = False
 
-            for species_num, species_repr in self.workplace.species.items():
+            for species_num, species_repr in new_species.items():
 
                 cmp_dist = self.calc_compatibility_distance(nn.connect_genes, species_repr)
 
@@ -701,7 +701,8 @@ class Worker:
                     is_assigned = True
 
             if not is_assigned:
-                new_species_num = max(self.workplace.species) + 1
+                all_species_num = list(self.workplace.species.keys()) + new_species_of_nns
+                new_species_num = max(all_species_num) + 1
                 new_species_of_nns.append(new_species_num)
                 new_species[new_species_num] = nn.connect_genes
 
@@ -713,6 +714,24 @@ class Worker:
 
         self.workplace.species = new_species2
         self.workplace.species_of_nns = new_species_of_nns
+
+    def calc_fitness_adjusted(self):
+
+        fitnesses_adjusted = []
+
+        for i, species in enumerate(self.workplace.species_of_nns):
+
+            n_species = self.workplace.species_of_nns.count(species)
+
+            fitness_raw = self.workplace.nns[i].fitness
+
+            fitnesses_adjusted.append(fitness_raw/n_species)
+
+        self.workplace.fitnesses_adjusted = fitnesses_adjusted
+
+
+
+
 
 
 

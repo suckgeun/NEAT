@@ -1805,28 +1805,35 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(workplace.species_of_nns, [1, 2, 2])
 
     def test_calc_fitness_adjusted(self):
-        workplace = Workplace(3, 1, bias=None, n_nn=3, c1=1, c2=2, c3=3, cmp_thr=1)
+        workplace = Workplace(3, 1, bias=None, n_nn=5, c1=10, c2=10, c3=0.3, cmp_thr=1)
         worker = Worker(workplace)
         worker.initialize_workplace()
 
         nn1 = worker.workplace.nns[0]
         nn2 = worker.workplace.nns[1]
         nn3 = worker.workplace.nns[2]
+        nn4 = worker.workplace.nns[3]
+        nn5 = worker.workplace.nns[4]
 
         worker.add_node(1, 3, nn1)
         worker.add_node(1, 3, nn2)
+        worker.add_node(1, 3, nn5)
         worker.add_connect(0, 4, 21, nn2)
+        worker.add_connect(0, 4, 21, nn5)
         worker.add_connect(0, 4, 21, nn3)
+        worker.add_connect(0, 4, 21, nn4)
 
         worker.speciate()
 
         nn1.fitness = 10
         nn2.fitness = 20
         nn3.fitness = 30
+        nn4.fitness = 40
+        nn5.fitness = 50
 
         worker.calc_fitness_adjusted()
 
-        self.assertEqual(workplace.fitnesses_adjusted, [10, 10, 15])
+        self.assertEqual(workplace.fitnesses_adjusted, [10, 10, 15, 20, 25])
 
     def test_eliminate_lowest_nns__(self):
         workplace = Workplace(3, 1, bias=None, n_nn=4, drop_rate=0.5)
