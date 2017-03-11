@@ -2,6 +2,7 @@ from players.neuralnet import NeuralNetwork
 import numpy as np
 from players.config import ENABLED
 import random
+import collections
 
 
 class Worker:
@@ -287,8 +288,7 @@ class Worker:
 
         self.workplace.is_initialized = True
         self.workplace.fitnesses_adjusted = [None] * n_nn
-        self.workplace.species.append(0)
-        self.workplace.species_repr.append(self.workplace.nns[0])
+        self.workplace.species[0] = np.copy(self.workplace.nns[0].connect_genes)
         self.workplace.species_of_nns = [0] * n_nn
 
     @staticmethod
@@ -483,23 +483,21 @@ class Worker:
                 gene[3] = 1
 
     @staticmethod
-    def get_matching_innov_num(nn1, nn2):
+    def get_matching_innov_num(connect_genes1, connect_genes2):
         """
         get a list of innovation numbers common in nn1 and nn2
 
-        :param nn1:
-        :param nn2:
+        :param connect_genes1:
+        :param connect_genes2:
         :return: list of matching innovation numbers. [] if none
         """
         match = []
-        genes1 = nn1.connect_genes
-        genes2 = nn2.connect_genes
 
-        matching_size = min(genes1.shape[0], genes2.shape[0])
+        matching_size = min(connect_genes1.shape[0], connect_genes2.shape[0])
 
         for i in range(matching_size):
-            if genes1[i, 4] == genes2[i, 4]:
-                match.append(genes1[i, 4])
+            if connect_genes1[i, 4] == connect_genes2[i, 4]:
+                match.append(connect_genes1[i, 4])
 
         return match
 
@@ -575,7 +573,7 @@ class Worker:
         """
         nn_new = NeuralNetwork()
 
-        match = self.get_matching_innov_num(nn1, nn2)
+        match = self.get_matching_innov_num(nn1.connect_genes, nn2.connect_genes)
 
         genes_matching = self.inherit_match(match, nn1, nn2)
         genes_disj_exc = self.inherit_disjoint_excess(match, nn1, nn2)
@@ -620,10 +618,10 @@ class Worker:
                 m[:, cur][m[:, 0] == node_index] = val
 
     @staticmethod
-    def get_disjoint_excess_num(nn1, nn2):
+    def get_disjoint_excess_num(connect_genes1, connect_genes2):
 
-        innov1 = nn1.connect_genes[:, 4]
-        innov2 = nn2.connect_genes[:, 4]
+        innov1 = connect_genes1[:, 4]
+        innov2 = connect_genes2[:, 4]
 
         max_num1 = innov1.max()
         max_num2 = innov2.max()
@@ -649,14 +647,14 @@ class Worker:
 
         return n_disjoint, n_excess
 
-    def calc_compatibility_distance(self, nn1, nn2):
+    def calc_compatibility_distance(self, connect_genes1, connect_genes2):
         """
         calculate compatibility distance of two neural network using sharing function.
 
         c1 * excess / number_of_larger_nn_genes + c2 * disjoint / number_of_larger_nn_genes + c3 * average_weight_diff
 
-        :param nn1: neural network 1
-        :param nn2: neural network 2
+        :param connect_genes1: neural network 1 connect_genes
+        :param connect_genes2: neural network 2 connect_genes
         :return: compatibility distance
         """
 
@@ -664,26 +662,57 @@ class Worker:
         c2 = self.workplace.c2
         c3 = self.workplace.c3
 
-        genes1 = nn1.connect_genes
-        genes2 = nn2.connect_genes
-
-        common_innov_nums = self.get_matching_innov_num(nn1, nn2)
+        common_innov_nums = self.get_matching_innov_num(connect_genes1, connect_genes2)
 
         w_diff_sum = 0
         for num in common_innov_nums:
-            w_nn1 = genes1[:, 2][genes1[:, 4] == num][0]
-            w_nn2 = genes2[:, 2][genes2[:, 4] == num][0]
+            w_nn1 = connect_genes1[:, 2][connect_genes1[:, 4] == num][0]
+            w_nn2 = connect_genes2[:, 2][connect_genes2[:, 4] == num][0]
             w_diff_sum += (w_nn1 - w_nn2)
 
         avg_w_diff = w_diff_sum / len(common_innov_nums)
 
-        n_disjoint, n_excess = self.get_disjoint_excess_num(nn1, nn2)
+        n_disjoint, n_excess = self.get_disjoint_excess_num(connect_genes1, connect_genes2)
 
-        n_larger_genes = max(genes1.shape[0], genes2.shape[0])
+        n_larger_genes = max(connect_genes1.shape[0], connect_genes2.shape[0])
 
         cmp_dist = c1 * n_excess / n_larger_genes + c2 * n_disjoint / n_larger_genes + c3 * avg_w_diff
 
         return cmp_dist
+
+    def speciate(self):
+        # TODO: refactoring needed
+        # TODO: documentation needed
+
+        cmp_thr = self.workplace.cmp_thr
+        new_species_of_nns = []
+        new_species = collections.OrderedDict(self.workplace.species)
+
+        for nn in self.workplace.nns:
+
+            is_assigned = False
+
+            for species_num, species_repr in self.workplace.species.items():
+
+                cmp_dist = self.calc_compatibility_distance(nn.connect_genes, species_repr)
+
+                if cmp_dist < cmp_thr:
+                    new_species_of_nns.append(species_num)
+                    is_assigned = True
+
+            if not is_assigned:
+                new_species_num = max(self.workplace.species) + 1
+                new_species_of_nns.append(new_species_num)
+                new_species[new_species_num] = nn.connect_genes
+
+        new_species2 = collections.OrderedDict(new_species)
+
+        for k in new_species:
+            if k not in new_species_of_nns:
+                del new_species2[k]
+
+        self.workplace.species = new_species2
+        self.workplace.species_of_nns = new_species_of_nns
 
 
 

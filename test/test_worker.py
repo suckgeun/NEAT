@@ -967,8 +967,8 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(workplace.innov_counter, 3)
         self.assertEqual(workplace.node_genes_global, [0, 1, 1, 1, 2])
         self.assertEqual(workplace.fitnesses_adjusted, [None]*workplace.n_nn)
-        self.assertEqual(workplace.species, [0])
-        self.assertEqual(workplace.species_repr, [workplace.nns[0]])
+        for k, v in workplace.species.items():
+            self.assertTrue(np.array_equal(v, workplace.nns[k].connect_genes))
         self.assertEqual(workplace.species_of_nns, [0]*workplace.n_nn)
 
         # test if two nns have identical genes except weight
@@ -995,8 +995,8 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(workplace.innov_counter, 2)
         self.assertEqual(workplace.node_genes_global, [1, 1, 1, 2])
         self.assertEqual(workplace.fitnesses_adjusted, [None]*workplace.n_nn)
-        self.assertEqual(workplace.species, [0])
-        self.assertEqual(workplace.species_repr, [workplace.nns[0]])
+        for k, v in workplace.species.items():
+            self.assertTrue(np.array_equal(v, workplace.nns[k].connect_genes))
         self.assertEqual(workplace.species_of_nns, [0]*workplace.n_nn)
 
         # test if two nns have identical genes except weight
@@ -1606,16 +1606,16 @@ class WorkerTest(unittest.TestCase):
     def test_get_matching_innov_num(self):
         worker, nn1, nn2 = self.create_env_same_as_paper()
 
-        matching = worker.get_matching_innov_num(nn1, nn2)
+        matching = worker.get_matching_innov_num(nn1.connect_genes, nn2.connect_genes)
         self.assertEqual(matching, [0, 1, 2, 3, 4])
 
     def test_inherit_match(self):
         worker, nn1, nn2 = self.create_env_same_as_paper()
 
-        matching = worker.get_matching_innov_num(nn1, nn2)
-
         genes_nn1 = nn1.connect_genes
         genes_nn2 = nn2.connect_genes
+
+        matching = worker.get_matching_innov_num(genes_nn1, genes_nn2)
         genes_new = worker.inherit_match(matching, nn1, nn2)
 
         self.assertTrue(np.array_equal(genes_new[0], genes_nn1[0]) or np.array_equal(genes_new[0], genes_nn2[0]))
@@ -1627,7 +1627,7 @@ class WorkerTest(unittest.TestCase):
     def test_inherit_disjoint_excess(self):
         worker, nn1, nn2 = self.create_env_same_as_paper()
 
-        matching = worker.get_matching_innov_num(nn1, nn2)
+        matching = worker.get_matching_innov_num(nn1.connect_genes, nn2.connect_genes)
         nn1.fitness = 1
         nn2.fitness = 2
 
@@ -1714,7 +1714,7 @@ class WorkerTest(unittest.TestCase):
     def test_get_disjoint_excess_num(self):
         worker, nn1, nn2 = self.create_env_same_as_paper()
 
-        n_disjoint, n_excess = worker.get_disjoint_excess_num(nn1, nn2)
+        n_disjoint, n_excess = worker.get_disjoint_excess_num(nn1.connect_genes, nn2.connect_genes)
 
         self.assertEqual(n_disjoint, 3)
         self.assertEqual(n_excess, 2)
@@ -1749,14 +1749,14 @@ class WorkerTest(unittest.TestCase):
                                       [2, 4, 2, 1, 5],
                                       [0, 4, 2, 1, 6]])
 
-        compatibility_dist = worker.calc_compatibility_distance(nn1, nn2)
+        compatibility_dist = worker.calc_compatibility_distance(nn1.connect_genes, nn2.connect_genes)
 
         w = ((3-2) + (3-2) + (3-2) + (3-2) + (3-2)) / 5
 
         self.assertEqual(compatibility_dist, c1*1/7 + c2*2/7 + c3*w)
 
     def test_speciate(self):
-        workplace = Workplace(3, 1, bias=None, n_nn=3, c1=1, c2=2, c3=3, cmp_thr=1)
+        workplace = Workplace(3, 1, bias=None, n_nn=3, c1=10, c2=10, c3=0.1, cmp_thr=1)
         worker = Worker(workplace)
         worker.initialize_workplace()
 
@@ -1766,8 +1766,10 @@ class WorkerTest(unittest.TestCase):
 
         worker.speciate()
 
-        self.assertEqual(workplace.species, [0])
-        self.assertEqual(workplace.species_repr, [nn1])
+        for k, v in workplace.species.items():
+            nn_num = workplace.species_of_nns.index(k)
+            self.assertTrue(worker.calc_compatibility_distance
+                            (v, workplace.nns[nn_num].connect_genes) < workplace.cmp_thr)
         self.assertEqual(workplace.species_of_nns, [0, 0, 0])
 
         worker.add_node(1, 3, nn1)
@@ -1775,20 +1777,31 @@ class WorkerTest(unittest.TestCase):
 
         worker.speciate()
 
-        self.assertEqual(workplace.species, [0, 1])
-        self.assertEqual(workplace.species_repr, [nn3, nn1])
+        for k, v in workplace.species.items():
+            nn_num = workplace.species_of_nns.index(k)
+            self.assertTrue(worker.calc_compatibility_distance
+                            (v, workplace.nns[nn_num].connect_genes) < workplace.cmp_thr)
         self.assertEqual(workplace.species_of_nns, [1, 1, 0])
 
         worker.add_connect(0, 4, 21, nn2)
 
-        self.assertEqual(workplace.species, [0, 1, 2])
-        self.assertEqual(workplace.species_repr, [nn3, nn1, nn2])
+        worker.speciate()
+
+        for k, v in workplace.species.items():
+            nn_num = workplace.species_of_nns.index(k)
+            self.assertTrue(worker.calc_compatibility_distance
+                            (v, workplace.nns[nn_num].connect_genes) < workplace.cmp_thr)
         self.assertEqual(workplace.species_of_nns, [1, 2, 0])
 
-        worker.add_connect(0, 4, 21, nn3)
+        worker.add_node(1, 3, nn3)
+        worker.add_connect(0, 4, 31, nn3)
 
-        self.assertEqual(workplace.species, [1, 2])
-        self.assertEqual(workplace.species_repr, [nn1, nn2])
+        worker.speciate()
+
+        for k, v in workplace.species.items():
+            nn_num = workplace.species_of_nns.index(k)
+            self.assertTrue(worker.calc_compatibility_distance
+                            (v, workplace.nns[nn_num].connect_genes) < workplace.cmp_thr)
         self.assertEqual(workplace.species_of_nns, [1, 2, 2])
 
     def test_calc_fitness_adjusted(self):
