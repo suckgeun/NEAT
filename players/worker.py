@@ -716,6 +716,7 @@ class Worker:
         self.workplace.species_of_nns = new_species_of_nns
 
     def calc_fitness_adjusted(self):
+        # TODO: documentation
 
         fitnesses_adjusted = []
 
@@ -728,6 +729,32 @@ class Worker:
             fitnesses_adjusted.append(fitness_raw/n_species)
 
         self.workplace.fitnesses_adjusted = fitnesses_adjusted
+
+    def select_better_nns(self):
+        """
+        select neural networks with better fitness based on fitnesses_adjusted
+
+        :return: list of better fitness neural networks
+        """
+
+        n_nn = self.workplace.n_nn
+        nns = self.workplace.nns
+        fitnesses_adjusted = list(self.workplace.fitnesses_adjusted)
+        n_keeping_nn = n_nn - int(n_nn * self.workplace.drop_rate)
+        keeping_nns = []
+
+        for _i in range(n_keeping_nn):
+            nn_index = fitnesses_adjusted.index(max(fitnesses_adjusted))
+            keeping_nns.append(nns[nn_index])
+            del fitnesses_adjusted[nn_index]
+
+        return keeping_nns
+
+
+
+
+
+
 
 
 

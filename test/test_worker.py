@@ -1835,7 +1835,7 @@ class WorkerTest(unittest.TestCase):
 
         self.assertEqual(workplace.fitnesses_adjusted, [10, 10, 15, 20, 25])
 
-    def test_eliminate_lowest_nns__(self):
+    def test_select_better_nns(self):
         workplace = Workplace(3, 1, bias=None, n_nn=4, drop_rate=0.5)
         worker = Worker(workplace)
         worker.initialize_workplace()
@@ -1846,16 +1846,16 @@ class WorkerTest(unittest.TestCase):
         nn4 = workplace.nns[3]
 
         workplace.fitnesses_adjusted = [1, 2, 3, 4]
-        better_nns = worker.eliminate_lowest_nns()
-        self.assertEqual(better_nns, [nn3, nn4])
+        better_nns = worker.select_better_nns()
+        self.assertEqual(better_nns, [nn4, nn3])
 
         workplace.drop_rate = 0.3
-        better_nns = worker.eliminate_lowest_nns()
-        self.assertEqual(better_nns, [nn2, nn3, nn4])
+        better_nns = worker.select_better_nns()
+        self.assertEqual(better_nns, [nn4, nn3, nn2])
 
         workplace.drop_rate = 0.1
-        better_nns = worker.eliminate_lowest_nns()
-        self.assertEqual(better_nns, [nn1, nn2, nn3, nn4])
+        better_nns = worker.select_better_nns()
+        self.assertEqual(better_nns, [nn4, nn3, nn2, nn1])
 
     def test_find_unconnected_pairs(self):
 
