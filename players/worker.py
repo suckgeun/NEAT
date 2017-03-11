@@ -649,11 +649,9 @@ class Worker:
 
         return n_disjoint, n_excess
 
-    def sharing_func(self, nn1, nn2):
+    def calc_compatibility_distance(self, nn1, nn2):
         """
         calculate compatibility distance of two neural network using sharing function.
-
-        sharing function equation
 
         c1 * excess / number_of_larger_nn_genes + c2 * disjoint / number_of_larger_nn_genes + c3 * average_weight_diff
 

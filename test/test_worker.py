@@ -1719,7 +1719,7 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(n_disjoint, 3)
         self.assertEqual(n_excess, 2)
 
-    def test_sharing_func(self):
+    def test_calc_compatibility_distance(self):
 
         c1 = 10
         c2 = 20
@@ -1749,7 +1749,7 @@ class WorkerTest(unittest.TestCase):
                                       [2, 4, 2, 1, 5],
                                       [0, 4, 2, 1, 6]])
 
-        compatibility_dist = worker.sharing_func(nn1, nn2)
+        compatibility_dist = worker.calc_compatibility_distance(nn1, nn2)
 
         w = ((3-2) + (3-2) + (3-2) + (3-2) + (3-2)) / 5
 
