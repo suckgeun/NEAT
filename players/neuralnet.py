@@ -1,3 +1,5 @@
+import numpy as np
+
 class NeuralNetwork:
     """
     Neural Network class
@@ -28,6 +30,13 @@ class NeuralNetwork:
 
     def flip(self):
         self._is_front = not self._is_front
+
+    def copy(self):
+        new_nn = NeuralNetwork()
+        new_nn.node_indices = list(self.node_indices)
+        new_nn.connect_genes = np.copy(self.connect_genes)
+        new_nn.fitness = self.fitness
+        return new_nn
 
 
 
