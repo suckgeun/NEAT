@@ -766,7 +766,7 @@ class Worker:
         :return: sum of each species fitness, total fitness
         """
 
-        fitness_sum = {}
+        fitness_sum = collections.OrderedDict()
         fitness_total = 0
 
         species = set(species_of_nn)
@@ -780,6 +780,43 @@ class Worker:
                     fitness_total += fitnesses[i]
 
         return fitness_sum, fitness_total
+
+    def calc_children_assign_num(self, fitness_each, fitness_total):
+
+        n_nn = self.workplace.n_nn
+        children_assigned = collections.OrderedDict()
+        total_children = 0
+
+        for species_num, fitness in fitness_each.items():
+            n_children = int(n_nn * (fitness / fitness_total))
+            children_assigned[species_num] = n_children
+            total_children += n_children
+
+        if total_children != n_nn:
+            if total_children > n_nn:
+                diff = total_children - n_nn
+
+                for i, n_children in children_assigned.items():
+                    if n_children <= 1:
+                        pass
+                    else:
+                        children_assigned[i] -= 1
+                        diff -= 1
+
+                    if diff == 0:
+                        break
+
+            else:
+                diff = n_nn - total_children
+
+                for i in children_assigned:
+                    children_assigned[i] += 1
+                    diff -= 1
+
+                    if diff == 0:
+                        break
+
+        return children_assigned
 
 
 
