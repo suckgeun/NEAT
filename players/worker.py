@@ -721,12 +721,11 @@ class Worker:
         fitnesses_adjusted = []
 
         for i, species in enumerate(self.workplace.species_of_nns):
-
             n_species = self.workplace.species_of_nns.count(species)
-
             fitness_raw = self.workplace.nns[i].fitness
-
-            fitnesses_adjusted.append(fitness_raw/n_species)
+            fitness_adjusted = fitness_raw/n_species
+            fitnesses_adjusted.append(fitness_adjusted)
+            self.workplace.nns[i].fitness = fitness_adjusted
 
         self.workplace.fitnesses_adjusted = fitnesses_adjusted
 
@@ -739,16 +738,21 @@ class Worker:
 
         n_nn = self.workplace.n_nn
         nns = self.workplace.nns
+        species_of_nns = self.workplace.species_of_nns
         fitnesses_adjusted = list(self.workplace.fitnesses_adjusted)
         n_keeping_nn = n_nn - int(n_nn * self.workplace.drop_rate)
         keeping_nns = []
+        species_keeping_nns = []
+        fitnesses_keeping_nns = []
 
         for _i in range(n_keeping_nn):
             nn_index = fitnesses_adjusted.index(max(fitnesses_adjusted))
             keeping_nns.append(nns[nn_index])
+            species_keeping_nns.append(species_of_nns[nn_index])
+            fitnesses_keeping_nns.append(fitnesses_adjusted[nn_index])
             del fitnesses_adjusted[nn_index]
 
-        return keeping_nns
+        return keeping_nns, species_keeping_nns, fitnesses_keeping_nns
 
 
 

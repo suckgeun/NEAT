@@ -1834,31 +1834,59 @@ class WorkerTest(unittest.TestCase):
         worker.calc_fitness_adjusted()
 
         self.assertEqual(workplace.fitnesses_adjusted, [10, 10, 15, 20, 25])
+        self.assertEqual(nn1.fitness, 10)
+        self.assertEqual(nn2.fitness, 10)
+        self.assertEqual(nn3.fitness, 15)
+        self.assertEqual(nn4.fitness, 20)
+        self.assertEqual(nn5.fitness, 25)
 
     def test_select_better_nns(self):
         workplace = Workplace(3, 1, bias=None, n_nn=4, drop_rate=0.5)
         worker = Worker(workplace)
         worker.initialize_workplace()
 
+        workplace.species_of_nns = [0, 2, 2, 3]
         nn1 = workplace.nns[0]
         nn2 = workplace.nns[1]
         nn3 = workplace.nns[2]
         nn4 = workplace.nns[3]
 
         workplace.fitnesses_adjusted = [1, 2, 3, 4]
-        better_nns = worker.select_better_nns()
+        better_nns, species_nns, fitnesses = worker.select_better_nns()
         self.assertEqual(better_nns, [nn4, nn3])
+        self.assertEqual(species_nns, [3, 2])
+        self.assertEqual(fitnesses, [4, 3])
 
         workplace.drop_rate = 0.3
-        better_nns = worker.select_better_nns()
+        better_nns, species_nns, fitnesses = worker.select_better_nns()
         self.assertEqual(better_nns, [nn4, nn3, nn2])
+        self.assertEqual(species_nns, [3, 2, 2])
+        self.assertEqual(fitnesses, [4, 3, 2])
 
         workplace.drop_rate = 0.1
-        better_nns = worker.select_better_nns()
+        better_nns, species_nns, fitnesses = worker.select_better_nns()
         self.assertEqual(better_nns, [nn4, nn3, nn2, nn1])
+        self.assertEqual(species_nns, [3, 2, 2, 0])
+        self.assertEqual(fitnesses, [4, 3, 2, 1])
 
-    def test_find_unconnected_pairs(self):
+    def test_get_sum_fitness(self):
+        workplace = Workplace(3, 1, bias=None, n_nn=4)
+        worker = Worker(workplace)
 
+        species_of_nn = [0, 1, 2, 3, 3, 1]
+        fitnesses = [11, 12, 13, 14, 15, 16]
+
+        fitness_each, fitness_total = worker.get_sum_fitness(species_of_nn, fitnesses)
+
+        self.assertEqual(fitness_each, {0: 11,
+                                        1: 28,
+                                        2: 13,
+                                        3: 29})
+        self.assertEqual(fitness_total, 81)
+
+
+
+    def test_calc_num_reproducing_children(self):
         pass
 
     def test_mutate_add_connection(self):
