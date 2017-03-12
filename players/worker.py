@@ -754,6 +754,33 @@ class Worker:
 
         return keeping_nns, species_keeping_nns, fitnesses_keeping_nns
 
+    @staticmethod
+    def get_sum_fitness(species_of_nn, fitnesses):
+        """
+        calculate sum of each species fitness and total fitness
+
+        result of this function is used to calculate reproducing children number
+
+        :param species_of_nn:
+        :param fitnesses:
+        :return: sum of each species fitness, total fitness
+        """
+
+        fitness_sum = {}
+        fitness_total = 0
+
+        species = set(species_of_nn)
+
+        for species_num in species:
+            fitness_sum[species_num] = 0
+
+            for i, val in enumerate(species_of_nn):
+                if val == species_num:
+                    fitness_sum[species_num] += fitnesses[i]
+                    fitness_total += fitnesses[i]
+
+        return fitness_sum, fitness_total
+
 
 
 
