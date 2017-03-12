@@ -1870,7 +1870,7 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(fitnesses, [4, 3, 2, 1])
 
     def test_get_sum_fitness(self):
-        workplace = Workplace(3, 1, bias=None, n_nn=4)
+        workplace = Workplace(3, 1, bias=None, n_nn=6)
         worker = Worker(workplace)
 
         species_of_nn = [0, 1, 2, 3, 3, 1]
@@ -1884,10 +1884,28 @@ class WorkerTest(unittest.TestCase):
                                         3: 29})
         self.assertEqual(fitness_total, 81)
 
+    def test_calc_children_assign_num(self):
+        workplace = Workplace(3, 1, bias=None, n_nn=10)
+        worker = Worker(workplace)
 
+        species_of_nn = [0, 1, 3, 3, 3, 1, 4, 4, 4, 4]
+        fitnesses = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
+        fitness_each, fitness_total = worker.get_sum_fitness(species_of_nn, fitnesses)
 
-    def test_calc_num_reproducing_children(self):
-        pass
+        children_assigned = worker.calc_children_assign_num(fitness_each, fitness_total)
+        self.assertEqual(children_assigned, {0: 1,
+                                             1: 2,
+                                             3: 3,
+                                             4: 4})
+
+        species_of_nn = [1, 3, 3, 3, 1, 4, 4, 4, 4]
+        fitnesses = [10, 10, 10, 10, 10, 10, 10, 10, 10]
+        fitness_each, fitness_total = worker.get_sum_fitness(species_of_nn, fitnesses)
+
+        children_assigned = worker.calc_children_assign_num(fitness_each, fitness_total)
+        self.assertEqual(children_assigned, {1: 3,
+                                             3: 3,
+                                             4: 4})
 
     def test_mutate_add_connection(self):
 
