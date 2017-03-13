@@ -1695,6 +1695,8 @@ class WorkerTest(unittest.TestCase):
         self.assertTrue(np.array_equal(genes_new[7], genes_nn2[7]))
         self.assertTrue(np.array_equal(genes_new[8], genes_nn2[8]))
 
+        self.assertEqual(nn_new.node_indices, [0, 1, 2, 3, 4, 5])
+
         nn1.fitness = 2
         nn2.fitness = 1
         nn_new = worker.crossover(nn1, nn2)
@@ -1707,6 +1709,8 @@ class WorkerTest(unittest.TestCase):
         self.assertTrue(np.array_equal(genes_new[4], genes_nn1[4]) or np.array_equal(genes_new[4], genes_nn2[4]))
 
         self.assertTrue(np.array_equal(nn_new.connect_genes[5], genes_nn1[5]))
+
+        self.assertEqual(nn_new.node_indices, [0, 1, 2, 3, 4])
 
         nn1.fitness = 1
         nn2.fitness = 1
@@ -1724,6 +1728,8 @@ class WorkerTest(unittest.TestCase):
         self.assertTrue(np.array_equal(genes_new[7], genes_nn2[6]))
         self.assertTrue(np.array_equal(genes_new[8], genes_nn2[7]))
         self.assertTrue(np.array_equal(genes_new[9], genes_nn2[8]))
+
+        self.assertEqual(nn_new.node_indices, [0, 1, 2, 3, 4, 5])
 
     def test_get_disjoint_excess_num(self):
         worker, nn1, nn2 = self.create_env_same_as_paper()

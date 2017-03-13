@@ -597,9 +597,9 @@ class Worker:
         genes_disj_exc = self.inherit_disjoint_excess(match, nn1, nn2)
         genes_new = np.vstack((genes_matching, genes_disj_exc))
 
-        # nn_new.node_indices = list(self.node_indices)
+        nn_new.node_indices = self.generate_node_indices(genes_new)
         nn_new.connect_genes = genes_new
-        # nn_new.results = [0]*len(nn_new.node_indices)
+        nn_new.results = [0]*len(nn_new.node_indices)
 
         return nn_new
 

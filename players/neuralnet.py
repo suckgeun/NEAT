@@ -39,6 +39,7 @@ class NeuralNetwork:
         new_nn.connect_genes = np.copy(self.connect_genes)
         new_nn.fitness = self.fitness
         new_nn.fitness_adjusted = self.fitness_adjusted
+        new_nn.results = [0]*len(self.results)
         return new_nn
 
 
