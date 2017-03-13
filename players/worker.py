@@ -725,7 +725,7 @@ class Worker:
             fitness_raw = self.workplace.nns[i].fitness
             fitness_adjusted = fitness_raw/n_species
             fitnesses_adjusted.append(fitness_adjusted)
-            self.workplace.nns[i].fitness = fitness_adjusted
+            self.workplace.nns[i].fitness_adjusted = fitness_adjusted
 
         self.workplace.fitnesses_adjusted = fitnesses_adjusted
 

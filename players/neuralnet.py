@@ -9,6 +9,7 @@ class NeuralNetwork:
         self.node_indices = None
         self.connect_genes = None
         self.fitness = None
+        self.fitness_adjusted = None
         self.results = None
         self._is_front = False
         self._result_col1 = 5
@@ -36,6 +37,7 @@ class NeuralNetwork:
         new_nn.node_indices = list(self.node_indices)
         new_nn.connect_genes = np.copy(self.connect_genes)
         new_nn.fitness = self.fitness
+        new_nn.fitness_adjusted = self.fitness_adjusted
         return new_nn
 
 

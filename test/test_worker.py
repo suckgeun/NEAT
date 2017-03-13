@@ -1834,11 +1834,11 @@ class WorkerTest(unittest.TestCase):
         worker.calc_fitness_adjusted()
 
         self.assertEqual(workplace.fitnesses_adjusted, [10, 10, 15, 20, 25])
-        self.assertEqual(nn1.fitness, 10)
-        self.assertEqual(nn2.fitness, 10)
-        self.assertEqual(nn3.fitness, 15)
-        self.assertEqual(nn4.fitness, 20)
-        self.assertEqual(nn5.fitness, 25)
+        self.assertEqual(nn1.fitness_adjusted, 10)
+        self.assertEqual(nn2.fitness_adjusted, 10)
+        self.assertEqual(nn3.fitness_adjusted, 15)
+        self.assertEqual(nn4.fitness_adjusted, 20)
+        self.assertEqual(nn5.fitness_adjusted, 25)
 
     def test_select_better_nns(self):
         workplace = Workplace(3, 1, bias=None, n_nn=4, drop_rate=0.5)
@@ -1906,6 +1906,21 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(children_assigned, {1: 3,
                                              3: 3,
                                              4: 4})
+
+    def test_choose_parent(self):
+        workplace = Workplace(3, 1, bias=None, n_nn=10)
+        worker = Worker(workplace)
+
+        species_of_nn = [0, 1, 3, 3, 3, 1, 4, 4, 4, 4]
+        fitnesses = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
+        fitness_each, fitness_total = worker.get_sum_fitness(species_of_nn, fitnesses)
+
+        children_assigned = worker.calc_children_assign_num(fitness_each, fitness_total)
+        self.assertEqual(children_assigned, {0: 1,
+                                             1: 2,
+                                             3: 3,
+                                             4: 4})
+
 
     def test_mutate_add_connection(self):
 
