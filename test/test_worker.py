@@ -1771,6 +1771,9 @@ class WorkerTest(unittest.TestCase):
             self.assertTrue(worker.calc_compatibility_distance
                             (v, workplace.nns[nn_num].connect_genes) < workplace.cmp_thr)
         self.assertEqual(workplace.species_of_nns, [0, 0, 0])
+        self.assertEqual(nn1.species, 0)
+        self.assertEqual(nn2.species, 0)
+        self.assertEqual(nn3.species, 0)
 
         worker.add_node(1, 3, nn1)
         worker.add_node(1, 3, nn2)
@@ -1782,6 +1785,9 @@ class WorkerTest(unittest.TestCase):
             self.assertTrue(worker.calc_compatibility_distance
                             (v, workplace.nns[nn_num].connect_genes) < workplace.cmp_thr)
         self.assertEqual(workplace.species_of_nns, [1, 1, 0])
+        self.assertEqual(nn1.species, 1)
+        self.assertEqual(nn2.species, 1)
+        self.assertEqual(nn3.species, 0)
 
         worker.add_connect(0, 4, 21, nn2)
 
@@ -1792,6 +1798,9 @@ class WorkerTest(unittest.TestCase):
             self.assertTrue(worker.calc_compatibility_distance
                             (v, workplace.nns[nn_num].connect_genes) < workplace.cmp_thr)
         self.assertEqual(workplace.species_of_nns, [1, 2, 0])
+        self.assertEqual(nn1.species, 1)
+        self.assertEqual(nn2.species, 2)
+        self.assertEqual(nn3.species, 0)
 
         worker.add_node(1, 3, nn3)
         worker.add_connect(0, 4, 31, nn3)
@@ -1803,6 +1812,9 @@ class WorkerTest(unittest.TestCase):
             self.assertTrue(worker.calc_compatibility_distance
                             (v, workplace.nns[nn_num].connect_genes) < workplace.cmp_thr)
         self.assertEqual(workplace.species_of_nns, [1, 2, 2])
+        self.assertEqual(nn1.species, 1)
+        self.assertEqual(nn2.species, 2)
+        self.assertEqual(nn3.species, 2)
 
     def test_calc_fitness_adjusted(self):
         workplace = Workplace(3, 1, bias=None, n_nn=5, c1=10, c2=10, c3=0.3, cmp_thr=1)

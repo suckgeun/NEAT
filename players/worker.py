@@ -698,13 +698,16 @@ class Worker:
 
                 if cmp_dist < cmp_thr:
                     new_species_of_nns.append(species_num)
+                    nn.species = species_num
                     is_assigned = True
+                    break
 
             if not is_assigned:
                 all_species_num = list(self.workplace.species.keys()) + new_species_of_nns
                 new_species_num = max(all_species_num) + 1
                 new_species_of_nns.append(new_species_num)
                 new_species[new_species_num] = nn.connect_genes
+                nn.species = new_species_num
 
         new_species2 = collections.OrderedDict(new_species)
 
@@ -817,6 +820,23 @@ class Worker:
                         break
 
         return children_assigned
+
+    def choose_parent(self, species_num, parents, parent_fitnesses, species_total_fitness, _fitness_target=None):
+
+        if _fitness_target is not None:
+            fitness_target = _fitness_target
+        else:
+            fitness_target = random.uniform(0, species_total_fitness)
+
+        fitness = 0
+
+        for nn in parents:
+            fitness += nn.fitness_adjusted
+            if fitness > fitness_target:
+                return nn
+
+
+
 
 
 
