@@ -558,6 +558,24 @@ class Worker:
         else:
             return genes_more_fit[len(match):, :]
 
+    @staticmethod
+    def generate_node_indices(connect_genes):
+        """
+        generate node indices from connect_genes
+
+        :param connect_genes:
+        :return: list of all nodes
+        """
+
+        nodes_input = set(connect_genes[:, 0])
+        nodes_output = set(connect_genes[:, 1])
+        nodes_all = nodes_input.union(nodes_output)
+
+        node_indices = list(nodes_all)
+        node_indices.sort()
+
+        return node_indices
+
     def crossover(self, nn1, nn2):
         """
         crossover the two nns
@@ -579,7 +597,9 @@ class Worker:
         genes_disj_exc = self.inherit_disjoint_excess(match, nn1, nn2)
         genes_new = np.vstack((genes_matching, genes_disj_exc))
 
+        # nn_new.node_indices = list(self.node_indices)
         nn_new.connect_genes = genes_new
+        # nn_new.results = [0]*len(nn_new.node_indices)
 
         return nn_new
 
