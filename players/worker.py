@@ -785,6 +785,14 @@ class Worker:
         return fitness_sum, fitness_total
 
     def calc_children_assign_num(self, fitness_each, fitness_total):
+        """
+        calculate each species's next generation's children number.
+
+        children assignment is based on species' fitness adjusted
+        :param fitness_each: dictionary of each species fitness with species number as key and fitness as value
+        :param fitness_total: total fitness of all nns
+        :return: dictionary of key: species number, value: assigned children number
+        """
 
         n_nn = self.workplace.n_nn
         children_assigned = collections.OrderedDict()
