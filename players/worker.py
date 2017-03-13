@@ -831,6 +831,17 @@ class Worker:
 
     @staticmethod
     def choose_parent(species_num, parents, species_total_fitness, _fitness_target=None):
+        """
+        choose parent from given parents list and species number
+
+        Roulette Wheel Selection is used
+
+        :param species_num: species to be used
+        :param parents: all parent nns
+        :param species_total_fitness: total fitness of the given species
+        :param _fitness_target: test purpose parameter
+        :return: one neural network object
+        """
 
         if _fitness_target is not None:
             fitness_target = _fitness_target
