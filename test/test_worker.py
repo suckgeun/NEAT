@@ -1172,7 +1172,7 @@ class WorkerTest(unittest.TestCase):
         self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-2, 2, 2]))
         self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 1, 1]))
         self.assertEqual(nn1.results, [-1, 1, 1, 1])
-        
+
     def test_activate_neurons__OR(self):
         workplace = Workplace(2, 1, bias=-1, n_nn=1)
         workplace.activ_func = linear
@@ -1224,7 +1224,7 @@ class WorkerTest(unittest.TestCase):
         self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_prev], [-1, 3, 3]))
         self.assertTrue(np.array_equal(nn1.connect_genes[:, nn1.result_col_cur], [-1, 1, 1]))
         self.assertEqual(nn1.results, [-1, 1, 1, 2.5])
-    
+
     def test_activate_neurons__XOR(self):
         workplace = Workplace(2, 1, bias=-1, n_nn=1)
         workplace.activ_func = linear
@@ -1561,7 +1561,7 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn.connect_genes[1, 3], 0)
         worker.disable_connect(2, 3, nn)
         self.assertEqual(nn.connect_genes[2, 3], 0)
-    
+
     def test_enable_connect(self):
         workplace = Workplace(3, 1)
         worker = Worker(workplace)
@@ -1911,16 +1911,32 @@ class WorkerTest(unittest.TestCase):
         workplace = Workplace(3, 1, bias=None, n_nn=10)
         worker = Worker(workplace)
 
-        species_of_nn = [0, 1, 3, 3, 3, 1, 4, 4, 4, 4]
-        fitnesses = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
-        fitness_each, fitness_total = worker.get_sum_fitness(species_of_nn, fitnesses)
+        parents = workplace.nns
+        for nn in parents:
+            nn.fitness_adjusted = 10
+        parent_fitnesses = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
+        parents_species = [0, 1, 3, 3, 3, 1, 4, 4, 4, 4]
+        fitness_each, fitness_total = worker.get_sum_fitness(parents_species, parent_fitnesses)
 
-        children_assigned = worker.calc_children_assign_num(fitness_each, fitness_total)
-        self.assertEqual(children_assigned, {0: 1,
-                                             1: 2,
-                                             3: 3,
-                                             4: 4})
+        species_num = 0
+        species_total_fitness = fitness_each[species_num]
+        parent = worker.choose_parent(species_num, parents, parent_fitnesses, species_total_fitness, _fitness_target=8)
+        self.assertEqual(parent, parents[0])
 
+        species_num = 1
+        species_total_fitness = fitness_each[species_num]
+        parent = worker.choose_parent(species_num, parents, parent_fitnesses, species_total_fitness, _fitness_target=15)
+        self.assertEqual(parent, parents[5])
+
+        species_num = 3
+        species_total_fitness = fitness_each[species_num]
+        parent = worker.choose_parent(species_num, parents, parent_fitnesses, species_total_fitness, _fitness_target=5)
+        self.assertEqual(parent, parents[2])
+
+        species_num = 4
+        species_total_fitness = fitness_each[species_num]
+        parent = worker.choose_parent(species_num, parents, parent_fitnesses, species_total_fitness, _fitness_target=35)
+        self.assertEqual(parent, parents[9])
 
     def test_mutate_add_connection(self):
 
