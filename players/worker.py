@@ -773,7 +773,7 @@ class Worker:
             keeping_nns.append(nns[nn_index])
             species_keeping_nns.append(species_of_nns[nn_index])
             fitnesses_keeping_nns.append(fitnesses_adjusted[nn_index])
-            del fitnesses_adjusted[nn_index]
+            fitnesses_adjusted[nn_index] = -1
 
         return keeping_nns, species_keeping_nns, fitnesses_keeping_nns
 
