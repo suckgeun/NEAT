@@ -1980,6 +1980,26 @@ class WorkerTest(unittest.TestCase):
         parent = worker.choose_parent(species_num, parents, species_total_fitness, _fitness_target=35)
         self.assertEqual(parent, parents[9])
 
+    def test_mutate_weight(self):
+        workplace = Workplace(30, 10, bias=None, n_nn=10, weight_mutate_rate=0.05, pm_weight_random=0.1)
+        worker = Worker(workplace)
+        worker.initialize_workplace()
+
+        nn = workplace.nns[0]
+
+        nn_new = worker.mutate_weight(nn, pm_weight_random=0.05)
+        for i, gene in enumerate(nn_new.connect_genes):
+            diff = gene[2] - nn.connect_genes[i, 4]
+            self.assertTrue(diff/100 <= workplace.weight_mutate_rate)
+
+        nn_new = worker.mutate_weight(nn, pm_weight_random=0.2)
+        test_result = False
+        for i, gene in enumerate(nn_new.connect_genes):
+            diff = gene[2] - nn.connect_genes[i, 4]
+            if diff/100 > workplace.weight_mutate_rate:
+                test_result = True
+        self.assertTrue(test_result)
+
     def test_mutate_add_connection(self):
 
         pass
@@ -1987,6 +2007,4 @@ class WorkerTest(unittest.TestCase):
     def test_mutate_add_node(self):
         pass
 
-    def test_mutate_weight(self):
-        pass
 
