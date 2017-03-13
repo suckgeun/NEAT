@@ -1884,7 +1884,6 @@ class WorkerTest(unittest.TestCase):
     def test_get_sum_fitness(self):
         workplace = Workplace(3, 1, bias=None, n_nn=6)
         worker = Worker(workplace)
-
         species_of_nn = [0, 1, 2, 3, 3, 1]
         fitnesses = [11, 12, 13, 14, 15, 16]
 
@@ -1922,32 +1921,43 @@ class WorkerTest(unittest.TestCase):
     def test_choose_parent(self):
         workplace = Workplace(3, 1, bias=None, n_nn=10)
         worker = Worker(workplace)
+        worker.initialize_workplace()
 
         parents = workplace.nns
         for nn in parents:
             nn.fitness_adjusted = 10
         parent_fitnesses = [10, 10, 10, 10, 10, 10, 10, 10, 10, 10]
         parents_species = [0, 1, 3, 3, 3, 1, 4, 4, 4, 4]
+        parents[0].species = 0
+        parents[1].species = 1
+        parents[2].species = 3
+        parents[3].species = 3
+        parents[4].species = 3
+        parents[5].species = 1
+        parents[6].species = 4
+        parents[7].species = 4
+        parents[8].species = 4
+        parents[9].species = 4
         fitness_each, fitness_total = worker.get_sum_fitness(parents_species, parent_fitnesses)
 
         species_num = 0
         species_total_fitness = fitness_each[species_num]
-        parent = worker.choose_parent(species_num, parents, parent_fitnesses, species_total_fitness, _fitness_target=8)
+        parent = worker.choose_parent(species_num, parents, species_total_fitness, _fitness_target=8)
         self.assertEqual(parent, parents[0])
 
         species_num = 1
         species_total_fitness = fitness_each[species_num]
-        parent = worker.choose_parent(species_num, parents, parent_fitnesses, species_total_fitness, _fitness_target=15)
+        parent = worker.choose_parent(species_num, parents, species_total_fitness, _fitness_target=15)
         self.assertEqual(parent, parents[5])
 
         species_num = 3
         species_total_fitness = fitness_each[species_num]
-        parent = worker.choose_parent(species_num, parents, parent_fitnesses, species_total_fitness, _fitness_target=5)
+        parent = worker.choose_parent(species_num, parents, species_total_fitness, _fitness_target=5)
         self.assertEqual(parent, parents[2])
 
         species_num = 4
         species_total_fitness = fitness_each[species_num]
-        parent = worker.choose_parent(species_num, parents, parent_fitnesses, species_total_fitness, _fitness_target=35)
+        parent = worker.choose_parent(species_num, parents, species_total_fitness, _fitness_target=35)
         self.assertEqual(parent, parents[9])
 
     def test_mutate_add_connection(self):

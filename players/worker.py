@@ -821,7 +821,8 @@ class Worker:
 
         return children_assigned
 
-    def choose_parent(self, species_num, parents, parent_fitnesses, species_total_fitness, _fitness_target=None):
+    @staticmethod
+    def choose_parent(species_num, parents, species_total_fitness, _fitness_target=None):
 
         if _fitness_target is not None:
             fitness_target = _fitness_target
@@ -831,9 +832,10 @@ class Worker:
         fitness = 0
 
         for nn in parents:
-            fitness += nn.fitness_adjusted
-            if fitness > fitness_target:
-                return nn
+            if species_num == nn.species:
+                fitness += nn.fitness_adjusted
+                if fitness > fitness_target:
+                    return nn
 
 
 
