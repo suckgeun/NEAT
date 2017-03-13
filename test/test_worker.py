@@ -1658,6 +1658,20 @@ class WorkerTest(unittest.TestCase):
         self.assertTrue(np.array_equal(genes_new[3], genes_nn2[7]))
         self.assertTrue(np.array_equal(genes_new[4], genes_nn2[8]))
 
+    def test_generate_node_indices(self):
+        workplace = Workplace(2, 1, bias=-1)
+        worker = Worker(workplace)
+        nn = NeuralNetwork()
+        nn.connect_genes = np.array([[0, 3, 1, 0, -1, -1],
+                                     [1, 3, 1, 1, 0, 0],
+                                     [2, 3, 1, 2, 0, 0],
+                                     [2, 5, 1, 5, 0, 0],
+                                     [5, 3, 1, 6, 0, 0]])
+
+        node_indices = worker.generate_node_indices(nn.connect_genes)
+
+        self.assertEqual(node_indices, [0, 1, 2, 3, 5])
+
     def test_crossover(self):
 
         worker, nn1, nn2 = self.create_env_same_as_paper()
