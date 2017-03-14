@@ -8,8 +8,12 @@ class Workplace:
     """
 
     def __init__(self, n_input, n_output, n_nn=1, bias=None,
-                 activ_func=sigmoid, c1=1, c2=1, c3=1, cmp_thr=1, drop_rate=0.5,
-                 pc=0.8, pm=0.1, pm_node=0.1, pm_connect=0.1, pm_weight=0.8):
+                 activ_func=sigmoid, c1=1, c2=1, c3=0.4, cmp_thr=3, drop_rate=0.5, small_group=5,
+                 pc=0.75, pc_interspecies = 0.001,
+                 pm_node_small=0.03, pm_connect_small=0.05,
+                 pm_node_big=0.3, pm_connect_big=0.3,
+                 pm_weight=0.8, pm_weight_random=0.1, weight_mutate_rate=0.1,
+                 pm_disable=0.75, ):
 
         assert n_input > -1 and n_output > -1 and n_nn > 0, "number of inputs, outputs and neural network " \
                                                             "should be positive integer"
@@ -38,12 +42,18 @@ class Workplace:
         self.c3 = c3
         self.cmp_thr = cmp_thr
         self.drop_rate = drop_rate
+        self.small_group = small_group
+        self.weight_mutate_rate = weight_mutate_rate
         # crossover probability
         self.pc = pc
+        self.pc_interspecies = pc_interspecies
         # mutation probability
-        self.pm = pm
-        self.pm_node = pm_node
-        self.pm_connect = pm_connect
+        self.pm_node_small = pm_node_small
+        self.pm_node_big = pm_node_big
+        self.pm_connect_small = pm_connect_small
+        self.pm_connect_big = pm_connect_big
         self.pm_weight = pm_weight
+        self.pm_weight_random = pm_weight_random
+        self.pm_disable = pm_disable
 
 

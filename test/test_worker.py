@@ -1981,24 +1981,22 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(parent, parents[9])
 
     def test_mutate_weight(self):
-        workplace = Workplace(30, 10, bias=None, n_nn=10, weight_mutate_rate=0.05, pm_weight_random=0.1)
+        workplace = Workplace(10, 1, bias=None, n_nn=2, weight_mutate_rate=0.05, pm_weight_random=0.1)
         worker = Worker(workplace)
         worker.initialize_workplace()
 
         nn = workplace.nns[0]
 
-        nn_new = worker.mutate_weight(nn, pm_weight_random=0.05)
-        for i, gene in enumerate(nn_new.connect_genes):
-            diff = gene[2] - nn.connect_genes[i, 4]
-            self.assertTrue(diff/100 <= workplace.weight_mutate_rate)
+        worker.mutate_weight(nn, pm_weight_random=0.05)
+        for gene in nn.connect_genes:
+            self.assertTrue(-1 <= gene[2] <= 1)
 
-        nn_new = worker.mutate_weight(nn, pm_weight_random=0.2)
-        test_result = False
-        for i, gene in enumerate(nn_new.connect_genes):
-            diff = gene[2] - nn.connect_genes[i, 4]
-            if diff/100 > workplace.weight_mutate_rate:
-                test_result = True
-        self.assertTrue(test_result)
+        nn = workplace.nns[1]
+        nn_original = nn.copy()
+        worker.mutate_weight(nn, pm_weight_random=0.2)
+        for i, gene in enumerate(nn.connect_genes):
+            percentage = (gene[2] - nn_original.connect_genes[i, 2]) / nn_original.connect_genes[i, 2]
+            self.assertTrue(-0.05 <= percentage <= 0.05)
 
     def test_mutate_add_connection(self):
 

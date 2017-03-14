@@ -876,6 +876,21 @@ class Worker:
                 if fitness > fitness_target:
                     return nn
 
+    def mutate_weight(self, nn, pm_weight_random=None):
+        mutate_rate = self.workplace.weight_mutate_rate
+
+        for gene in nn.connect_genes:
+            pm = pm_weight_random
+            if pm_weight_random is None:
+                pm = random.random()
+
+            if pm <= self.workplace.pm_weight_random:
+                # TODO: weight range setting
+                gene[2] = random.uniform(-1, 1)
+            else:
+                mutate_range = mutate_rate * gene[2]
+                gene[2] += random.uniform(-mutate_range, mutate_range)
+
 
 
 
