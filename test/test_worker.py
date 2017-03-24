@@ -1478,7 +1478,7 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn.connect_genes.shape, (5, 7))
         gene_w_removed = np.delete(nn.connect_genes, 2, 1)
         self.assertTrue(np.array_equal(gene_w_removed, np.array([[0, 3, 1, 0, -1, -1],
-                                                                 [1, 3, 1, 1, 0, 0],
+                                                                 [1, 3, 0, 1, 0, 0],
                                                                  [2, 3, 1, 2, 0, 0],
                                                                  [1, 4, 1, 3, 0, 0],
                                                                  [4, 3, 1, 4, 0, 0]])))
@@ -1509,7 +1509,7 @@ class WorkerTest(unittest.TestCase):
         self.assertEqual(nn2.connect_genes.shape, (5, 7))
         gene_w_removed = np.delete(nn2.connect_genes, 2, 1)
         self.assertTrue(np.array_equal(gene_w_removed, np.array([[0, 3, 1, 0, -1, -1],
-                                                                 [1, 3, 1, 1, 0, 0],
+                                                                 [1, 3, 0, 1, 0, 0],
                                                                  [2, 3, 1, 2, 0, 0],
                                                                  [1, 4, 1, 3, 0, 0],
                                                                  [4, 3, 1, 4, 0, 0]])))
@@ -1543,7 +1543,7 @@ class WorkerTest(unittest.TestCase):
         gene_w_removed = np.delete(nn3.connect_genes, 2, 1)
         self.assertTrue(np.array_equal(gene_w_removed, np.array([[0, 3, 1, 0, -1, -1],
                                                                  [1, 3, 1, 1, 0, 0],
-                                                                 [2, 3, 1, 2, 0, 0],
+                                                                 [2, 3, 0, 2, 0, 0],
                                                                  [2, 5, 1, 5, 0, 0],
                                                                  [5, 3, 1, 6, 0, 0]])))
 

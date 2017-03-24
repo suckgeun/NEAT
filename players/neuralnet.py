@@ -12,6 +12,8 @@ class NeuralNetwork:
         self.fitness_adjusted = None
         self.results = None
         self.species = 0
+        self.is_champ = False
+        self.fitness_previous = -1
         self._is_front = False
         self._result_col1 = 5
         self._result_col2 = 6

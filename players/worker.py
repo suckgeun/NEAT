@@ -56,7 +56,7 @@ class Worker:
         """
         assert node > -1, "node index must be positive integer"
 
-        if self.workplace.bias is None:
+        if self.workplace.n_bias == 0:
             return False
         else:
             return node == 0
@@ -206,9 +206,17 @@ class Worker:
 
         assert node_in > -1 and node_out > -1, "node index must be positive integer"
         assert type(nn) is NeuralNetwork, "nn must be an instance of Neural Network"
-        assert not self.is_connect_exist_nn(node_in, node_out, nn), "connect must not exist in the neural network"
+        assert not self.is_connect_exist_nn(int(node_in), int(node_out), nn), "connect must not exist in the neural network"
+        assert not self.is_recursive_connect(node_in, node_out), "recursive connect not allowed"
+        assert not self.is_bias_in_connect(node_in, node_out), "bias in connect not allowed"
+        assert not self.is_in_bias_at_end_connect(node_in, node_out), "in and bias cannot be output node"
+        assert not self.is_in_in_connect(node_in, node_out), "in in connect not allowed"
+        assert not self.is_out_out_connect(node_in, node_out), "out out connect not allowed"
+        assert not self.is_output_node(node_in), "output node cannot be node_in"
+        assert not self.is_input_node(node_out), "input node cannot be node_out"
+        assert not self.is_bias_node(node_out), "bias node cannot be node_out"
 
-        innov_num = self.is_connect_exist_global(node_in, node_out)
+        innov_num = self.is_connect_exist_global(int(node_in), int(node_out))
 
         if innov_num is None:
             self.increment_innov_counter()
@@ -220,7 +228,7 @@ class Worker:
         if self.is_bias_node(node_in):
             result_node_in = self.workplace.bias
 
-        new_gene = np.array([[node_in, node_out, weight, ENABLED, innov_num, result_node_in, result_node_in]])
+        new_gene = np.array([[int(node_in), int(node_out), weight, ENABLED, innov_num, result_node_in, result_node_in]])
 
         if nn.connect_genes is None:
             nn.connect_genes = new_gene
@@ -242,6 +250,9 @@ class Worker:
         n_node_in = n_bias + n_input
         n_node_out = n_output
 
+        weight_max = self.workplace.weight_max
+        weight_min = self.workplace.weight_min
+
         # initialize node_indices
         nn.node_indices = list(range(n_node_in + n_node_out))
 
@@ -251,7 +262,7 @@ class Worker:
             for node_out in range(n_node_in, n_node_in + n_node_out):
 
                 # TODO decide how to cap the random weights.
-                self.add_connect(node_in, node_out, random.uniform(-1.0, 1.0), nn)
+                self.add_connect(node_in, node_out, random.uniform(weight_min, weight_max), nn)
 
         # initialize results list
         results = [0] * (n_input + n_output)
@@ -266,6 +277,7 @@ class Worker:
         :return:
         """
 
+        print("initializing workplace")
         node_genes = self.workplace.node_genes_global
         n_bias = self.workplace.n_bias
         n_input = self.workplace.n_input
@@ -281,6 +293,7 @@ class Worker:
         for _i in range(n_output):
             node_genes.append(2)
 
+        print("initializing nn")
         for _i in range(n_nn):
             nn = NeuralNetwork()
             self.initialize_nn(nn)
@@ -321,6 +334,8 @@ class Worker:
         rows = np.where((connects == (node_in, node_out)).all(1))
         n_rows = len(rows[0])
 
+        if n_rows > 1:
+            print(nn.connect_genes[:, :4])
         assert n_rows <= 1, "there are more then two identical connections. connection corrupted"
 
         if n_rows == 0:
@@ -401,7 +416,7 @@ class Worker:
 
         return activ_result[(n_bias+n_input):(n_bias + n_input + n_output)]
 
-    def get_node_between(self, node_in, node_out):
+    def get_node_between(self, node_in, node_out, nn=None):
         """
         get one node between node_in and node_out.
 
@@ -420,9 +435,26 @@ class Worker:
 
         for connect_in, connect_out in self.workplace.innov_history:
             if connect_in in outs and connect_out == node_out:
-                return connect_in
+                if self.is_connect_exist_nn(connect_in, node_out, nn) \
+                        or self.is_connect_exist_nn(node_in, connect_in, nn):
+                    pass
+                else:
+                    return connect_in
 
         return None
+
+    def is_node_between_nn(self, node_in, node_out, nn):
+
+        outs = []
+        for row in nn.connect_genes:
+            if row[0] == node_in:
+                outs.append(row[1])
+
+        for row in nn.connect_genes:
+            if row[0] in outs and row[1] == node_out:
+                return True
+
+        return False
 
     def add_node(self, node_in, node_out, nn):
         """
@@ -440,15 +472,22 @@ class Worker:
 
         ori_weight = self.get_weight_of_connect(node_in, node_out, nn)
 
-        new_node = self.get_node_between(node_in, node_out)
+        new_node = self.get_node_between(node_in, node_out, nn)
         if new_node is None:
             self.workplace.node_genes_global.append(3)
             new_node = len(self.workplace.node_genes_global) - 1
-
-        nn.node_indices.append(new_node)
-        nn.results.append(0)
+        if new_node not in nn.node_indices:
+            nn.node_indices.append(new_node)
+            nn.results.append(0)
+        if self.is_connect_exist_nn(new_node, node_out, nn):
+            print("connection exists: {0}, {1}".format(new_node, node_out))
+            assert False, "add_node trying to add existing connection"
+        elif self.is_connect_exist_nn(node_in, new_node, nn):
+            print("connection exists: {0}, {1}".format(node_in, new_node))
+            assert False, "add_node trying to add existing connection"
         self.add_connect(node_in, new_node, 1.0, nn)
         self.add_connect(new_node, node_out, ori_weight, nn)
+        self.disable_connect(node_in, node_out, nn)
 
     def disable_connect(self, node_in, node_out, nn):
         """
@@ -465,6 +504,9 @@ class Worker:
         for gene in nn.connect_genes:
             if gene[0] == node_in and gene[1] == node_out:
                 gene[3] = 0
+                return
+
+        assert False, "Failed to disable connection: ({0}, {1})".format(node_in, node_out)
 
     def enable_connect(self, node_in, node_out, nn):
         """
@@ -493,11 +535,11 @@ class Worker:
         """
         match = []
 
-        matching_size = min(connect_genes1.shape[0], connect_genes2.shape[0])
-
-        for i in range(matching_size):
-            if connect_genes1[i, 4] == connect_genes2[i, 4]:
-                match.append(connect_genes1[i, 4])
+        for innov1 in connect_genes1[:, 4]:
+            for innov2 in connect_genes2[:, 4]:
+                if innov1 == innov2:
+                    match.append(innov1)
+                    break
 
         return match
 
@@ -518,10 +560,17 @@ class Worker:
 
         for innov_num in match:
             rand = random.random()
+            gene1 = genes1[genes1[:, 4] == innov_num]
+            gene2 = genes2[genes2[:, 4] == innov_num]
             if rand > 0.5:
-                gene_to_add = genes1[genes1[:, 4] == innov_num]
+                gene_to_add = gene1
             else:
-                gene_to_add = genes2[genes2[:, 4] == innov_num]
+                gene_to_add = gene2
+
+            if gene1[0, 3] == 0 or gene2[0, 3] == 0:
+                p_disable = random.random()
+                if p_disable <= 0.75:
+                    gene_to_add[0, 3] = 0
 
             if genes_new is None:
                 genes_new = gene_to_add
@@ -553,10 +602,29 @@ class Worker:
         else:
             genes_more_fit = None
 
+        # TODO: performance bottleneck
         if genes_more_fit is None:
-            return np.vstack((genes1[len(match):, :], genes2[len(match):, :]))
+            indices1 = []
+            indices2 = []
+            for i in match:
+                for j, row in enumerate(genes1):
+                    if row[4] == i:
+                        indices1.append(j)
+
+                for j, row in enumerate(genes2):
+                    if row[4] == i:
+                        indices2.append(j)
+                genes1 = np.delete(genes1, indices1, axis=0)
+                genes2 = np.delete(genes2, indices2, axis=0)
+            return np.vstack((genes1, genes2))
         else:
-            return genes_more_fit[len(match):, :]
+            indices = []
+            for i in match:
+                for j, row in enumerate(genes_more_fit):
+                    if row[4] == i:
+                        indices.append(j)
+            genes_more_fit = np.delete(genes_more_fit, indices, axis=0)
+            return genes_more_fit
 
     @staticmethod
     def generate_node_indices(connect_genes):
@@ -589,6 +657,12 @@ class Worker:
         :param nn2:
         :return: newly inherited neural network.
         """
+
+        if len(nn1.connect_genes[:, 4]) > len(set(nn1.connect_genes[:, 4])):
+            assert False, "crossover start corrupted. mother"
+        if len(nn2.connect_genes[:, 4]) > len(set(nn2.connect_genes[:, 4])):
+            assert False, "crossover start corrupted. father"
+
         nn_new = NeuralNetwork()
 
         match = self.get_matching_innov_num(nn1.connect_genes, nn2.connect_genes)
@@ -597,9 +671,33 @@ class Worker:
         genes_disj_exc = self.inherit_disjoint_excess(match, nn1, nn2)
         genes_new = np.vstack((genes_matching, genes_disj_exc))
 
+
         nn_new.node_indices = self.generate_node_indices(genes_new)
         nn_new.connect_genes = genes_new
         nn_new.results = [0]*len(nn_new.node_indices)
+
+
+        if len(nn_new.connect_genes[:, 4]) > len(set(nn_new.connect_genes[:, 4])):
+            mother = np.delete(nn1.connect_genes, (2, 3, 5, 6), axis=1)
+            father = np.delete(nn2.connect_genes, (2, 3, 5, 6), axis=1)
+            child = np.delete(genes_new, (2, 3, 5, 6), axis=1)
+            print("$$$$ making children $$$$")
+            print(match)
+            print("mother")
+            print(mother)
+            print("father")
+            print(father)
+            print("$$$$$$$$$$$$$$$$$$$$$$$$$")
+            print("matching_genes")
+            print(np.delete(genes_matching, (2, 3, 5, 6), axis=1))
+            print("disj_exc_genes")
+            print(np.delete(genes_disj_exc, (2, 3, 5, 6), axis=1))
+
+            print("genes_new")
+            print(child)
+            print("$$$$$$$$$$$$$$$$$$")
+
+            assert False, "crossover end corrupted. nn_new"
 
         return nn_new
 
@@ -627,12 +725,14 @@ class Worker:
             if self.is_bias_node(node_index):
                 m[:, cur][m[:, 0] == node_index] = self.workplace.bias
             elif self.is_input_node(node_index):
-                wx_sum = m[m[:, 1] == node_index][:, prev].sum()
+                m_enabled = m[m[:, 3] != 0]
+                wx_sum = m_enabled[m_enabled[:, 1] == node_index][:, prev].sum()
                 val = inputs[i - n_bias] + wx_sum
                 nn.results[i] = val
                 m[:, cur][m[:, 0] == node_index] = val
             else:
-                wx_sum = m[m[:, 1] == node_index][:, prev].sum()
+                m_enabled = m[m[:, 3] != 0]
+                wx_sum = m_enabled[m_enabled[:, 1] == node_index][:, prev].sum()
                 val = self.workplace.activ_func(wx_sum)
                 nn.results[i] = val
                 m[:, cur][m[:, 0] == node_index] = val
@@ -703,12 +803,12 @@ class Worker:
     def speciate(self):
         # TODO: refactoring needed
         # TODO: documentation needed
-
+        print("speciating")
         cmp_thr = self.workplace.cmp_thr
         new_species_of_nns = []
         new_species = collections.OrderedDict(self.workplace.species)
 
-        for nn in self.workplace.nns:
+        for i, nn in enumerate(self.workplace.nns):
 
             is_assigned = False
 
@@ -814,18 +914,22 @@ class Worker:
         :return: dictionary of key: species number, value: assigned children number
         """
 
-        n_nn = self.workplace.n_nn
+        if fitness_total == 0:
+            fitness_total = 1
+
+        n_child_nn = self.workplace.n_nn - self.workplace.n_champion_keeping
         children_assigned = collections.OrderedDict()
         total_children = 0
 
         for species_num, fitness in fitness_each.items():
-            n_children = int(n_nn * (fitness / fitness_total))
+
+            n_children = int(n_child_nn * (fitness / fitness_total))
             children_assigned[species_num] = n_children
             total_children += n_children
 
-        if total_children != n_nn:
-            if total_children > n_nn:
-                diff = total_children - n_nn
+        if total_children != n_child_nn:
+            if total_children > n_child_nn:
+                diff = total_children - n_child_nn
 
                 for i, n_children in children_assigned.items():
                     if n_children <= 1:
@@ -838,7 +942,7 @@ class Worker:
                         break
 
             else:
-                diff = n_nn - total_children
+                diff = n_child_nn - total_children
 
                 for i in children_assigned:
                     children_assigned[i] += 1
@@ -862,22 +966,22 @@ class Worker:
         :param _fitness_target: test purpose parameter
         :return: one neural network object
         """
-
         if _fitness_target is not None:
             fitness_target = _fitness_target
         else:
             fitness_target = random.uniform(0, species_total_fitness)
-
         fitness = 0
 
         for nn in parents:
             if species_num == nn.species:
                 fitness += nn.fitness_adjusted
-                if fitness > fitness_target:
+                if fitness >= fitness_target:
                     return nn
 
     def mutate_weight(self, nn, pm_weight_random=None):
         mutate_rate = self.workplace.weight_mutate_rate
+        weight_max = self.workplace.weight_max
+        weight_min = self.workplace.weight_min
 
         for gene in nn.connect_genes:
             pm = pm_weight_random
@@ -885,11 +989,99 @@ class Worker:
                 pm = random.random()
 
             if pm <= self.workplace.pm_weight_random:
-                # TODO: weight range setting
-                gene[2] = random.uniform(-1, 1)
+                gene[2] = random.uniform(weight_min, weight_max)
             else:
                 mutate_range = mutate_rate * gene[2]
                 gene[2] += random.uniform(-mutate_range, mutate_range)
+
+    def mutate_node(self, nn):
+
+        if len(nn.connect_genes[:, 4]) > len(set(nn.connect_genes[:, 4])):
+            assert False, "mutate_node start corrupted"
+        # TODO bug
+        # need to check if there is node between two node in the same nn
+        indices = []
+
+        for i, row in enumerate(nn.connect_genes):
+            if row[3] == 0:
+                indices.append(i)
+        x = np.delete(nn.connect_genes, indices, axis=0)
+
+        if len(x) > 0:
+            index = random.randint(0, len(x)-1)
+            gene = x[index]
+            if self.is_node_between_nn(gene[0], gene[1], nn):
+                return
+
+            self.add_node(gene[0], gene[1], nn)
+
+            if len(nn.connect_genes[:, 4]) > len(set(nn.connect_genes[:, 4])):
+                assert False, "mutate_node end corrupted"
+
+    def get_bias_input_nodes(self):
+
+        n_input = self.workplace.n_input
+        n_bias = self.workplace.n_bias
+
+        return [node for node in range(0, n_bias+n_input)]
+
+    def mutate_connect(self, nn):
+
+        if len(nn.connect_genes[:, 4]) > len(set(nn.connect_genes[:, 4])):
+            assert False, "mutate_connect start corrupted"
+
+        nodes_output = self.get_output_nodes()
+        nodes_input = self.get_bias_input_nodes()
+        samples_in = [node for node in nn.node_indices if node not in nodes_output]
+        samples_out = [node for node in nn.node_indices if node not in nodes_input]
+        weight_max = self.workplace.weight_max
+        weight_min = self.workplace.weight_min
+
+        node_in = random.sample(samples_in, 1)[0]
+        if not self.is_input_node(node_in):
+            samples_out.remove(node_in)
+
+        is_chosen = False
+
+        node_out = None
+        while not is_chosen:
+
+            if not samples_out:
+                self.mutate_node(nn)
+                return
+
+            node_out = random.sample(samples_out, 1)[0]
+
+            if self.is_connect_exist_nn(node_in, node_out, nn):
+                samples_out.remove(node_out)
+                node_out = None
+            else:
+                is_chosen = True
+
+        if node_out is None:
+            assert False, "mutate_connect: node_out is None"
+
+        self.add_connect(node_in, node_out, random.uniform(weight_min, weight_max), nn)
+
+        if len(nn.connect_genes[:, 4]) > len(set(nn.connect_genes[:, 4])):
+            assert False, "mutate_connect end corrupted"
+
+    def mutate_disable(self, nn):
+        choices = np.where(nn.connect_genes[:, 3] == 1)[0]
+        choices = list(choices)
+
+        if len(choices) != 0:
+            choice = random.sample(choices, k=1)
+            nn.connect_genes[choice, 3] = 0
+
+    def mutate_enable(self, nn):
+
+        choices = np.where(nn.connect_genes[:, 3] == 0)[0]
+        choices = list(choices)
+
+        if len(choices) != 0:
+            choice = random.sample(choices, k=1)
+            nn.connect_genes[choice, 3] = 1
 
 
 
