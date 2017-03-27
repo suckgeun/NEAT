@@ -1,10 +1,14 @@
 from players.worker import Worker
 from globaladmin.workplace import Workplace
 import random
+import os
+import numpy as np
+from players.neuralnet import NeuralNetwork
 
 
 class Manager:
-    def __init__(self, n_nns, n_inputs, n_outputs, bias=None, c1=1, c2=1, c3=0.4, drop_rate=0.8):
+    def __init__(self, n_nns, n_inputs, n_outputs, bias=None, c1=1, c2=1, c3=0.4, drop_rate=0.8,
+                 weight_max=10, weight_min=-10, weight_mutate_rate=0.1):
         self.worker = None
         self.workplace = None
         self.n_nns = n_nns
@@ -15,10 +19,16 @@ class Manager:
         self.c2 = c2
         self.c3 = c3
         self.drop_rate = drop_rate
+        self.nn_best = None
+        self.weight_max = weight_max
+        self.weight_min = weight_min
+        self.weight_mutate_rate = weight_mutate_rate
 
     def initialize(self):
         self.workplace = Workplace(self.n_inputs, self.n_outputs, bias=None, n_nn=self.n_nns,
-                                   c1=self.c1, c2=self.c2, c3=self.c3, drop_rate=self.drop_rate)
+                                   c1=self.c1, c2=self.c2, c3=self.c3, drop_rate=self.drop_rate,
+                                   weight_max=self.weight_max, weight_min=self.weight_min,
+                                   weight_mutate_rate=self.weight_mutate_rate)
         self.worker = Worker(self.workplace)
         self.worker.initialize_workplace()
 
@@ -148,6 +158,108 @@ class Manager:
     def create_next_generation(self):
         self.adjust_fitness()
         self.workplace.nns = self.make_children()
+
+    def write_best_nn(self, filename):
+
+        assert self.nn_best is not None, "nn best is not ready yet"
+
+        dir_path = os.path.join(os.getcwd(), "results")
+        file_path = os.path.join(dir_path, filename)
+
+        f = open(file_path, "w")
+        f.write("connect_genes\n")
+        for gene in self.nn_best.connect_genes[:, :5]:
+            f.write(str(gene))
+            f.write("\n")
+
+        f.write("node_indices\n")
+        f.write(str(self.nn_best.node_indices))
+        f.write("\n")
+
+        f.write("results\n")
+        f.write(str(self.nn_best.results))
+
+        f.write("\n")
+        f.write("fitness: {0}".format(str(self.nn_best.fitness)))
+        f.close()
+
+    def remember_best_nn(self):
+
+        if self.nn_best is None:
+            self.nn_best = self.workplace.nns[0]
+
+        for nn in self.workplace.nns:
+            if self.nn_best.fitness < nn.fitness:
+                self.nn_best = nn
+
+    @staticmethod
+    def recreate_best_nn(filename):
+
+        dir_path = os.path.join(os.getcwd(), "results")
+        file_path = os.path.join(dir_path, filename)
+
+        assert os.path.isfile(file_path), "file does not exist"
+
+        connects = None
+        node_indices = []
+        results = []
+
+        with open(file_path) as file:
+
+            for line in file:
+                print(line)
+                if line.startswith("connect_genes"):
+                    line = file.readline()
+                    line = line.replace('[', '').replace(']', '').replace('\n', '')
+                    nums = line.split()
+                    gene = []
+                    for num in nums:
+                        gene.append(float(num))
+
+                    gene.append(0)
+                    gene.append(0)
+
+                    connects = np.array(gene)
+
+                    for line in file:
+                        if line[0] == '[':
+                            if ']' not in line:
+                                line += '  ' + file.readline()
+                            line = line.replace('[', '').replace(']', '').replace('\n', '')
+                            nums = line.split()
+                            gene = []
+                            for num in nums:
+                                gene.append(float(num))
+
+                            gene.append(0)
+                            gene.append(0)
+
+                            connects = np.vstack((connects, gene))
+                        elif line.startswith("node_indices"):
+                            line = file.readline()
+                            line = line.replace('[', '').replace(']', '').replace('\n', '').replace(' ', '')
+                            nums = line.split(',')
+                            for num in nums:
+                                node_indices.append(float(num))
+
+                        elif line.startswith("results"):
+                            line = file.readline()
+                            line = line.replace('[', '').replace(']', '').replace('\n', '').replace(' ', '')
+                            nums = line.split(',')
+                            for num in nums:
+                                results.append(float(num))
+
+        nn_best = NeuralNetwork()
+        nn_best.connect_genes = connects
+        nn_best.node_indices = node_indices
+        nn_best.results = results
+
+        return nn_best
+
+
+
+
+
 
 
 

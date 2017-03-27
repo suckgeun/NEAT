@@ -931,25 +931,27 @@ class Worker:
             if total_children > n_child_nn:
                 diff = total_children - n_child_nn
 
-                for i, n_children in children_assigned.items():
-                    if n_children <= 1:
-                        pass
-                    else:
-                        children_assigned[i] -= 1
-                        diff -= 1
+                while diff > 0:
+                    for i, n_children in children_assigned.items():
+                        if n_children <= 1:
+                            pass
+                        else:
+                            children_assigned[i] -= 1
+                            diff -= 1
 
-                    if diff == 0:
-                        break
+                        if diff == 0:
+                            break
 
             else:
                 diff = n_child_nn - total_children
 
-                for i in children_assigned:
-                    children_assigned[i] += 1
-                    diff -= 1
+                while diff > 0:
+                    for i in children_assigned:
+                        children_assigned[i] += 1
+                        diff -= 1
 
-                    if diff == 0:
-                        break
+                        if diff == 0:
+                            break
 
         return children_assigned
 
