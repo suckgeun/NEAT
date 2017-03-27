@@ -4,6 +4,16 @@ import os
 
 
 def run_episode(env, manager, nn, i, n_epi=1, render=False):
+    """
+    runs each episode
+
+    :param env: OpenAI environment
+    :param manager: NEAT manager
+    :param nn: neural network to run the episode
+    :param i: neural network index
+    :param n_epi: number of times to run episode
+    :param render: if True, renders the game play
+    """
     observation = env.reset()
     nn.fitness = 0
     fitness_sum = 0
@@ -31,6 +41,11 @@ def run_episode(env, manager, nn, i, n_epi=1, render=False):
 
 
 def run():
+    """
+    Runs NEAT training
+    """
+
+    # initialize test environment
     env = gym.make('MountainCar-v0')
     n_input = 2
     n_output = env.action_space.n
@@ -41,20 +56,28 @@ def run():
 
     dir_path = os.path.join(os.getcwd(), "results")
     file_path = os.path.join(dir_path, "mountain_fitness_history.txt")
+
+    # run 30 generations
     for i_episode in range(30):
         print("running episode: {0}".format(i_episode))
         for i, nn in enumerate(manager.workplace.nns):
             run_episode(env, manager, nn, i, n_epi=3)
+
+        # record best fitness
         manager.remember_best_nn()
         with open(file_path, "a") as f:
             f.write(str(manager.nn_best.fitness - 300))
             f.write("\n")
         manager.create_next_generation()
 
+    # record best neural network
     manager.write_best_nn("mountain_result.txt")
 
 
 def check_result():
+    """
+    Validates the best performed neural network
+    """
     env = gym.make('MountainCar-v0')
     n_input = 2
     n_output = env.action_space.n
@@ -63,6 +86,7 @@ def check_result():
     manager = Manager(n_nn, n_input, n_output, c1=2, c2=2, c3=1, bias=1, drop_rate=0.8)
     nn = manager.recreate_best_nn("mountain_result.txt")
 
+    # runs 100 times and see the results
     for i_episode in range(100):
         print("running episode: {0}".format(i_episode))
         run_episode(env, manager, nn, -1, n_epi=3, render=True)
