@@ -11,10 +11,14 @@
  
 #### How to run CartPole-v0 test
     > python cartpole.py
+#### How to run CartPole-v0 OpenAI test
+    > python cartpole_openai.py
    
  
 #### How to run MountainCar-v0 test
     > python mountaincar.py
+#### How to run MountainCar-v0 OpenAI test
+    > python mountaincar_openai.py
  
 #### How to run SpaceInvaders-ram-v0 test
     > python spaceinvaders_ram.py
