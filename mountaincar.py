@@ -84,6 +84,7 @@ def check_result():
     n_nn = 1
     print("number of input: {0}, number of output:{1}".format(n_input, n_output))
     manager = Manager(n_nn, n_input, n_output, c1=2, c2=2, c3=1, bias=1, drop_rate=0.8)
+    manager.initialize()
     nn = manager.recreate_best_nn("mountain_result.txt")
 
     # runs 100 times and see the results

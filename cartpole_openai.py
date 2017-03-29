@@ -1,6 +1,7 @@
 import gym
 from players.manager import Manager
 import os
+from gym import wrappers
 
 
 def run_episode(env, manager, nn, i, n_epi=1, render=False):
@@ -43,34 +44,36 @@ def run():
     Runs NEAT training
     """
 
-    # initialize test environment
-    env = gym.make('CartPole-v0')
     n_input = 4
     n_output = env.action_space.n
-    n_nn = 150
+    n_nn = 50
     print("number of input: {0}, number of output:{1}".format(n_input, n_output))
     manager = Manager(n_nn, n_input, n_output, c1=2, c2=2, c3=1, bias=1, drop_rate=0.8, weight_max=3, weight_min=-3,
                       weight_mutate_rate=0.005)
     manager.initialize()
 
     dir_path = os.path.join(os.getcwd(), "results")
-    file_path = os.path.join(dir_path, "cartpole_fitness_history.txt")
+    file_path = os.path.join(dir_path, "cartpole_fitness_history2.txt")
 
     # run 30 generations
     for i_episode in range(30):
         print("running episode: {0}".format(i_episode))
         for i, nn in enumerate(manager.workplace.nns):
-            run_episode(env, manager, nn, i, n_epi=3)
+            run_episode(env, manager, nn, i, n_epi=5)
 
-        # record best fitness
-        manager.remember_best_nn()
-        with open(file_path, "a") as f:
-            f.write(str(manager.nn_best.fitness))
-            f.write("\n")
+            if nn.fitness >= 200.0:
+                # record best fitness
+                manager.remember_best_nn(nn)
+
+                with open(file_path, "a") as f:
+                    f.write(str(manager.nn_best.fitness))
+                    f.write("\n")
+
+                # record best neural network
+                manager.write_best_nn("cartpole_result2.txt")
+                return
+
         manager.create_next_generation()
-
-    # record best neural network
-    manager.write_best_nn("cartpole_result.txt")
 
 
 def check_result():
@@ -78,14 +81,13 @@ def check_result():
     Validates the best performed neural network
     """
 
-    env = gym.make('CartPole-v0')
     n_input = 4
     n_output = env.action_space.n
     n_nn = 1
     print("number of input: {0}, number of output:{1}".format(n_input, n_output))
     manager = Manager(n_nn, n_input, n_output, c1=2, c2=2, c3=1, bias=1, drop_rate=0.8)
     manager.initialize()
-    nn = manager.recreate_best_nn("cartpole_result.txt")
+    nn = manager.recreate_best_nn("cartpole_result2.txt")
 
     # runs 100 times and see the results
     for i_episode in range(100):
@@ -93,5 +95,8 @@ def check_result():
         run_episode(env, manager, nn, -1, n_epi=1, render=True)
 
 if __name__ == "__main__":
+    # initialize test environment
+    env = gym.make('CartPole-v0')
+    env = wrappers.Monitor(env, 'tmp/cartpole-exp-1', force=True)
     run()
     check_result()

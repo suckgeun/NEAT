@@ -8,7 +8,7 @@ from players.neuralnet import NeuralNetwork
 
 class Manager:
     def __init__(self, n_nns, n_inputs, n_outputs, bias=None, c1=1, c2=1, c3=0.4, drop_rate=0.8,
-                 weight_max=10, weight_min=-10, weight_mutate_rate=0.1):
+                 weight_max=10, weight_min=-10, weight_mutate_rate=0.1, pm_weight_random=0.1):
         self.worker = None
         self.workplace = None
         self.n_nns = n_nns
@@ -23,12 +23,14 @@ class Manager:
         self.weight_max = weight_max
         self.weight_min = weight_min
         self.weight_mutate_rate = weight_mutate_rate
+        self.pm_weight_random = pm_weight_random
 
     def initialize(self):
         self.workplace = Workplace(self.n_inputs, self.n_outputs, bias=None, n_nn=self.n_nns,
                                    c1=self.c1, c2=self.c2, c3=self.c3, drop_rate=self.drop_rate,
                                    weight_max=self.weight_max, weight_min=self.weight_min,
-                                   weight_mutate_rate=self.weight_mutate_rate)
+                                   weight_mutate_rate=self.weight_mutate_rate,
+                                   pm_weight_random=self.pm_weight_random)
         self.worker = Worker(self.workplace)
         self.worker.initialize_workplace()
 
@@ -183,14 +185,17 @@ class Manager:
         f.write("fitness: {0}".format(str(self.nn_best.fitness)))
         f.close()
 
-    def remember_best_nn(self):
+    def remember_best_nn(self, nn=None):
 
         if self.nn_best is None:
             self.nn_best = self.workplace.nns[0]
 
-        for nn in self.workplace.nns:
-            if self.nn_best.fitness < nn.fitness:
-                self.nn_best = nn
+        if nn is None:
+            for nn in self.workplace.nns:
+                if self.nn_best.fitness < nn.fitness:
+                    self.nn_best = nn
+        else:
+            self.nn_best = nn
 
     @staticmethod
     def recreate_best_nn(filename):
